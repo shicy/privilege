@@ -1,0 +1,5 @@
+*.iml
+.idea
+logs
+priv_api/target
+priv_service/target
