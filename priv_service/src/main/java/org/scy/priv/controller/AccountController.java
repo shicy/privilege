@@ -1,8 +1,12 @@
 package org.scy.priv.controller;
 
+import org.apache.commons.lang3.StringUtils;
+import org.scy.common.Const;
+import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.utils.ValidCodeUtils;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
+import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +25,32 @@ import java.util.Map;
  * Created by shicy on 2017/8/31.
  */
 @Controller
+@SuppressWarnings("unused")
 public class AccountController extends BaseController {
 
     @Autowired
     private AccountService accountService;
+
+    /**
+     * 获取 AccessToken，新获取的 token 具有15分钟的有效期，不需要频繁获取
+     * 参数：
+     * -param appid 帐户对应的应用编号
+     * -param secret 密钥
+     * @return 返回一个32位的 token 字符串
+     */
+    @RequestMapping(value = "/account/token", method = RequestMethod.POST)
+    @ResponseBody
+    public Object accessToken(HttpServletRequest request) {
+        String appid = HttpUtilsEx.getStringValue(request, "appid");
+        String secret = HttpUtilsEx.getStringValue(request, "secret");
+
+        if (StringUtils.isBlank(appid) || StringUtils.isBlank(secret)) {
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少必要参数");
+        }
+
+//        AccountModel account = accountService.getWithSecret();
+        return null;
+    }
 
     /**
      * 注册帐户
@@ -33,7 +59,7 @@ public class AccountController extends BaseController {
     @RequestMapping(value = "/account/register", method = RequestMethod.POST)
     @ResponseBody
     public Object register(HttpServletRequest request) {
-        return new AccountModel();
+        return new Account();
     }
 
     /**

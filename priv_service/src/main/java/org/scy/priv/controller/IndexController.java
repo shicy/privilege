@@ -12,13 +12,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by shicy on 2017/8/31
  */
 @Controller
+@SuppressWarnings("unused")
 public class IndexController extends BaseController {
 
+    @Auth
     @RequestMapping("/test/auth")
     @ResponseBody
-    @Auth
     public Object authTest() {
         return HttpResult.ok("ok");
     }
+
 
 }

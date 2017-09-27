@@ -1,6 +1,5 @@
 package org.scy.priv.controller;
 
-import org.junit.runners.Parameterized;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.annotation.AccessToken;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 
 /**
  * 用户登录验证
