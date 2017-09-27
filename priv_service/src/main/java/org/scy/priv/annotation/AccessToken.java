@@ -11,5 +11,5 @@ import java.lang.annotation.*;
 @Documented
 public @interface AccessToken {
     // 是否必须，如果是必须的将比拦截并返回错误，默认非必须
-    boolean required() default false;
+    boolean required() default true;
 }
