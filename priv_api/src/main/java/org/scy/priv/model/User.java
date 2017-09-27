@@ -9,7 +9,7 @@ import java.util.Date;
  * 用户信息
  * Created by shicy on 2017/9/4.
  */
-public class UserModel extends BaseModel {
+public class User extends BaseModel {
 
     private static final long serialVersionUID = 1002017090400000000L;
 

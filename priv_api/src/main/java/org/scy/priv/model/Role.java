@@ -3,21 +3,24 @@ package org.scy.priv.model;
 import org.scy.common.web.model.BaseModel;
 
 /**
- * 用户组
+ * 角色
  * Created by shicy on 2017/9/4.
  */
-public class GroupModel extends BaseModel {
+public class Role extends BaseModel {
 
-    private static final long serialVersionUID = 1002017090400000001L;
+    private static final long serialVersionUID = 1002017090400000002L;
 
-    // 组名称
+    // 角色名称
     private String name;
 
     // 备注信息
     private String remark;
 
+    // 角色类型：0-默认
+    private short type;
+
     /**
-     * 获取组名称
+     * 获取角色名称
      * @return
      */
     public String getName() {
@@ -25,7 +28,7 @@ public class GroupModel extends BaseModel {
     }
 
     /**
-     * 设置组名称
+     * 设置角色名称
      * @param name
      */
     public void setName(String name) {
@@ -46,6 +49,22 @@ public class GroupModel extends BaseModel {
      */
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    /**
+     * 获取角色类型
+     * @return
+     */
+    public short getType() {
+        return type;
+    }
+
+    /**
+     * 设置角色类型
+     * @param type
+     */
+    public void setType(short type) {
+        this.type = type;
     }
 
 }

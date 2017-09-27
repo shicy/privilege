@@ -6,7 +6,7 @@ import org.scy.common.web.model.BaseModel;
  * 授权信息
  * Created by shicy on 2017/9/4.
  */
-public class PrivilegeModel extends BaseModel {
+public class Privilege extends BaseModel {
 
     private static final long serialVersionUID = 1002017090400000004L;
 

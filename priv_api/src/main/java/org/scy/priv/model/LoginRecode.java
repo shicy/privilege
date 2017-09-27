@@ -6,7 +6,7 @@ import org.scy.common.web.model.BaseModel;
  * 登录记录
  * Created by shicy on 2017/9/5.
  */
-public class LoginRecodeModel extends BaseModel {
+public class LoginRecode extends BaseModel {
 
     private static final long serialVersionUID = 1002017090500000000L;
 

@@ -6,7 +6,7 @@ import org.scy.common.web.model.BaseModel;
  * 模块信息
  * Created by shicy on 2017/9/4.
  */
-public class ModuleModel extends BaseModel {
+public class Module extends BaseModel {
 
     private static final long serialVersionUID = 1002017090400000003L;
 

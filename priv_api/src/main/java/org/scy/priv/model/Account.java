@@ -3,10 +3,10 @@ package org.scy.priv.model;
 import org.scy.common.web.model.BaseModel;
 
 /**
- * 账户信息
+ * 帐户信息
  * Created by shicy on 2017/8/31
  */
-public class AccountModel extends BaseModel {
+public class Account extends BaseModel {
 
     private static final long serialVersionUID = 1002017090200000000L;
 

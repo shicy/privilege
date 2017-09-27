@@ -6,7 +6,7 @@ import org.scy.common.web.model.BaseModel;
  * 角色-用户信息
  * Created by shicy on 2017/9/4.
  */
-public class RoleUserModel extends BaseModel {
+public class RoleUser extends BaseModel {
 
     private static final long serialVersionUID = 1002017090400000006L;
 

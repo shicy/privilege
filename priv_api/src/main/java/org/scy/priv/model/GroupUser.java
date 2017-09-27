@@ -6,7 +6,7 @@ import org.scy.common.web.model.BaseModel;
  * 用户-组关联信息
  * Created by shicy on 2017/9/4.
  */
-public class GroupUserModel extends BaseModel {
+public class GroupUser extends BaseModel {
 
     private static final long serialVersionUID = 1002017090400000005L;
 

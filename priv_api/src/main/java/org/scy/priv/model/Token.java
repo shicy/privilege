@@ -6,7 +6,7 @@ import org.scy.common.web.model.BaseModel;
  * 用户登录状态信息
  * Created by shicy on 2017/9/5.
  */
-public class TokenModel extends BaseModel {
+public class Token extends BaseModel {
 
     private static final long serialVersionUID = 1002017090500000001L;
 
