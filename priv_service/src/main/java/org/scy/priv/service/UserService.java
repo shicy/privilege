@@ -1,6 +1,6 @@
 package org.scy.priv.service;
 
-import org.scy.priv.model.UserModel;
+import org.scy.priv.model.User;
 
 /**
  * 用户相关服务类
@@ -13,6 +13,6 @@ public interface UserService {
      * @param name
      * @return
      */
-    UserModel findUserByName(String name);
+    User findUserByName(String name);
 
 }

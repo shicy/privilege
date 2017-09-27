@@ -1,7 +1,7 @@
 package org.scy.priv.service.impl;
 
 import org.scy.common.web.service.BaseService;
-import org.scy.priv.model.UserModel;
+import org.scy.priv.model.User;
 import org.scy.priv.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl extends BaseService implements UserService {
 
     @Override
-    public UserModel findUserByName(String name) {
+    public User findUserByName(String name) {
         return null;
     }
 
