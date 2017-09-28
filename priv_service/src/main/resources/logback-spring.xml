@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
     <include resource="org/scy/common/logback-base.xml"></include>
+
+    <logger name="org.scy.priv.mapper" level="debug" additivity="false">
+        <appender-ref ref="sql_script" />
+    </logger>
+
 </configuration>
