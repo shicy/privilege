@@ -14,15 +14,15 @@ CREATE TABLE IF NOT EXISTS `account` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL COMMENT '名称：姓名或企业名称',
   `code` VARCHAR(32) NOT NULL COMMENT '编码，第三方应用识别码',
-  `secret` VARCHAR(12) NOT NULL COMMENT '密钥，用于APP验证，应该只用于服务端',
+  `secret` VARCHAR(32) NOT NULL COMMENT '密钥，用于第三方验证',
   `mobile` VARCHAR(20) NULL COMMENT '绑定手机号',
   `email` VARCHAR(50) NULL COMMENT '绑定邮箱',
   `type` TINYINT NULL DEFAULT 1 COMMENT '0-平台 1-个人 2-企业',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-失效 1-有效',
   `creatorId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `updatorId` INT NULL,
-  `updateDate` BIGINT NULL,
+  `updateTime` BIGINT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   UNIQUE INDEX `code_UNIQUE` (`code` ASC))
@@ -48,9 +48,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   `lastLoginDate` BIGINT NULL COMMENT '最后一次登录时间',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-无效 1-有效',
   `creatorId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `updatorId` INT NULL,
-  `updateDate` BIGINT NULL,
+  `updateTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -68,9 +68,9 @@ CREATE TABLE IF NOT EXISTS `group` (
   `remark` VARCHAR(200) NULL,
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-失效 1-有效',
   `creatorId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `updatorId` INT NULL,
-  `updateDate` BIGINT NULL,
+  `updateTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -88,9 +88,9 @@ CREATE TABLE IF NOT EXISTS `role` (
   `type` TINYINT NULL DEFAULT 0 COMMENT '0-默认',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-无效 1-有效',
   `createId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `updateId` INT NULL,
-  `updateDate` BIGINT NULL,
+  `updateTime` BIGINT NULL,
   `paasId` INT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -109,9 +109,9 @@ CREATE TABLE IF NOT EXISTS `module` (
   `parentId` INT NULL DEFAULT 0 COMMENT '上级编号',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-无效 1-失效',
   `creatorId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `updatorId` INT NULL,
-  `updateDate` BIGINT NULL,
+  `updateTime` BIGINT NULL,
   `paasId` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `privs` (
   `grantType` INT NULL DEFAULT 1 COMMENT '授权方式：0-只读 1-读写',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-失效 1-有效',
   `creatorId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_privs_module_idx` (`moduleId` ASC),
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `group_users` (
   `userId` INT NOT NULL,
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-无效 1-有效',
   `creatorId` INT NULL COMMENT '	',
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_group_users_group_idx` (`groupId` ASC),
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `role_users` (
   `userId` INT NULL,
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-无效 1-有效',
   `creatorId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_role_users_role_idx` (`roleId` ASC),
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS `login_recode` (
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
   `client` VARCHAR(16) NULL COMMENT '客户端编号',
   `creatorId` INT NULL,
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_login_recode_user_idx` (`userId` ASC))
@@ -232,14 +232,10 @@ CREATE TABLE IF NOT EXISTS `token` (
   `domain` VARCHAR(30) NULL COMMENT '登录时的域名',
   `client` VARCHAR(16) NULL COMMENT '客户端编号',
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
-  `createDate` BIGINT NULL,
+  `createTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_token_user_idx` (`userId` ASC))
 ENGINE = InnoDB
 COMMENT = '当前用户登录状态表';
-
-
--- 修改帐户密钥为32位 <2017-09-02 18:15:00>
-ALTER TABLE `account` CHANGE COLUMN `secret` `secret` VARCHAR(32) NOT NULL COMMENT '密钥，用于第三方验证' ;
 
