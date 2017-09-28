@@ -18,6 +18,7 @@
 
     <modules>
         <module>../jcoms</module>
+        <module>../cached/cache_api</module>
         <module>priv_service</module>
         <module>priv_api</module>
     </modules>

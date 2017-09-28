@@ -23,6 +23,12 @@
 
         <dependency>
             <groupId>org.scy.service</groupId>
+            <artifactId>cache_api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scy.service</groupId>
             <artifactId>priv_api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -30,6 +36,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>1.3.0</version>
         </dependency>
     </dependencies>
 
