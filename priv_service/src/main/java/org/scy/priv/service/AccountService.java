@@ -21,4 +21,10 @@ public interface AccountService {
      */
     AccountModel getWithSecret(String code, String secret);
 
+    /**
+     * 刷新并获取帐户的 AccessToken，原 AccessToken 无效。
+     * AccessToken 具有15分钟有效期，无需频繁获取
+     */
+    String getAccessToken(String code);
+
 }

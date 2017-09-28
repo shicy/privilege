@@ -45,11 +45,14 @@ public class AccountController extends BaseController {
         String secret = HttpUtilsEx.getStringValue(request, "secret");
 
         if (StringUtils.isBlank(appid) || StringUtils.isBlank(secret)) {
-            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少必要参数");
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
         }
 
-//        AccountModel account = accountService.getWithSecret();
-        return null;
+        AccountModel account = accountService.getWithSecret(appid, secret);
+        if (account == null)
+            return HttpResult.error(Const.MSG_CODE_ACCOUNTERROR);
+
+        return HttpResult.ok(accountService.getAccessToken(account.getCode()));
     }
 
     /**
