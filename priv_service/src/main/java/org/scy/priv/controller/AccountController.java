@@ -52,7 +52,11 @@ public class AccountController extends BaseController {
         if (account == null)
             return HttpResult.error(Const.MSG_CODE_ACCOUNTERROR);
 
-        return HttpResult.ok(accountService.getAccessToken(account.getCode()));
+        String token = accountService.getAccessToken(account.getCode());
+        if (token == null)
+            return HttpResult.error("获取 AccessToken 失败！");
+
+        return HttpResult.ok(token);
     }
 
     /**
