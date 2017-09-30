@@ -6,6 +6,7 @@ import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.utils.ValidCodeUtils;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
+import org.scy.priv.manager.TokenManager;
 import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.service.AccountService;
@@ -52,7 +53,7 @@ public class AccountController extends BaseController {
         if (account == null)
             return HttpResult.error(Const.MSG_CODE_ACCOUNTERROR);
 
-        String token = accountService.getAccessToken(account.getCode());
+        String token = TokenManager.getAccessToken(account.getCode());
         if (token == null)
             return HttpResult.error("获取 AccessToken 失败！");
 
@@ -93,6 +94,27 @@ public class AccountController extends BaseController {
     @ResponseBody
     public Object sendValidCode(@PathVariable("mobile") String mobile) {
         return HttpResult.ok(null);
+    }
+
+    /**
+     * 验证 AccessToken 是否过期
+     * @return “1” - 未过期 “0” - “过期”
+     */
+    @RequestMapping(value = "/valid/access/{token}", method = RequestMethod.GET)
+    @ResponseBody
+    public Object validAccessToken(@PathVariable("token") String token) {
+        boolean validate = TokenManager.isAccessTokenValidate(token);
+        return HttpResult.ok(validate ? "1" : "0");
+    }
+
+    /**
+     * 验证用户 session 是否过期
+     * @return “1” - 未过期 “0” - “过期”
+     */
+    @RequestMapping(value = "/valid/session/{token}", method = RequestMethod.GET)
+    @ResponseBody
+    public Object validUserToken(@PathVariable("token") String token) {
+        return HttpResult.ok("1");
     }
 
 }
