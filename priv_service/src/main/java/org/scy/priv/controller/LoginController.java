@@ -1,8 +1,8 @@
 package org.scy.priv.controller;
 
+import org.scy.common.annotation.AccessToken;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
-import org.scy.priv.annotation.AccessToken;
 import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,7 +36,6 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Object login(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println(request.getAttribute("access_token"));
         return HttpResult.ok(null);
     }
 
