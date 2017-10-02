@@ -14,8 +14,6 @@ public class App extends BaseApplication {
 
     /**
      * 主函数
-     * @param args
-     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         new App().run(args);
