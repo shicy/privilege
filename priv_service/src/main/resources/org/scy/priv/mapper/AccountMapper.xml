@@ -2,8 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.scy.priv.mapper.AccountMapper">
 
+    <!-- 根据编码获取帐户信息 -->
     <select id="getByCode" resultType="AccountModel">
         select * from account where code = #{code}
     </select>
+
+    <!-- 根据名称获取帐户信息 -->
+    <select id="getByName" resultType="AccountModel">
+        select * from account where name = #{name}
+    </select>
+
+    <!-- 根据手机号码获帐户信息 -->
+    <select id="getByMobile" resultType="AccountModel">
+        select * from account where mobile = #{mobile}
+    </select>
+
+    <!-- 根据邮箱获取帐户信息 -->
+    <select id="getByEmail" resultType="AccountModel">
+        select * from account where email = #{email}
+    </select>
+
+    <!-- 新增帐户 -->
+    <insert id="add" parameterType="AccountModel" useGeneratedKeys="true" keyProperty="id">
+        insert into account(name, code, secret, mobile, email, type, state, creatorId, createTime)
+        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{type},
+            #{state}, #{creatorId}, #{createTime})
+    </insert>
+
+    <!-- 更新帐户信息（按编号更新） -->
+    <update id="update" parameterType="AccountModel">
+        update account
+
+        set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email},
+        secret = #{secret}, type = ${type}, state = #{state},
+        updatorId = #{updatorId}, updateTime = #{updateTime}
+
+        where id = #{id}
+    </update>
 
 </mapper>

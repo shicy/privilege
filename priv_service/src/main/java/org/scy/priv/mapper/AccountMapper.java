@@ -12,8 +12,21 @@ import org.scy.priv.model.AccountModel;
 public interface AccountMapper {
 
     /**
-     * 根据编码获取帐户信息
+     * 根据单个帐户信息
      */
     AccountModel getByCode(String code);
+    AccountModel getByName(String name);
+    AccountModel getByMobile(String mobile);
+    AccountModel getByEmail(String email);
+
+    /**
+     * 添加帐户
+     */
+    int add(AccountModel account);
+
+    /**
+     * 更新帐户
+     */
+    int update(AccountModel account);
 
 }
