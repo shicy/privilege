@@ -3,6 +3,7 @@ package org.scy.priv.manager;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.cache.CachedClientAdapter;
 import org.scy.cache.model.CachedVO;
+import org.scy.common.Const;
 import org.scy.common.utils.StringUtilsEx;
 
 import java.util.Date;
@@ -48,6 +49,7 @@ public final class TokenManager {
 
     /**
      * 验证 AccessToken 是否有效
+     * @param token AccessToken
      */
     public static boolean isAccessTokenValidate(String token) {
         if (StringUtils.isNotBlank(token)) {
@@ -58,6 +60,27 @@ public final class TokenManager {
             }
         }
         return false;
+    }
+
+    /**
+     * 是不是平台帐户
+     * @param token AccessToken
+     */
+    public static boolean isPlatform(String token) {
+        return Const.PLATFORM_CODE.equals(getAccessTokenValue(token));
+    }
+
+    /**
+     * 获取 AccessToken 值，即帐户编码
+     * @param token AccessToken
+     */
+    public static String getAccessTokenValue(String token) {
+        if (StringUtils.isNotBlank(token)) {
+            CachedVO cachedVO = CachedClientAdapter.get("access_token_val-" + token);
+            if (cachedVO != null)
+                return cachedVO.getValue();
+        }
+        return null;
     }
 
     /**

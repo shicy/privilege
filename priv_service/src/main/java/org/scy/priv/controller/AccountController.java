@@ -1,11 +1,14 @@
 package org.scy.priv.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.scy.cache.CachedClientAdapter;
 import org.scy.common.Const;
+import org.scy.common.annotation.AccessToken;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.utils.ValidCodeUtils;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
+import org.scy.common.web.session.SessionManager;
 import org.scy.priv.manager.TokenManager;
 import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
@@ -62,16 +65,28 @@ public class AccountController extends BaseController {
 
     /**
      * 注册帐户
+     * 参数：
+     * -param type 帐户类型
+     * -param name 帐户名称
+     * -param mobile 手机号码
+     * -param email 邮箱地址（可选）
      * @return
      */
+    @AccessToken
     @RequestMapping(value = "/account/register", method = RequestMethod.POST)
     @ResponseBody
-    public Object register(HttpServletRequest request) {
-        return new Account();
+    public Object register(HttpServletRequest request, Account account) {
+        // 平台帐户才可以创建
+        String accessToken = SessionManager.getAccessToken();
+        if (!TokenManager.isPlatform(accessToken))
+            return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
+
+        account.setId(0); // 确保新增
+        return HttpResult.ok(accountService.save(account));
     }
 
     /**
-     * 邮箱注册时，获取验证码
+     * 注册时获取验证码
      * @return
      */
     @RequestMapping(value = "/account/register/validcode", method = RequestMethod.GET)
@@ -79,16 +94,19 @@ public class AccountController extends BaseController {
     public Object getValidInfo() {
         String code = ValidCodeUtils.getCode(4);
         String image = ValidCodeUtils.getBase64CodeImage(code);
-        Map<String, String> datas = new HashMap<String, String>();
-//        datas.put("code", code);
-        datas.put("url", image);
+
+        String uuid = SessionManager.uuid.get();
+        CachedClientAdapter.set("register_code-" + uuid, code, 15 * 60);
+
+        Map<String, Object> datas = new HashMap<String, Object>();
+        datas.put("imageUrl", image);
+
         return HttpResult.ok(datas);
     }
 
     /**
      * 发送短信验证码
-     * @param mobile
-     * @return
+     * @param mobile 手机号码
      */
     @RequestMapping(value = "/account/register/sendcode/{mobile}", method = RequestMethod.GET)
     @ResponseBody
