@@ -13,6 +13,8 @@ import org.scy.priv.manager.TokenManager;
 import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.service.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +33,8 @@ import java.util.Map;
 @Controller
 @SuppressWarnings("unused")
 public class AccountController extends BaseController {
+
+    private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     @Autowired
     private AccountService accountService;
@@ -75,14 +79,23 @@ public class AccountController extends BaseController {
     @AccessToken
     @RequestMapping(value = "/account/register", method = RequestMethod.POST)
     @ResponseBody
-    public Object register(HttpServletRequest request, Account account) {
+    public Object register(HttpServletRequest request, Account account, String validcode) {
         // 平台帐户才可以创建
         String accessToken = SessionManager.getAccessToken();
         if (!TokenManager.isPlatform(accessToken))
             return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
 
+        String registerCode = "register_code-" + SessionManager.uuid.get();
+
+        if (StringUtils.isBlank(validcode) || !validcode.equalsIgnoreCase(registerCode))
+            return HttpResult.error(Const.MSG_CODE_VALIDFAILED);
+
         account.setId(0); // 确保新增
-        return HttpResult.ok(accountService.save(account));
+        AccountModel newAccount = accountService.save(account);
+
+        CachedClientAdapter.delete(registerCode); // 删除验证码，用过即失效
+
+        return HttpResult.ok(newAccount);
     }
 
     /**
@@ -100,6 +113,9 @@ public class AccountController extends BaseController {
 
         Map<String, Object> datas = new HashMap<String, Object>();
         datas.put("imageUrl", image);
+
+        System.out.println(code);
+        logger.debug("register code " + code);
 
         return HttpResult.ok(datas);
     }

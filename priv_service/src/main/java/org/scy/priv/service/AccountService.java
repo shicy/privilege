@@ -10,6 +10,12 @@ import org.scy.priv.model.AccountModel;
 public interface AccountService {
 
     /**
+     * 根据编号获取帐户信息
+     * @param id 帐户编号
+     */
+    AccountModel getById(int id);
+
+    /**
      * 根据编码获取帐户信息
      * @param code 帐户编码
      */

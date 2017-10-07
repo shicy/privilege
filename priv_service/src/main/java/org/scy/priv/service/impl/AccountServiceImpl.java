@@ -33,6 +33,11 @@ public class AccountServiceImpl extends BaseService implements AccountService {
     private AccountMapper accountMapper;
 
     @Override
+    public AccountModel getById(int id) {
+        return accountMapper.getById(id);
+    }
+
+    @Override
     public AccountModel getByCode(String code) {
         return accountMapper.getByCode(code);
     }
@@ -76,23 +81,19 @@ public class AccountServiceImpl extends BaseService implements AccountService {
 
         accountModel.setMobile(StringUtils.trimToEmpty(account.getMobile()));
         if (accountMapper.getByMobile(accountModel.getMobile()) != null)
-            throw new ResultException(1002, "手机号码已存在");
-
-        accountModel.setCode(StringUtils.trimToEmpty(account.getCode()));
-        if (accountMapper.getByCode(accountModel.getCode()) != null)
-            throw new ResultException(10003, "编码已存在");
+            throw new ResultException(10002, "手机号码已存在");
 
         accountModel.setEmail(StringUtils.trimToEmpty(account.getEmail()));
         if (StringUtils.isNotEmpty(accountModel.getEmail())) {
             if (accountMapper.getByEmail(accountModel.getEmail()) != null)
-                throw new ResultException(10004, "邮箱已存在");
+                throw new ResultException(10003, "邮箱已存在");
         }
 
         accountModel.setCode(getValidateCode());
         accountModel.setSecret(makeSecret());
+        accountModel.setType(account.getType());
         accountModel.setState(Const.ENABLED);
         accountModel.setCreateDate(new Date());
-        accountModel.setType(account.getType());
 
         if (!ArrayUtils.contains(new int[]{Account.PERSONAL, Account.COMPANY}, accountModel.getType()))
             accountModel.setType(Account.PERSONAL);
@@ -106,7 +107,41 @@ public class AccountServiceImpl extends BaseService implements AccountService {
      * 更新帐户
      */
     private AccountModel update(Account account) {
-        return null;
+        AccountModel accountModel = getById(account.getId());
+        AccountModel tempAccount = null;
+
+        accountModel.setCode(StringUtils.trimToEmpty(account.getCode()));
+        tempAccount = accountMapper.getByCode(accountModel.getCode());
+        if (tempAccount != null && tempAccount.getId() == account.getId())
+            throw new ResultException(10001, "编码已存在");
+
+        accountModel.setName(StringUtils.trimToEmpty(account.getName()));
+        tempAccount = accountMapper.getByName(accountModel.getName());
+        if (tempAccount != null && tempAccount.getId() == account.getId())
+            throw new ResultException(10002, "名称已存在");
+
+        accountModel.setMobile(StringUtils.trimToEmpty(account.getMobile()));
+        tempAccount = accountMapper.getByMobile(accountModel.getMobile());
+        if (tempAccount != null && tempAccount.getId() == account.getId())
+            throw new ResultException(10003, "手机号码已存在");
+
+        accountModel.setEmail(StringUtils.trimToEmpty(account.getEmail()));
+        if (StringUtils.isNotEmpty(accountModel.getEmail())) {
+            tempAccount = accountMapper.getByEmail(accountModel.getEmail());
+            if (tempAccount != null && tempAccount.getId() == account.getId())
+                throw new ResultException(1004, "邮箱已存在");
+        }
+
+        accountModel.setType(account.getType());
+        accountModel.setState(account.getState() == Const.ENABLED ? Const.ENABLED : Const.DISABLED);
+        accountModel.setUpdateDate(new Date());
+
+        if (!ArrayUtils.contains(new int[]{Account.PERSONAL, Account.COMPANY}, accountModel.getType()))
+            accountModel.setType(Account.PERSONAL);
+
+        accountMapper.update(accountModel);
+
+        return accountModel;
     }
 
     /**
