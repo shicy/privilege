@@ -14,6 +14,7 @@ public interface AccountMapper {
     /**
      * 根据单个帐户信息
      */
+    AccountModel getById(int id);
     AccountModel getByCode(String code);
     AccountModel getByName(String name);
     AccountModel getByMobile(String mobile);
