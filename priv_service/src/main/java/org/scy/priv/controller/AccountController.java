@@ -74,7 +74,7 @@ public class AccountController extends BaseController {
      * -param name 帐户名称
      * -param mobile 手机号码
      * -param email 邮箱地址（可选）
-     * @return
+     * @return 返回新建的帐户信息
      */
     @AccessToken
     @RequestMapping(value = "/account/register", method = RequestMethod.POST)
@@ -90,6 +90,9 @@ public class AccountController extends BaseController {
         if (StringUtils.isBlank(validcode) || !validcode.equalsIgnoreCase(registerCode))
             return HttpResult.error(Const.MSG_CODE_VALIDFAILED);
 
+        if (account == null)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
         account.setId(0); // 确保新增
         AccountModel newAccount = accountService.save(account);
 
@@ -100,7 +103,6 @@ public class AccountController extends BaseController {
 
     /**
      * 注册时获取验证码
-     * @return
      */
     @RequestMapping(value = "/account/register/validcode", method = RequestMethod.GET)
     @ResponseBody
@@ -128,27 +130,6 @@ public class AccountController extends BaseController {
     @ResponseBody
     public Object sendValidCode(@PathVariable("mobile") String mobile) {
         return HttpResult.ok(null);
-    }
-
-    /**
-     * 验证 AccessToken 是否过期
-     * @return “1” - 未过期 “0” - “过期”
-     */
-    @RequestMapping(value = "/valid/access/{token}", method = RequestMethod.GET)
-    @ResponseBody
-    public Object validAccessToken(@PathVariable("token") String token) {
-        boolean validate = TokenManager.isAccessTokenValidate(token);
-        return HttpResult.ok(validate ? "1" : "0");
-    }
-
-    /**
-     * 验证用户 session 是否过期
-     * @return “1” - 未过期 “0” - “过期”
-     */
-    @RequestMapping(value = "/valid/session/{token}", method = RequestMethod.GET)
-    @ResponseBody
-    public Object validUserToken(@PathVariable("token") String token) {
-        return HttpResult.ok("1");
     }
 
 }

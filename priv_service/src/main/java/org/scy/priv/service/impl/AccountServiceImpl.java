@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
 import org.scy.common.exception.ResultException;
 import org.scy.common.utils.StringUtilsEx;
-import org.scy.common.web.service.BaseService;
+import org.scy.common.web.service.MybatisBaseService;
 import org.scy.priv.mapper.AccountMapper;
 import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
@@ -23,7 +23,7 @@ import java.util.Date;
  */
 @Service
 @SuppressWarnings("unused")
-public class AccountServiceImpl extends BaseService implements AccountService {
+public class AccountServiceImpl extends MybatisBaseService implements AccountService {
 
     private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -39,7 +39,17 @@ public class AccountServiceImpl extends BaseService implements AccountService {
 
     @Override
     public AccountModel getByCode(String code) {
-        return accountMapper.getByCode(code);
+        return accountMapper.getByCode(StringUtils.trimToEmpty(code));
+    }
+
+    @Override
+    public AccountModel getByMobile(String mobile) {
+        return accountMapper.getByMobile(StringUtils.trimToEmpty(mobile));
+    }
+
+    @Override
+    public AccountModel getByEmail(String email) {
+        return accountMapper.getByEmail(StringUtils.trimToEmpty(email));
     }
 
     @Override
@@ -133,8 +143,11 @@ public class AccountServiceImpl extends BaseService implements AccountService {
         }
 
         accountModel.setType(account.getType());
-        accountModel.setState(account.getState() == Const.ENABLED ? Const.ENABLED : Const.DISABLED);
+        accountModel.setState(account.getState());
         accountModel.setUpdateDate(new Date());
+
+        if (accountModel.getState() != Const.ENABLED)
+            accountModel.setState(Const.DISABLED);
 
         if (!ArrayUtils.contains(new int[]{Account.PERSONAL, Account.COMPANY}, accountModel.getType()))
             accountModel.setType(Account.PERSONAL);

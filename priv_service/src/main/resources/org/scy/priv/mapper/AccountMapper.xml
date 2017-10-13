@@ -4,27 +4,27 @@
 
     <!-- 根据编号获取帐户信息 -->
     <select id="getById" resultType="AccountModel">
-        select * from account where id = #{id}
+        select * from account where id = ${id} and state > 0
     </select>
 
     <!-- 根据编码获取帐户信息 -->
     <select id="getByCode" resultType="AccountModel">
-        select * from account where code = #{code}
+        select * from account where code = #{code} and state > 0
     </select>
 
     <!-- 根据名称获取帐户信息 -->
     <select id="getByName" resultType="AccountModel">
-        select * from account where name = #{name}
+        select * from account where name = #{name} and state > 0
     </select>
 
     <!-- 根据手机号码获帐户信息 -->
     <select id="getByMobile" resultType="AccountModel">
-        select * from account where mobile = #{mobile}
+        select * from account where mobile = #{mobile} and state > 0
     </select>
 
     <!-- 根据邮箱获取帐户信息 -->
     <select id="getByEmail" resultType="AccountModel">
-        select * from account where email = #{email}
+        select * from account where email = #{email} and state > 0
     </select>
 
     <!-- 新增帐户 -->
@@ -37,12 +37,10 @@
     <!-- 更新帐户信息（按编号更新） -->
     <update id="update" parameterType="AccountModel">
         update account
-
         set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email},
-        secret = #{secret}, type = ${type}, state = #{state},
-        updatorId = #{updatorId}, updateTime = #{updateTime}
-
-        where id = #{id}
+            secret = #{secret}, type = ${type}, state = #{state},
+            updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = ${id}
     </update>
 
 </mapper>

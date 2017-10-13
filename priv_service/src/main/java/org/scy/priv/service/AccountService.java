@@ -22,6 +22,18 @@ public interface AccountService {
     AccountModel getByCode(String code);
 
     /**
+     * 根据手机号码获取帐户信息
+     * @param mobile 帐户手机号码
+     */
+    AccountModel getByMobile(String mobile);
+
+    /**
+     * 根据邮箱获取帐户信息
+     * @param email 帐户邮箱地址
+     */
+    AccountModel getByEmail(String email);
+
+    /**
      * 根据编码获取帐户信息，验证密钥信息，如果密钥错误返回 null
      * @param code 帐户编码
      * @param secret 密钥

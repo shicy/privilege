@@ -12,7 +12,7 @@ import org.scy.priv.model.AccountModel;
 public interface AccountMapper {
 
     /**
-     * 根据单个帐户信息
+     * 获取单个帐户信息
      */
     AccountModel getById(int id);
     AccountModel getByCode(String code);
