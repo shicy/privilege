@@ -18,7 +18,6 @@ public class Group extends BaseModel {
 
     /**
      * 获取组名称
-     * @return
      */
     public String getName() {
         return name;
@@ -26,7 +25,6 @@ public class Group extends BaseModel {
 
     /**
      * 设置组名称
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -34,7 +32,6 @@ public class Group extends BaseModel {
 
     /**
      * 获取备注信息
-     * @return
      */
     public String getRemark() {
         return remark;
@@ -42,7 +39,6 @@ public class Group extends BaseModel {
 
     /**
      * 设置备注信息
-     * @param remark
      */
     public void setRemark(String remark) {
         this.remark = remark;
