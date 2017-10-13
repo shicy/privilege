@@ -1,6 +1,6 @@
 package org.scy.priv.service.impl;
 
-import org.scy.common.web.service.BaseService;
+import org.scy.common.web.service.MybatisBaseService;
 import org.scy.priv.model.User;
 import org.scy.priv.service.UserService;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * Created by shicy on 2017/9/3.
  */
 @Service
-public class UserServiceImpl extends BaseService implements UserService {
+public class UserServiceImpl extends MybatisBaseService implements UserService {
 
     @Override
     public User findUserByName(String name) {
