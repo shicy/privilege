@@ -31,11 +31,6 @@
         update `group` set state = 0 where id = ${id}
     </update>
 
-    <!-- deleteById -->
-    <update id="deleteById">
-        update `group` set state = 0 where id = ${id}
-    </update>
-
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
         select * from `group` ${where} ${orderBy} ${groupBy} limit #{page}, #{limit}

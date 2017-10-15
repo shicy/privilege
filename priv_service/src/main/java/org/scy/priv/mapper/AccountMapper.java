@@ -1,6 +1,7 @@
 package org.scy.priv.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.scy.common.ds.mybatis.BaseMapper;
 import org.scy.priv.model.AccountModel;
 
 /**
@@ -9,25 +10,14 @@ import org.scy.priv.model.AccountModel;
  */
 @Mapper
 @SuppressWarnings("unused")
-public interface AccountMapper {
+public interface AccountMapper extends BaseMapper<AccountModel> {
 
     /**
      * 获取单个帐户信息
      */
-    AccountModel getById(int id);
     AccountModel getByCode(String code);
     AccountModel getByName(String name);
     AccountModel getByMobile(String mobile);
     AccountModel getByEmail(String email);
-
-    /**
-     * 添加帐户
-     */
-    int add(AccountModel account);
-
-    /**
-     * 更新帐户
-     */
-    int update(AccountModel account);
 
 }
