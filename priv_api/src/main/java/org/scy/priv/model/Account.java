@@ -37,7 +37,6 @@ public class Account extends BaseModel {
 
     /**
      * 获取名称
-     * @return
      */
     public String getName() {
         return name;
@@ -45,7 +44,6 @@ public class Account extends BaseModel {
 
     /**
      * 设置名称
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -53,7 +51,6 @@ public class Account extends BaseModel {
 
     /**
      * 获取编码
-     * @return
      */
     public String getCode() {
         return code;
@@ -61,7 +58,6 @@ public class Account extends BaseModel {
 
     /**
      * 设置编码
-     * @param code
      */
     public void setCode(String code) {
         this.code = code;
@@ -69,7 +65,6 @@ public class Account extends BaseModel {
 
     /**
      * 获取帐户密钥
-     * @return
      */
     public String getSecret() {
         return secret;
@@ -77,7 +72,6 @@ public class Account extends BaseModel {
 
     /**
      * 设置帐户密钥，加密存储
-     * @param secret
      */
     public void setSecret(String secret) {
         this.secret = secret;
@@ -85,7 +79,6 @@ public class Account extends BaseModel {
 
     /**
      * 获取帐户绑定手机
-     * @return
      */
     public String getMobile() {
         return mobile;
@@ -93,7 +86,6 @@ public class Account extends BaseModel {
 
     /**
      * 设置帐户绑定手机
-     * @param mobile
      */
     public void setMobile(String mobile) {
         this.mobile = mobile;
@@ -101,7 +93,6 @@ public class Account extends BaseModel {
 
     /**
      * 获取帐户绑定邮箱
-     * @return
      */
     public String getEmail() {
         return email;
@@ -109,7 +100,6 @@ public class Account extends BaseModel {
 
     /**
      * 设置帐户绑定邮箱
-     * @param email
      */
     public void setEmail(String email) {
         this.email = email;
@@ -117,7 +107,6 @@ public class Account extends BaseModel {
 
     /**
      * 获取帐户类型
-     * @return
      */
     public short getType() {
         return type;
@@ -125,7 +114,6 @@ public class Account extends BaseModel {
 
     /**
      * 设置帐户类型
-     * @param type
      */
     public void setType(short type) {
         this.type = type;
