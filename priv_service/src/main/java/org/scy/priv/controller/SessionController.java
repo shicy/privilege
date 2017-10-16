@@ -1,6 +1,7 @@
 package org.scy.priv.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.scy.common.annotation.AccessToken;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.manager.TokenManager;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,6 +77,32 @@ public class SessionController extends BaseController {
     @RequestMapping(value = "/session/info/{token}", method = RequestMethod.GET)
     @ResponseBody
     public Object userInfo(@PathVariable("token") String token) {
+        return HttpResult.ok();
+    }
+
+    /**
+     * 登录
+     * -param username 用户名称、手机号或邮箱
+     * -param password 登录密码
+     * -param expires 有效期（秒），大于零时有效，否则无限期
+     * -param loginType 登录方式，默认所有登录方式
+     * @return 登录成功将返回用户token信息
+     */
+    @AccessToken
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @ResponseBody
+    public Object login(HttpServletRequest request) {
+        return HttpResult.ok(null);
+    }
+
+    /**
+     * 登出
+     * -param token 用户登录得到的token信息
+     */
+    @AccessToken
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @ResponseBody
+    public Object logout(HttpServletRequest request) {
         return HttpResult.ok();
     }
 
