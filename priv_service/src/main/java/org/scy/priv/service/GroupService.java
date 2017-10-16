@@ -14,9 +14,13 @@ import java.util.Map;
 public interface GroupService {
 
     /**
-     * 获取用户组信息
+     * 根据编号获取用户组信息
      */
     GroupModel getById(int id);
+
+    /**
+     * 根据名称获取用户组信息
+     */
     GroupModel getByName(String name);
 
     /**
@@ -36,8 +40,8 @@ public interface GroupService {
     /**
      * 查询用户组信息
      * @param params 查询参数：
-     *     -name 按名称查询
-     *     -nameLike 按名称模糊查询
+     *      -name 按名称查询
+     *      -nameLike 按名称模糊查询
      * @param pageInfo 分页信息
      * @return 返回用户组列表
      */

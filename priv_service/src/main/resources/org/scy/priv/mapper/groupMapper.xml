@@ -4,12 +4,12 @@
 
     <!-- getById -->
     <select id="getById" resultType="GroupModel">
-        select * from `group` where id = ${id} and state = 1
+        select * from `group` where id = ${id} and state > 0 limit 1
     </select>
 
     <!-- getByName -->
     <select id="getByName" resultType="GroupModel">
-        select * from `group` where name = #{name} and paasId = #{paasId} and state = 1
+        select * from `group` where name = #{name} and paasId = #{paasId} and state > 0 limit 1
     </select>
 
     <!-- add -->
@@ -28,12 +28,14 @@
 
     <!-- delete -->
     <update id="delete" parameterType="GroupModel">
-        update `group` set state = 0 where id = ${id}
+        update `group`
+        set state = 0, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = ${id}
     </update>
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
-        select * from `group` ${where} ${orderBy} ${groupBy} limit #{page}, #{limit}
+        select * from `group` ${where} ${orderBy} ${groupBy} #{limit}
     </select>
 
     <!-- countFind -->

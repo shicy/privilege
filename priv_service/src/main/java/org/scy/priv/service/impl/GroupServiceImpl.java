@@ -1,6 +1,5 @@
 package org.scy.priv.service.impl;
 
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
 import org.scy.common.ds.PageInfo;
@@ -34,7 +33,7 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     @Override
     public GroupModel getById(int id) {
         GroupModel groupModel = groupMapper.getById(id);
-        if (groupModel != null) {
+        if (groupModel != null && !SessionManager.isPlatform()) {
             if (groupModel.getPaasId() != SessionManager.getAccountId())
                 return null;
         }
@@ -65,9 +64,9 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     public GroupModel delete(int id) {
         GroupModel groupModel = getById(id);
         if (groupModel != null) {
-            if (groupModel.getPaasId() != SessionManager.getAccountId())
-                throw new ResultException(Const.MSG_CODE_NOPERMISSION);
             groupModel.setState(Const.DISABLED);
+            groupModel.setUpdatorId(SessionManager.getUserId());
+            groupModel.setUpdateDate(new Date());
             groupMapper.delete(groupModel);
         }
         return groupModel;
