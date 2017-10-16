@@ -81,8 +81,7 @@ public class AccountController extends BaseController {
     @ResponseBody
     public Object register(HttpServletRequest request, Account account, String validcode) {
         // 平台帐户才可以创建
-        String accessToken = SessionManager.getAccessToken();
-        if (!TokenManager.isPlatform(accessToken))
+        if (!SessionManager.isPlatform())
             return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
 
         String registerCode = "register_code-" + SessionManager.uuid.get();

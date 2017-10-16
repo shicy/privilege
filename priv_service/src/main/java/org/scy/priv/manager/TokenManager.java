@@ -3,7 +3,6 @@ package org.scy.priv.manager;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.cache.CachedClientAdapter;
 import org.scy.cache.model.CachedVO;
-import org.scy.common.Const;
 import org.scy.common.utils.StringUtilsEx;
 
 import java.util.Date;
@@ -60,14 +59,6 @@ public final class TokenManager {
             }
         }
         return false;
-    }
-
-    /**
-     * 是不是平台帐户
-     * @param token AccessToken
-     */
-    public static boolean isPlatform(String token) {
-        return Const.PLATFORM_CODE.equals(getAccessTokenValue(token));
     }
 
     /**
