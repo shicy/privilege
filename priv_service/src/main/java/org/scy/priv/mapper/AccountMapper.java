@@ -12,9 +12,6 @@ import org.scy.priv.model.AccountModel;
 @SuppressWarnings("unused")
 public interface AccountMapper extends BaseMapper<AccountModel> {
 
-    /**
-     * 获取单个帐户信息
-     */
     AccountModel getByCode(String code);
     AccountModel getByName(String name);
     AccountModel getByMobile(String mobile);

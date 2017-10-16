@@ -2,45 +2,60 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.scy.priv.mapper.AccountMapper">
 
-    <!-- 根据编号获取帐户信息 -->
+    <!-- getById -->
     <select id="getById" resultType="AccountModel">
-        select * from account where id = ${id} and state > 0
+        select * from `account` where id = ${id} and state > 0 limit 1
     </select>
 
-    <!-- 根据编码获取帐户信息 -->
+    <!-- getByCode -->
     <select id="getByCode" resultType="AccountModel">
-        select * from account where code = #{code} and state > 0
+        select * from `account` where code = #{code} and state > 0 limit 1
     </select>
 
-    <!-- 根据名称获取帐户信息 -->
+    <!-- getByName -->
     <select id="getByName" resultType="AccountModel">
-        select * from account where name = #{name} and state > 0
+        select * from `account` where name = #{name} and state > 0 limit 1
     </select>
 
-    <!-- 根据手机号码获帐户信息 -->
+    <!-- getByMobile -->
     <select id="getByMobile" resultType="AccountModel">
-        select * from account where mobile = #{mobile} and state > 0
+        select * from `account` where mobile = #{mobile} and state > 0 limit 1
     </select>
 
-    <!-- 根据邮箱获取帐户信息 -->
+    <!-- getByEmail -->
     <select id="getByEmail" resultType="AccountModel">
-        select * from account where email = #{email} and state > 0
+        select * from `account` where email = #{email} and state > 0 limit 1
     </select>
 
-    <!-- 新增帐户 -->
+    <!-- add -->
     <insert id="add" parameterType="AccountModel" useGeneratedKeys="true" keyProperty="id">
-        insert into account(name, code, secret, mobile, email, type, state, creatorId, createTime)
+        insert into `account` (name, code, secret, mobile, email, type, state, creatorId, createTime)
         values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{type},
             #{state}, #{creatorId}, #{createTime})
     </insert>
 
-    <!-- 更新帐户信息（按编号更新） -->
+    <!-- update -->
     <update id="update" parameterType="AccountModel">
-        update account
+        update `account`
         set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email},
             secret = #{secret}, type = ${type}, state = #{state},
             updatorId = #{updatorId}, updateTime = #{updateTime}
         where id = ${id}
     </update>
+
+    <!-- delete -->
+    <update id="delete" parameterType="AccountModel">
+        update `account` set state = 0 where id = #{id}
+    </update>
+
+    <!-- find -->
+    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="AccountModel">
+        select * from `account` ${where} ${orderBy} ${groupBy} ${limit}
+    </select>
+
+    <!-- countFind -->
+    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(id) as count from `account` ${where} ${orderBy} ${groupBy}
+    </select>
 
 </mapper>
