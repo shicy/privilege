@@ -4,6 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import org.scy.common.web.model.BaseModel;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户信息
@@ -12,10 +13,6 @@ import java.util.Date;
 public class User extends BaseModel {
 
     private static final long serialVersionUID = 1002017090400000000L;
-
-    public final short LOGINTYPE_NAME = 1;
-    public final short LOGINTYPE_MOBILE = 2;
-    public final short LOGINTYPE_EMAIL = 3;
 
     // 用户编码，用于业务系统识别用户
     private String code;
@@ -47,18 +44,14 @@ public class User extends BaseModel {
     // 最后一次登录时间
     private Long lastLoginDate;
 
-    /**
-     * 当前用户是否支持某种登录方式
-     * @param loginType
-     * @return
-     */
-    public boolean isLoginAccept(short loginType) {
-        return (accept & loginType) != 0;
-    }
+    // 所在用户组
+    private List<Group> groups;
+
+    // 用户角色信息
+    private List<Role> roles;
 
     /**
      * 获取用户编码
-     * @return
      */
     public String getCode() {
         return code;
@@ -66,7 +59,6 @@ public class User extends BaseModel {
 
     /**
      * 设置用户编码
-     * @param code
      */
     public void setCode(String code) {
         this.code = code;
@@ -74,7 +66,6 @@ public class User extends BaseModel {
 
     /**
      * 获取用户名
-     * @return
      */
     public String getName() {
         return name;
@@ -82,7 +73,6 @@ public class User extends BaseModel {
 
     /**
      * 设置用户名
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -90,7 +80,6 @@ public class User extends BaseModel {
 
     /**
      * 获取手机号码
-     * @return
      */
     public String getMobile() {
         return mobile;
@@ -98,7 +87,6 @@ public class User extends BaseModel {
 
     /**
      * 设置手机号码
-     * @param mobile
      */
     public void setMobile(String mobile) {
         this.mobile = mobile;
@@ -106,7 +94,6 @@ public class User extends BaseModel {
 
     /**
      * 获取邮箱
-     * @return
      */
     public String getEmail() {
         return email;
@@ -114,7 +101,6 @@ public class User extends BaseModel {
 
     /**
      * 设置邮箱
-     * @param email
      */
     public void setEmail(String email) {
         this.email = email;
@@ -122,7 +108,6 @@ public class User extends BaseModel {
 
     /**
      * 获取登录密码
-     * @return
      */
     @JSONField(serialize = false)
     public String getPassword() {
@@ -131,7 +116,6 @@ public class User extends BaseModel {
 
     /**
      * 设置登录密码
-     * @param password
      */
     public void setPassword(String password) {
         this.password = password;
@@ -139,7 +123,6 @@ public class User extends BaseModel {
 
     /**
      * 获取备注信息
-     * @return
      */
     public String getRemark() {
         return remark;
@@ -147,7 +130,6 @@ public class User extends BaseModel {
 
     /**
      * 设置备注信息
-     * @param remark
      */
     public void setRemark(String remark) {
         this.remark = remark;
@@ -155,7 +137,6 @@ public class User extends BaseModel {
 
     /**
      * 获取用户类型
-     * @return
      */
     public short getType() {
         return type;
@@ -163,7 +144,6 @@ public class User extends BaseModel {
 
     /**
      * 设置用户类型
-     * @param type
      */
     public void setType(short type) {
         this.type = type;
@@ -171,7 +151,6 @@ public class User extends BaseModel {
 
     /**
      * 获取允许登录方式
-     * @return
      */
     public short getAccept() {
         return accept;
@@ -179,7 +158,6 @@ public class User extends BaseModel {
 
     /**
      * 设置允许登录方式
-     * @param accept
      */
     public void setAccept(short accept) {
         this.accept = accept;
@@ -187,7 +165,6 @@ public class User extends BaseModel {
 
     /**
      * 获取最后登录方式
-     * @return
      */
     public short getLastLoginType() {
         return lastLoginType;
@@ -195,7 +172,6 @@ public class User extends BaseModel {
 
     /**
      * 设置最后登录方式
-     * @param lastLoginType
      */
     public void setLastLoginType(short lastLoginType) {
         this.lastLoginType = lastLoginType;
@@ -203,7 +179,6 @@ public class User extends BaseModel {
 
     /**
      * 获取最后登录时间，返回时间戳
-     * @return
      */
     public Long getLastLoginTime() {
         return lastLoginDate;
@@ -211,7 +186,6 @@ public class User extends BaseModel {
 
     /**
      * 设置最后登录时间
-     * @param lastLoginDate
      */
     public void setLastLoginTime(Long lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
@@ -219,7 +193,6 @@ public class User extends BaseModel {
 
     /**
      * 获取最后登录时间
-     * @return
      */
     @JSONField(serialize = false)
     public Date getLastLoginDate() {
@@ -228,10 +201,37 @@ public class User extends BaseModel {
 
     /**
      * 设置最后登录时间
-     * @param lastLoginDate
      */
     public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate != null ? lastLoginDate.getTime() : null;
+    }
+
+    /**
+     * 获取用户组信息
+     */
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    /**
+     * 设置用户组信息
+     */
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
+
+    /**
+     * 获取用户角色信息
+     */
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    /**
+     * 设置用户角色信息
+     */
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
 }

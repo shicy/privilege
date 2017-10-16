@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 用户登录验证
@@ -19,24 +18,30 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @SuppressWarnings("unused")
-public class LoginController extends BaseController {
+public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
 
     /**
-     * 登录
-     * 参数：
-     * -param username 用户名称、手机号或邮箱
-     * -param password 登录密码
-     * -param expires 有效期（秒），大于零时有效，否则无限期
-     * @return 登录成功将返回用户信息
+     * 添加用户
+     * -param code 用户代码（自定义）
+     * -param name 用户名称
+     * -param mobile 手机号码
+     * -param email 邮箱号
+     * -param password 用户名或邮箱登录使用的密码
+     * -param remark 备注信息
+     * -param type 用户类型（自定义）
+     * -param accept 允许登录类型
+     * -param groupIds 用户所属分组
+     * -param roleIds 用户角色
+     * @return 返回新建用户信息
      */
     @AccessToken
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/add", method = RequestMethod.POST)
     @ResponseBody
-    public Object login(HttpServletRequest request, HttpServletResponse response) {
-        return HttpResult.ok(null);
+    public Object addUser(HttpServletRequest request) {
+        return HttpResult.ok();
     }
 
 }
