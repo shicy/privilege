@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scy.priv.mapper.RoleMapper">
+
+    <!-- getById -->
+    <select id="getById" resultType="RoleModel">
+        select * from `role` where id = #{id} and state > 0 limit 1
+    </select>
+
+    <!-- getByName -->
+    <select id="getByName" resultType="RoleModel">
+        select * from `role` where name = #{name} and paasId = #{paasId} and state > 0 limit 1
+    </select>
+
+    <!-- add -->
+    <insert id="add" parameterType="RoleModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `role` (name, remark, type, state, creatorId, createTime, paasId)
+        values (#{name}, #{remark}, #{type}, #{state}, #{creatorId}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="RoleModel">
+        update `role`
+        set name = #{name}, remark = #{remark}, type = #{type}, state = #{state},
+            updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- delete -->
+    <update id="delete" parameterType="RoleModel">
+        update `role` set state = 0 where id = #{id}
+    </update>
+
+    <!-- find -->
+    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="RoleModel">
+        select * from `role` ${where} ${orderBy} ${groupBy} ${limit}
+    </select>
+
+    <!-- countFind -->
+    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(id) from `role` ${where} ${orderBy} ${groupBy}
+    </select>
+
+</mapper>
