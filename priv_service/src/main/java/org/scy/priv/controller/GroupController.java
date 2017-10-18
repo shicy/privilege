@@ -79,6 +79,7 @@ public class GroupController extends BaseController {
 
     /**
      * 更新用户组
+     * @return 返回用户信息
      */
     @AccessToken
     @RequestMapping(value = "/group/update", method = RequestMethod.POST)

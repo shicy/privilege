@@ -117,7 +117,7 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         if (groupTemp != null && groupTemp.getId() == group.getId())
             throw new ResultException(10001, "名称已存在");
 
-        groupModel.setRemark(group.getRemark());
+        groupModel.setRemark(StringUtils.trimToEmpty(group.getRemark()));
         groupModel.setUpdatorId(SessionManager.getUserId());
         groupModel.setUpdateDate(new Date());
         groupModel.setState(group.getState());
