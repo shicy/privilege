@@ -50,12 +50,12 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="AccountModel">
-        select * from `account` ${where} ${orderBy} ${groupBy} ${limit}
+        select * from `account` ${where} ${groupBy} ${orderBy} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) as count from `account` ${where} ${orderBy} ${groupBy}
+        select count(id) as count from `account` ${where} ${groupBy} ${orderBy}
     </select>
 
 </mapper>

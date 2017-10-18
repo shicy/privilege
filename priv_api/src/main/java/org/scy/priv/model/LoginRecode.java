@@ -36,7 +36,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取用户编号
-     * @return
      */
     public int getUserId() {
         return userId;
@@ -44,7 +43,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置用户编号
-     * @param userId
      */
     public void setUserId(int userId) {
         this.userId = userId;
@@ -52,7 +50,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取登录用户名称
-     * @return
      */
     public String getLoginName() {
         return loginName;
@@ -60,7 +57,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置登录用户名称
-     * @param loginName
      */
     public void setLoginName(String loginName) {
         this.loginName = loginName;
@@ -68,7 +64,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取登录方式
-     * @return
      */
     public short getLoginType() {
         return loginType;
@@ -76,7 +71,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置登录方式
-     * @param loginType
      */
     public void setLoginType(short loginType) {
         this.loginType = loginType;
@@ -84,7 +78,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取登录验证码
-     * @return
      */
     public String getValidcode() {
         return validcode;
@@ -92,7 +85,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置登录验证码
-     * @param validcode
      */
     public void setValidcode(String validcode) {
         this.validcode = validcode;
@@ -100,7 +92,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取用户IP地址
-     * @return
      */
     public String getIp() {
         return ip;
@@ -108,7 +99,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置用户IP地址
-     * @param ip
      */
     public void setIp(String ip) {
         this.ip = ip;
@@ -116,7 +106,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取网站域名
-     * @return
      */
     public String getDomain() {
         return domain;
@@ -124,7 +113,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置网站域名
-     * @param domain
      */
     public void setDomain(String domain) {
         this.domain = domain;
@@ -132,7 +120,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取用户代理
-     * @return
      */
     public String getUserAgent() {
         return userAgent;
@@ -140,7 +127,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置用户代理
-     * @param userAgent
      */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
@@ -148,7 +134,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 获取客户端编号
-     * @return
      */
     public String getClient() {
         return client;
@@ -156,7 +141,6 @@ public class LoginRecode extends BaseModel {
 
     /**
      * 设置客户端编号
-     * @param client
      */
     public void setClient(String client) {
         this.client = client;

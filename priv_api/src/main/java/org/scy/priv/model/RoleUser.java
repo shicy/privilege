@@ -18,7 +18,6 @@ public class RoleUser extends BaseModel {
 
     /**
      * 获取角色编号
-     * @return
      */
     public int getRoleId() {
         return roleId;
@@ -26,7 +25,6 @@ public class RoleUser extends BaseModel {
 
     /**
      * 设置角色编号
-     * @param roleId
      */
     public void setRoleId(int roleId) {
         this.roleId = roleId;
@@ -34,7 +32,6 @@ public class RoleUser extends BaseModel {
 
     /**
      * 获取用户编号
-     * @return
      */
     public int getUserId() {
         return userId;
@@ -42,7 +39,6 @@ public class RoleUser extends BaseModel {
 
     /**
      * 设置用户编号
-     * @param userId
      */
     public void setUserId(int userId) {
         this.userId = userId;

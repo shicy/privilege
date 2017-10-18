@@ -30,7 +30,6 @@ public class Token extends BaseModel {
 
     /**
      * 获取用户编号
-     * @return
      */
     public int getUserId() {
         return userId;
@@ -38,7 +37,6 @@ public class Token extends BaseModel {
 
     /**
      * 设置用户编号
-     * @param userId
      */
     public void setUserId(int userId) {
         this.userId = userId;
@@ -46,7 +44,6 @@ public class Token extends BaseModel {
 
     /**
      * 获取 Token 信息
-     * @return
      */
     public String getToken() {
         return token;
@@ -54,7 +51,6 @@ public class Token extends BaseModel {
 
     /**
      * 设置 Token 信息
-     * @param token
      */
     public void setToken(String token) {
         this.token = token;
@@ -62,7 +58,6 @@ public class Token extends BaseModel {
 
     /**
      * 获取 Token 过期时间，时间戳
-     * @return
      */
     public long getExpires() {
         return expires;
@@ -70,7 +65,6 @@ public class Token extends BaseModel {
 
     /**
      * 设置 Token 过期时间，时间戳
-     * @param expires
      */
     public void setExpires(long expires) {
         this.expires = expires;
@@ -78,7 +72,6 @@ public class Token extends BaseModel {
 
     /**
      * 获取登录域名
-     * @return
      */
     public String getDomain() {
         return domain;
@@ -86,7 +79,6 @@ public class Token extends BaseModel {
 
     /**
      * 设置登录域名
-     * @param domain
      */
     public void setDomain(String domain) {
         this.domain = domain;
@@ -94,7 +86,6 @@ public class Token extends BaseModel {
 
     /**
      * 获取客户端编号
-     * @return
      */
     public String getClient() {
         return client;
@@ -102,7 +93,6 @@ public class Token extends BaseModel {
 
     /**
      * 设置客户端编号
-     * @param client
      */
     public void setClient(String client) {
         this.client = client;
@@ -110,7 +100,6 @@ public class Token extends BaseModel {
 
     /**
      * 获取用户代理
-     * @return
      */
     public String getUserAgent() {
         return userAgent;
@@ -118,7 +107,6 @@ public class Token extends BaseModel {
 
     /**
      * 设置用户代理
-     * @param userAgent
      */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;

@@ -24,7 +24,6 @@ public class Module extends BaseModel {
 
     /**
      * 获取模块名称
-     * @return
      */
     public String getName() {
         return name;
@@ -32,7 +31,6 @@ public class Module extends BaseModel {
 
     /**
      * 设置模块名称
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -40,7 +38,6 @@ public class Module extends BaseModel {
 
     /**
      * 获取模块编码
-     * @return
      */
     public String getCode() {
         return code;
@@ -48,7 +45,6 @@ public class Module extends BaseModel {
 
     /**
      * 设置模块编码
-     * @param code
      */
     public void setCode(String code) {
         this.code = code;
@@ -56,7 +52,6 @@ public class Module extends BaseModel {
 
     /**
      * 获取备注信息
-     * @return
      */
     public String getRemark() {
         return remark;
@@ -64,7 +59,6 @@ public class Module extends BaseModel {
 
     /**
      * 设置备注信息
-     * @param remark
      */
     public void setRemark(String remark) {
         this.remark = remark;
@@ -72,7 +66,6 @@ public class Module extends BaseModel {
 
     /**
      * 获取上级模块编号
-     * @return
      */
     public int getParentId() {
         return parentId;
@@ -80,7 +73,6 @@ public class Module extends BaseModel {
 
     /**
      * 设置上级模块编号
-     * @param parentId
      */
     public void setParentId(int parentId) {
         this.parentId = parentId;

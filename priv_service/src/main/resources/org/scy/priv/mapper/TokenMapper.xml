@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scy.priv.mapper.TokenMapper">
+
+    <!-- getById -->
+    <select id="getById" resultType="TokenModel">
+        select * from `token` where id = #{id}
+    </select>
+
+    <!-- getByUserId -->
+    <select id="getByUserId" resultType="TokenModel">
+        select * from `token` where userId = #{userId}
+    </select>
+
+    <!-- add -->
+    <insert id="add" parameterType="TokenModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `token` (userId, token, expires, domain, client, userAgent, createTime, paasId)
+        values (#{userId}, #{token}, #{expires}, #{domain}, #{client}, #{userAgent}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="TokenModel">
+        update `token`
+        set userId = #{userId}, token = #{token}, expires = #{expires}, domain = #{domain},
+            client = #{client}, userAgent = #{userAgent}
+        where id = #{id}
+    </update>
+
+    <!-- delete -->
+    <delete id="delete" parameterType="TokenModel">
+        delete from `token` where id = #{id}
+    </delete>
+
+    <!-- find -->
+    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="TokenModel">
+        select * from `token` ${where} ${groupBy} ${orderBy} ${limit}
+    </select>
+
+    <!-- countFind -->
+    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(id) as count from `token` ${where} ${groupBy} ${orderBy}
+    </select>
+
+</mapper>

@@ -33,12 +33,38 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="RoleModel">
-        select * from `role` ${where} ${orderBy} ${groupBy} ${limit}
+        select * from `role` ${where} ${groupBy} ${orderBy} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) from `role` ${where} ${orderBy} ${groupBy}
+        select count(id) from `role` ${where} ${groupBy} ${orderBy}
     </select>
+
+    <!-- addRoleUser -->
+    <insert id="addRoleUser" parameterType="RoleUserModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `role_users` (roleId, userId, state, creatorId, createTime, paasId)
+        values (#{roleId}, #{userId}, #{state}, #{creatorId}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- deleteRoleUserById -->
+    <delete id="deleteRoleUserById">
+        delete from `role_users` where id = #{id}
+    </delete>
+
+    <!-- deleteRoleUserByRoleId -->
+    <delete id="deleteRoleUserByRoleId">
+        delete from `role_users` where roleId = #{roleId}
+    </delete>
+
+    <!-- deleteRoleUserByUserId -->
+    <delete id="deleteRoleUserByUserId">
+        delete from `role_users` where userId = #{userId}
+    </delete>
+
+    <!-- deleteRoleUserByRUId -->
+    <delete id="deleteRoleUserByRUId">
+        delete from `role_users` where roleId = #{roleId} and userId = #{userId}
+    </delete>
 
 </mapper>

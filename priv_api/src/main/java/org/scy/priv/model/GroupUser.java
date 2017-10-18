@@ -18,7 +18,6 @@ public class GroupUser extends BaseModel {
 
     /**
      * 获取用户组编号
-     * @return
      */
     public int getGroupId() {
         return groupId;
@@ -26,7 +25,6 @@ public class GroupUser extends BaseModel {
 
     /**
      * 设置用户组编号
-     * @param groupId
      */
     public void setGroupId(int groupId) {
         this.groupId = groupId;
@@ -34,7 +32,6 @@ public class GroupUser extends BaseModel {
 
     /**
      * 获取用户编号
-     * @return
      */
     public int getUserId() {
         return userId;
@@ -42,7 +39,6 @@ public class GroupUser extends BaseModel {
 
     /**
      * 设置用户编号
-     * @param userId
      */
     public void setUserId(int userId) {
         this.userId = userId;

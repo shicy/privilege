@@ -21,7 +21,6 @@ public class Role extends BaseModel {
 
     /**
      * 获取角色名称
-     * @return
      */
     public String getName() {
         return name;
@@ -29,7 +28,6 @@ public class Role extends BaseModel {
 
     /**
      * 设置角色名称
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -37,7 +35,6 @@ public class Role extends BaseModel {
 
     /**
      * 获取备注信息
-     * @return
      */
     public String getRemark() {
         return remark;
@@ -45,7 +42,6 @@ public class Role extends BaseModel {
 
     /**
      * 设置备注信息
-     * @param remark
      */
     public void setRemark(String remark) {
         this.remark = remark;
@@ -53,7 +49,6 @@ public class Role extends BaseModel {
 
     /**
      * 获取角色类型
-     * @return
      */
     public short getType() {
         return type;
@@ -61,7 +56,6 @@ public class Role extends BaseModel {
 
     /**
      * 设置角色类型
-     * @param type
      */
     public void setType(short type) {
         this.type = type;

@@ -35,12 +35,38 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
-        select * from `group` ${where} ${orderBy} ${groupBy} #{limit}
+        select * from `group` ${where} ${groupBy} ${orderBy} #{limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) as count from `group` ${where} ${orderBy} ${groupBy}
+        select count(id) as count from `group` ${where} ${groupBy} ${orderBy}
     </select>
+
+    <!-- addGroupUser -->
+    <insert id="addGroupUser" parameterType="GroupUserModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `group_users` (groupId, userId, state, creatorId, createTime, paasId)
+        values (#{groupId}, #{userId}, #{state}, #{creatorId}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- deleteGroupUserById -->
+    <delete id="deleteGroupUserById">
+        delete from `group_users` where id = #{id}
+    </delete>
+
+    <!-- deleteGroupUserByGroupId -->
+    <delete id="deleteGroupUserByGroupId">
+        delete from `group_users` where groupId = #{groupId}
+    </delete>
+
+    <!-- deleteGroupUserByUserId -->
+    <delete id="deleteGroupUserByUserId">
+        delete from `group_users` where userId = #{userId}
+    </delete>
+
+    <!-- deleteGroupUserByGUId -->
+    <delete id="deleteGroupUserByGUId">
+        delete from `group_users` where groupId = #{groupId} and userId = #{userId}
+    </delete>
 
 </mapper>

@@ -10,9 +10,6 @@ public class Privilege extends BaseModel {
 
     private static final long serialVersionUID = 1002017090400000004L;
 
-    public final static int READONLY = 0;
-    public final static int WRITEABLE = 1;
-
     // 模块编号
     private int moduleId;
 
@@ -30,7 +27,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 获取模块编号
-     * @return
      */
     public int getModuleId() {
         return moduleId;
@@ -38,7 +34,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 设置模块编号
-     * @param moduleId
      */
     public void setModuleId(int moduleId) {
         this.moduleId = moduleId;
@@ -46,7 +41,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 获取用户编号
-     * @return
      */
     public int getUserId() {
         return userId;
@@ -54,7 +48,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 设置用户编号
-     * @param userId
      */
     public void setUserId(int userId) {
         this.userId = userId;
@@ -62,7 +55,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 获取用户组编号
-     * @return
      */
     public int getGroupId() {
         return groupId;
@@ -70,7 +62,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 设置用户组编号
-     * @param groupId
      */
     public void setGroupId(int groupId) {
         this.groupId = groupId;
@@ -78,7 +69,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 获取角色编号
-     * @return
      */
     public int getRoleId() {
         return roleId;
@@ -86,7 +76,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 设置角色编号
-     * @param roleId
      */
     public void setRoleId(int roleId) {
         this.roleId = roleId;
@@ -94,7 +83,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 获取授权类型
-     * @return
      */
     public int getGrantType() {
         return grantType;
@@ -102,7 +90,6 @@ public class Privilege extends BaseModel {
 
     /**
      * 设置授权类型
-     * @param grantType
      */
     public void setGrantType(int grantType) {
         this.grantType = grantType;

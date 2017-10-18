@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scy.priv.mapper.ModuleMapper">
+
+    <!-- getById -->
+    <select id="getById" resultType="ModuleModel">
+        select * from `module` where id = #{id} and state > 0
+    </select>
+
+    <!-- getByCode -->
+    <select id="getByCode" resultType="ModuleModel">
+        select * from `module` where code = #{code} and paasId = #{paasId} and state > 0
+    </select>
+
+    <!-- add -->
+    <insert id="add" parameterType="ModuleModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `module` (name, code, remark, parentId, state, creatorId, createTime, paasId)
+        values (#{name}, #{code}, #{remark}, #{parentId}, #{state}, #{creatorId}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="ModuleModel">
+        update `module`
+        set name = #{name}, code = #{code}, remark = #{remark}, parentId = #{parentId},
+            state = #{state}, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- delete -->
+    <update id="delete" parameterType="ModuleModel">
+        update `module`
+        set state = 0, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- find -->
+    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="ModuleModel">
+        select * from `module` ${where} ${groupBy} ${orderBy} ${limit}
+    </select>
+
+    <!-- countFind -->
+    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(id) as count from `module` ${where} ${groupBy} ${orderBy}
+    </select>
+
+    <!-- listByParent -->
+    <select id="listByParent" resultType="ModuleModel">
+        select * from `module` where parentId = #{parentId} and state > 0
+    </select>
+
+</mapper>
