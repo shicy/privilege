@@ -1,7 +1,10 @@
 package org.scy.priv.controller;
 
 import org.apache.commons.lang3.StringUtils;
+import org.scy.common.Const;
 import org.scy.common.annotation.AccessToken;
+import org.scy.common.exception.ResultException;
+import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.manager.TokenManager;
@@ -38,8 +41,22 @@ public class SessionController extends BaseController {
      * @return 返回一个32位的 token 字符串
      */
     @RequestMapping(value = "/token/access", method = RequestMethod.GET)
-    public Object getAccessToken() {
-        return HttpResult.ok();
+    public Object getAccessToken(HttpServletRequest request) {
+        String appId = HttpUtilsEx.getStringValue(request, "appid");
+        String secret = HttpUtilsEx.getStringValue(request, "secret");
+
+        if (StringUtils.isBlank(appId) || StringUtils.isBlank(secret))
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
+        AccountModel accountModel = accountService.getWithSecret(appId, secret);
+        if (accountModel == null)
+            return HttpResult.error(Const.MSG_CODE_ACCOUNTERROR);
+
+        String token = TokenManager.getAccessToken(accountModel.getCode());
+        if (token == null)
+            return HttpResult.error(10001, "获取 AccessToken 失败！");
+
+        return HttpResult.ok(token);
     }
 
     /**
