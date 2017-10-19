@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
  * Created by shicy on 2017/10/15.
  */
 @Controller
+@AccessToken
+@ResponseBody
 @SuppressWarnings("unused")
 public class RoleController extends BaseController {
 
@@ -29,12 +31,11 @@ public class RoleController extends BaseController {
      * 参数：
      * -param name 按名称查询角色信息
      * -param nameLike 按名称模糊查询角色信息
+     * -param userId 某用户的角色信息
      * -param page 当前分页页码
      * -param limit 分页大小，默认20
      */
-    @AccessToken
     @RequestMapping(value = "/role/list", method = RequestMethod.GET)
-    @ResponseBody
     public Object list(HttpServletRequest request) {
         return HttpResult.ok();
     }
@@ -47,9 +48,7 @@ public class RoleController extends BaseController {
      * -param type 角色类型（自定义）
      * @return 返回新增的角色信息
      */
-    @AccessToken
     @RequestMapping(value = "/role/add", method = RequestMethod.POST)
-    @ResponseBody
     public Object addRole(Role role) {
         return HttpResult.ok();
     }
@@ -62,9 +61,7 @@ public class RoleController extends BaseController {
      * -param type 角色类型（自定义）
      * @return 返回角色信息
      */
-    @AccessToken
     @RequestMapping(value = "/role/update", method = RequestMethod.POST)
-    @ResponseBody
     public Object updateRole(Role role) {
         return HttpResult.ok();
     }
@@ -74,9 +71,7 @@ public class RoleController extends BaseController {
      * 参数：
      * -param id 想要删除的角色编号
      */
-    @AccessToken
     @RequestMapping(value = "/role/delete", method = RequestMethod.POST)
-    @ResponseBody
     public Object deleteRole(HttpServletRequest request) {
         return HttpResult.ok();
     }

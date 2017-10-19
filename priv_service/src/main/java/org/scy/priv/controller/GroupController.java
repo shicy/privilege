@@ -27,6 +27,8 @@ import java.util.Map;
  * Created by shicy on 2017/10/7.
  */
 @Controller
+@AccessToken
+@ResponseBody
 @SuppressWarnings("unused")
 public class GroupController extends BaseController {
 
@@ -40,12 +42,11 @@ public class GroupController extends BaseController {
      * 参数：
      * -param name 用户组名称
      * -param nameLike 用户组名称模糊查询
+     * -param userId 某用户所在的用户组信息
      * -param page 当前分页页码
      * -param limit 每页大小，默认20
      */
-    @AccessToken
     @RequestMapping(value = "/group/list", method = RequestMethod.GET)
-    @ResponseBody
     public Object list(HttpServletRequest request) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", HttpUtilsEx.getStringValue(request, "name"));
@@ -64,9 +65,7 @@ public class GroupController extends BaseController {
      * -param remark 备注信息
      * @return 返回新建用户组信息
      */
-    @AccessToken
     @RequestMapping(value = "/group/add", method = RequestMethod.POST)
-    @ResponseBody
     public Object addGroup(Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
@@ -81,9 +80,7 @@ public class GroupController extends BaseController {
      * 更新用户组
      * @return 返回用户信息
      */
-    @AccessToken
     @RequestMapping(value = "/group/update", method = RequestMethod.POST)
-    @ResponseBody
     public Object updateGroup(Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
@@ -103,9 +100,7 @@ public class GroupController extends BaseController {
      * 参数：
      * -param id 想要删除的用户组编号
      */
-    @AccessToken
     @RequestMapping(value = "/group/delete", method = RequestMethod.POST)
-    @ResponseBody
     public Object deleteGroup(HttpServletRequest request) {
         int groupId = HttpUtilsEx.getIntValue(request, "id", -1);
         if (groupId <= 0)

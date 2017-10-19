@@ -23,6 +23,7 @@ import java.util.Map;
  * Created by shicy on 2017/10/10.
  */
 @Controller
+@ResponseBody
 @SuppressWarnings("unused")
 public class SessionController extends BaseController {
 
@@ -30,11 +31,22 @@ public class SessionController extends BaseController {
     private AccountService accountService;
 
     /**
+     * 获取 AccessToken，新获取的 token 具有15分钟的有效期，不需要频繁获取
+     * 参数：
+     * -param appid 帐户对应的应用编号
+     * -param secret 密钥
+     * @return 返回一个32位的 token 字符串
+     */
+    @RequestMapping(value = "/token/access", method = RequestMethod.GET)
+    public Object getAccessToken() {
+        return HttpResult.ok();
+    }
+
+    /**
      * 验证 AccessToken 是否过期
      * @return “1” - 未过期 “0” - “过期”
      */
     @RequestMapping(value = "/valid/access/{token}", method = RequestMethod.GET)
-    @ResponseBody
     public Object validAccessToken(@PathVariable("token") String token) {
         boolean validate = TokenManager.isAccessTokenValidate(token);
         return HttpResult.ok(validate ? "1" : "0");
@@ -45,7 +57,6 @@ public class SessionController extends BaseController {
      * @return “1” - 未过期 “0” - “过期”
      */
     @RequestMapping(value = "/valid/session/{token}", method = RequestMethod.GET)
-    @ResponseBody
     public Object validUserToken(@PathVariable("token") String token) {
         return HttpResult.ok("1");
     }
@@ -54,7 +65,6 @@ public class SessionController extends BaseController {
      * 获取帐户信息
      */
     @RequestMapping(value = "/session/account/{token}", method = RequestMethod.GET)
-    @ResponseBody
     public Object accountInfo(@PathVariable("token") String token) {
         String code = TokenManager.getAccessTokenValue(token);
         if (StringUtils.isNotBlank(code)) {
@@ -75,7 +85,6 @@ public class SessionController extends BaseController {
      * 获取用户信息
      */
     @RequestMapping(value = "/session/info/{token}", method = RequestMethod.GET)
-    @ResponseBody
     public Object userInfo(@PathVariable("token") String token) {
         return HttpResult.ok();
     }
@@ -90,7 +99,6 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
     public Object login(HttpServletRequest request) {
         return HttpResult.ok(null);
     }
@@ -101,7 +109,6 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    @ResponseBody
     public Object logout(HttpServletRequest request) {
         return HttpResult.ok();
     }
