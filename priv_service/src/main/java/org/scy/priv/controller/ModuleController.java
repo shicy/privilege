@@ -2,6 +2,8 @@ package org.scy.priv.controller;
 
 import org.scy.common.Const;
 import org.scy.common.annotation.AccessToken;
+import org.scy.common.ds.PageInfo;
+import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.model.Module;
@@ -9,11 +11,15 @@ import org.scy.priv.model.ModuleModel;
 import org.scy.priv.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 模块
@@ -46,7 +52,21 @@ public class ModuleController extends BaseController {
      */
     @RequestMapping(value = "/module/list", method = RequestMethod.GET)
     public Object list(HttpServletRequest request) {
-        return HttpResult.ok();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("name", HttpUtilsEx.getStringValue(request, "name"));
+        params.put("nameLike", HttpUtilsEx.getStringValue(request, "nameLike"));
+        params.put("code", HttpUtilsEx.getStringValue(request, "code"));
+        params.put("codeLike", HttpUtilsEx.getStringValue(request, "codeLike"));
+        params.put("parentId", HttpUtilsEx.getIntValue(request, "parentId"));
+        params.put("includeChildren", HttpUtilsEx.getIntValue(request,"includeChildren"));
+        params.put("userId", HttpUtilsEx.getIntValue(request, "userId"));
+        params.put("groupId", HttpUtilsEx.getIntValue(request, "groupId"));
+        params.put("roleId", HttpUtilsEx.getIntValue(request, "roleId"));
+
+        PageInfo pageInfo = PageInfo.create(request);
+        List<ModuleModel> moduleModels = moduleService.find(params, pageInfo);
+
+        return HttpResult.ok(moduleModels, pageInfo);
     }
 
     /**
@@ -80,7 +100,15 @@ public class ModuleController extends BaseController {
      */
     @RequestMapping(value = "/module/update", method = RequestMethod.POST)
     public Object updateModule(Module module) {
-        return HttpResult.ok();
+        if (module == null)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
+        if (module.getId() <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
+
+        ModuleModel moduleModel = moduleService.save(module);
+
+        return HttpResult.ok(moduleModel);
     }
 
     /**
@@ -88,8 +116,15 @@ public class ModuleController extends BaseController {
      * 参数：
      * -param id 根据编号删除模块
      */
-    @RequestMapping(value = "/module/delete", method = RequestMethod.POST)
-    public Object deleteModule(HttpServletRequest request) {
+    @RequestMapping(value = "/module/delete/{id}", method = RequestMethod.POST)
+    public Object deleteModule(@PathVariable int moduleId) {
+        if (moduleId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
+        ModuleModel moduleModel = moduleService.delete(moduleId);
+        if (moduleModel == null)
+            return HttpResult.error(Const.MSG_CODE_NOTEXIST, "模块不存在");
+
         return HttpResult.ok();
     }
 

@@ -3,6 +3,8 @@ package org.scy.priv.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
 import org.scy.common.ds.PageInfo;
+import org.scy.common.ds.query.Oper;
+import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
 import org.scy.common.web.service.BaseService;
 import org.scy.common.web.session.SessionManager;
@@ -13,9 +15,7 @@ import org.scy.priv.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 模块相关服务类
@@ -48,7 +48,12 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
 
     @Override
     public List<ModuleModel> getByNameLike(String name) {
-        return null;
+        if (StringUtils.isNotBlank(name)) {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("nameLike", name);
+            return find(params, null);
+        }
+        return new ArrayList<ModuleModel>();
     }
 
     @Override
@@ -61,7 +66,12 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
 
     @Override
     public List<ModuleModel> getByCodeLike(String code) {
-        return null;
+        if (StringUtils.isNotBlank(code)) {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("codeLike", code);
+            return find(params, null);
+        }
+        return new ArrayList<ModuleModel>();
     }
 
     @Override
@@ -77,12 +87,28 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
 
     @Override
     public ModuleModel delete(int id) {
-        return null;
+        ModuleModel moduleModel = getById(id);
+        if (moduleModel != null) {
+            moduleModel.setState(Const.DISABLED);
+            moduleModel.setUpdatorId(SessionManager.getUserId());
+            moduleModel.setUpdateDate(new Date());
+            moduleMapper.delete(moduleModel);
+        }
+        return moduleModel;
     }
 
     @Override
     public List<ModuleModel> find(Map<String, Object> params, PageInfo pageInfo) {
-        return null;
+        Selector selector = Selector.build(pageInfo);
+        selector.addFilter("state", 0, Oper.GT);
+
+        if (!SessionManager.isPlatform())
+            selector.addFilter("paasId", SessionManager.getAccountId());
+
+        if (pageInfo != null)
+            pageInfo.setTotal(moduleMapper.countFind(selector));
+
+        return moduleMapper.find(selector);
     }
 
     /**
