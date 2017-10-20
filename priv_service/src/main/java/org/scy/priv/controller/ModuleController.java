@@ -1,9 +1,13 @@
 package org.scy.priv.controller;
 
+import org.scy.common.Const;
 import org.scy.common.annotation.AccessToken;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.model.Module;
+import org.scy.priv.model.ModuleModel;
+import org.scy.priv.service.ModuleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 @SuppressWarnings("unused")
 public class ModuleController extends BaseController {
 
+    @Autowired
+    private ModuleService moduleService;
+
     /**
      * 查询模块信息
      * 参数：
@@ -35,6 +42,7 @@ public class ModuleController extends BaseController {
      * -param roleId 某角色的模块
      * -param page
      * -param size
+     * @return 返回模块列表
      */
     @RequestMapping(value = "/module/list", method = RequestMethod.GET)
     public Object list(HttpServletRequest request) {
@@ -52,7 +60,13 @@ public class ModuleController extends BaseController {
      */
     @RequestMapping(value = "/module/add", method = RequestMethod.POST)
     public Object addModule(Module module) {
-        return HttpResult.ok();
+        if (module == null)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
+        module.setId(0);
+        ModuleModel moduleModel = moduleService.save(module);
+
+        return HttpResult.ok(moduleModel);
     }
 
     /**

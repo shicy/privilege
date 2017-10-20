@@ -12,6 +12,7 @@ import java.util.List;
 public interface ModuleMapper extends BaseMapper<ModuleModel> {
 
     ModuleModel getByCode(String code, int paasId);
+    ModuleModel getByName(String name, int paasId);
 
     List<ModuleModel> listByParent(int parentId);
 
