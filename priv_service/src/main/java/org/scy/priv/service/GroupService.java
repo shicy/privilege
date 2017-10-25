@@ -11,6 +11,7 @@ import java.util.Map;
  * 用户组
  * Created by shicy on 2017/10/7.
  */
+@SuppressWarnings("unused")
 public interface GroupService {
 
     /**
@@ -22,6 +23,11 @@ public interface GroupService {
      * 根据名称获取用户组信息
      */
     GroupModel getByName(String name);
+
+    /**
+     * 根据用户编号，获取该用户的所属用户组信息
+     */
+    List<GroupModel> getByUserId(int userId);
 
     /**
      * 保存用户组，新建或修改用户组
@@ -42,6 +48,7 @@ public interface GroupService {
      * @param params 查询参数：
      *      -name 按名称查询
      *      -nameLike 按名称模糊查询
+     *      -userId 按用户编号查询
      * @param pageInfo 分页信息
      * @return 返回用户组列表
      */

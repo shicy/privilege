@@ -35,12 +35,28 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
-        select * from `group` ${where} ${groupBy} ${orderBy} #{limit}
+        select g.* from `group` as g ${where} ${order} ${group} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) as count from `group` ${where} ${groupBy} ${orderBy}
+        select count(g.id) as count from `group` as g ${where} ${order} ${group}
+    </select>
+
+    <!-- findWithUser -->
+    <select id="findWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
+        select g.* from `group` as g, `group_users` as gu
+        where g.id = gu.groupId ${whereMore} ${order}
+        group by g.id ${groupMore} ${limit}
+    </select>
+
+    <!-- countFindWithUser -->
+    <select id="countFindWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(id) from (
+            select g.id from `group` as g, `group_users` as gu
+            where g.id = gu.groupId ${whereMore} ${order}
+            group by g.id ${groupMore}
+        )
     </select>
 
     <!-- addGroupUser -->

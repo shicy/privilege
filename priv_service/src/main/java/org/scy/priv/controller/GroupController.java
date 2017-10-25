@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -51,11 +52,21 @@ public class GroupController extends BaseController {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", HttpUtilsEx.getStringValue(request, "name"));
         params.put("nameLike", HttpUtilsEx.getStringValue(request, "nameLike"));
+        params.put("userId", HttpUtilsEx.getIntValue(request, "userId"));
 
         PageInfo pageInfo = PageInfo.create(request);
         List<GroupModel> groupList = groupService.find(params, pageInfo);
 
         return HttpResult.ok(groupList, pageInfo);
+    }
+
+    /**
+     * 获取某用户的所属用户组信息，不分页
+     */
+    @RequestMapping(value = "/group/list/user/{userId}", method = RequestMethod.GET)
+    public Object getByUser(int userId) {
+        List<GroupModel> groupModels = groupService.getByUserId(userId);
+        return HttpResult.ok(groupModels);
     }
 
     /**
@@ -100,9 +111,8 @@ public class GroupController extends BaseController {
      * 参数：
      * -param id 想要删除的用户组编号
      */
-    @RequestMapping(value = "/group/delete", method = RequestMethod.POST)
-    public Object deleteGroup(HttpServletRequest request) {
-        int groupId = HttpUtilsEx.getIntValue(request, "id", -1);
+    @RequestMapping(value = "/group/delete/{groupId}", method = RequestMethod.POST)
+    public Object deleteGroup(HttpServletRequest request, @PathVariable int groupId) {
         if (groupId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户组编号无效");
 

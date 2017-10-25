@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,13 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     @Override
     public GroupModel getByName(String name) {
         return groupMapper.getByName(StringUtils.trimToEmpty(name), SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<GroupModel> getByUserId(int userId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("userId", userId);
+        return find(params, null);
     }
 
     @Override
@@ -75,15 +83,28 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     @Override
     public List<GroupModel> find(Map<String, Object> params, PageInfo pageInfo) {
         Selector selector = Selector.build(pageInfo);
-        selector.addFilter("state", 0, Oper.GT);
-        selector.addFilter("paasId", SessionManager.getAccountId());
+
         if (params != null) {
-            selector.addFilterNotBlank("name", params.get("name"));
-            selector.addFilterNotBlank("name", params.get("nameLike"), Oper.LIKE);
+            selector.addFilterNotBlank("g.name", params.get("name"));
+            selector.addFilterNotBlank("g.name", params.get("nameLike"), Oper.LIKE);
         }
 
-        pageInfo.setTotal(groupMapper.countFind(selector));
+        selector.addFilter("g.state", 0, Oper.GT);
+        if (!SessionManager.isPlatform())
+            selector.addFilter("g.paasId", SessionManager.getAccountId());
 
+        int userId = params != null ? (Integer)params.get("userId") : 0;
+        if (userId > 0) {
+            selector.addFilter("gu.userId", userId);
+            selector.addFilter("gu.state", 0, Oper.GT);
+
+            if (pageInfo != null)
+                pageInfo.setTotal(groupMapper.countFindWithUser(selector));
+            return groupMapper.findWithUser(selector);
+        }
+
+        if (pageInfo != null)
+            pageInfo.setTotal(groupMapper.countFind(selector));
         return groupMapper.find(selector);
     }
 
@@ -120,11 +141,6 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         groupModel.setRemark(StringUtils.trimToEmpty(group.getRemark()));
         groupModel.setUpdatorId(SessionManager.getUserId());
         groupModel.setUpdateDate(new Date());
-        groupModel.setState(group.getState());
-        groupModel.setPaasId(group.getPaasId());
-
-        if (groupModel.getState() != Const.ENABLED)
-            groupModel.setState(Const.DISABLED);
 
         groupMapper.update(groupModel);
 

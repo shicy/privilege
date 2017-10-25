@@ -26,4 +26,7 @@ public interface GroupMapper extends BaseMapper<GroupModel> {
     int deleteGroupUserByUserId(int userId);
     int deleteGroupUserByGUId(int groupId, int userId);
 
+    List<GroupModel> findWithUser(Selector selector);
+    int countFindWithUser(Selector selector);
+
 }
