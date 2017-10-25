@@ -134,12 +134,12 @@ public class ModuleController extends BaseController {
      * 删除模块
      * 参数：
      * -param id 根据编号删除模块
-     * -param force 是否强制删除，1为强制删除
+     * -param force 是否强制删除，1为强制删除，同时删除子模块
      */
-    @RequestMapping(value = "/module/delete/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/module/delete/{moduleId}", method = RequestMethod.POST)
     public Object deleteModule(HttpServletRequest request, @PathVariable int moduleId) {
         if (moduleId <= 0)
-            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "模块编号无效");
 
         ModuleModel moduleModel;
         if (HttpUtilsEx.getIntValue(request, "force") == 1)

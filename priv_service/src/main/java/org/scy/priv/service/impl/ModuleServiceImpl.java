@@ -172,14 +172,16 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
     public List<ModuleModel> find(Map<String, Object> params, PageInfo pageInfo) {
         Selector selector = Selector.build(pageInfo);
 
-        selector.addFilterNotBlank("name", params.get("name"));
-        selector.addFilterNotBlank("name", params.get("nameLike"), Oper.LIKE);
-        selector.addFilterNotBlank("code", params.get("code"));
-        selector.addFilterNotBlank("code", params.get("codeLike"), Oper.LIKE);
+        if (params != null) {
+            selector.addFilterNotBlank("name", params.get("name"));
+            selector.addFilterNotBlank("name", params.get("nameLike"), Oper.LIKE);
+            selector.addFilterNotBlank("code", params.get("code"));
+            selector.addFilterNotBlank("code", params.get("codeLike"), Oper.LIKE);
 
-        int parentId = (Integer)params.get("parentId");
-        if (parentId >= 0)
-            selector.addFilter("parentId", parentId);
+            int parentId = (Integer)params.get("parentId");
+            if (parentId >= 0)
+                selector.addFilter("parentId", parentId);
+        }
 
         selector.addFilter("state", 0, Oper.GT);
         if (!SessionManager.isPlatform())
@@ -239,7 +241,6 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
 
         moduleModel.setRemark(module.getRemark());
         moduleModel.setParentId(module.getParentId());
-        moduleModel.setState(module.getState());
         moduleModel.setUpdatorId(SessionManager.getUserId());
         moduleModel.setUpdateDate(new Date());
 
