@@ -35,17 +35,13 @@ public class ModuleController extends BaseController {
     private ModuleService moduleService;
 
     /**
-     * 查询模块信息
+     * 查询模块信息，带分页，不分层次关系，parentId为0时查询顶层模块
      * 参数：
      * -param name 按名称查询
      * -param nameLike 按名称模糊查询
      * -param code 按编码查询
      * -param codeLike 按编码模糊查询
      * -param parentId 上级模块编号
-     * -param includeChildren 是否包含子模块，存在parentId时有效
-     * -param userId 某用户的模块
-     * -param groupId 某用户组的模块
-     * -param roleId 某角色的模块
      * -param page
      * -param size
      * @return 返回模块列表
@@ -58,15 +54,38 @@ public class ModuleController extends BaseController {
         params.put("code", HttpUtilsEx.getStringValue(request, "code"));
         params.put("codeLike", HttpUtilsEx.getStringValue(request, "codeLike"));
         params.put("parentId", HttpUtilsEx.getIntValue(request, "parentId"));
-        params.put("includeChildren", HttpUtilsEx.getIntValue(request,"includeChildren"));
-        params.put("userId", HttpUtilsEx.getIntValue(request, "userId"));
-        params.put("groupId", HttpUtilsEx.getIntValue(request, "groupId"));
-        params.put("roleId", HttpUtilsEx.getIntValue(request, "roleId"));
 
         PageInfo pageInfo = PageInfo.create(request);
         List<ModuleModel> moduleModels = moduleService.find(params, pageInfo);
 
         return HttpResult.ok(moduleModels, pageInfo);
+    }
+
+    /**
+     * 获取某用户的模块配置，无分页
+     */
+    @RequestMapping(value = "/module/list/user/{userId}", method = RequestMethod.GET)
+    public Object listByUser(int userId) {
+        List<ModuleModel> moduleModels = moduleService.getByUserId(userId);
+        return HttpResult.ok(moduleModels);
+    }
+
+    /**
+     * 获取某用户组的模块配置，无分页
+     */
+    @RequestMapping(value = "/module/list/group/{groupId}", method = RequestMethod.GET)
+    public Object listByGroup(int groupId) {
+        List<ModuleModel> moduleModels = moduleService.getByGroupId(groupId);
+        return HttpResult.ok(moduleModels);
+    }
+
+    /**
+     * 获取某角色的模块配置，无分页
+     */
+    @RequestMapping(value = "/module/list/role/{roleId}", method = RequestMethod.GET)
+    public Object listByRole(int roleId) {
+        List<ModuleModel> moduleModels = moduleService.getByRoleId(roleId);
+        return HttpResult.ok(moduleModels);
     }
 
     /**
@@ -115,13 +134,19 @@ public class ModuleController extends BaseController {
      * 删除模块
      * 参数：
      * -param id 根据编号删除模块
+     * -param force 是否强制删除，1为强制删除
      */
     @RequestMapping(value = "/module/delete/{id}", method = RequestMethod.POST)
-    public Object deleteModule(@PathVariable int moduleId) {
+    public Object deleteModule(HttpServletRequest request, @PathVariable int moduleId) {
         if (moduleId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
-        ModuleModel moduleModel = moduleService.delete(moduleId);
+        ModuleModel moduleModel;
+        if (HttpUtilsEx.getIntValue(request, "force") == 1)
+            moduleModel = moduleService.forceDelete(moduleId);
+        else
+            moduleModel = moduleService.delete(moduleId);
+
         if (moduleModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "模块不存在");
 

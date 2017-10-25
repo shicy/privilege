@@ -11,6 +11,7 @@ import java.util.Map;
  * 模块相关服务
  * Created by shicy on 2017/10/19.
  */
+@SuppressWarnings("unused")
 public interface ModuleService {
 
     /**
@@ -39,6 +40,26 @@ public interface ModuleService {
     List<ModuleModel> getByCodeLike(String code);
 
     /**
+     * 根据上级编号获取子模块信息
+     */
+    List<ModuleModel> getByParentId(int parentId);
+
+    /**
+     * 根据用户编号，获取该用户配置的模块信息
+     */
+    List<ModuleModel> getByUserId(int userId);
+
+    /**
+     * 根据用户组编号，获取该用户组配置的模块信息
+     */
+    List<ModuleModel> getByGroupId(int groupId);
+
+    /**
+     * 根据角色编号，获取该角色配置的模块信息
+     */
+    List<ModuleModel> getByRoleId(int roleId);
+
+    /**
      * 保存模块信息，新增或修改模块
      * @param module 想要保存的模块信息
      * @return 返回当前模块信息
@@ -46,11 +67,18 @@ public interface ModuleService {
     ModuleModel save(Module module);
 
     /**
-     * 删除模块
+     * 删除模块，如果存在子模块将删除失败
      * @param id 想要删除的模块编号
      * @return 返回被删除的模块信息
      */
     ModuleModel delete(int id);
+
+    /**
+     * 强制删除模块，同事删除子模块
+     * @param id 想要删除的模块编号
+     * @return 返回被删除的模块信息
+     */
+    ModuleModel forceDelete(int id);
 
     /**
      * 查询
@@ -60,10 +88,6 @@ public interface ModuleService {
      *      -param code 按编码查询
      *      -param codeLike 按编码模糊查询
      *      -param parentId 上级模块编号
-     *      -param includeChildren 是否包含子模块，存在parentId时有效
-     *      -param userId 某用户的模块
-     *      -param groupId 某用户组的模块
-     *      -param roleId 某角色的模块
      * @param pageInfo 分页信息
      * @return 返回模块列表
      */

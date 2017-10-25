@@ -22,6 +22,15 @@ import javax.servlet.http.HttpServletRequest;
 public class PrivilegeController extends BaseController {
 
     /**
+     * 获取某个用户的权限信息
+     * @return 返回该用户的所有授权信息
+     */
+    @RequestMapping(value = "/privs/list/user/{userId}", method = RequestMethod.GET)
+    public Object getUserPrivs(int userId) {
+        return HttpResult.ok();
+    }
+
+    /**
      * 添加权限
      * 参数：
      * -param moduleId 模块编号

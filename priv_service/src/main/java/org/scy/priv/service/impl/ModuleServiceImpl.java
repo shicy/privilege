@@ -12,6 +12,7 @@ import org.scy.priv.mapper.ModuleMapper;
 import org.scy.priv.model.Module;
 import org.scy.priv.model.ModuleModel;
 import org.scy.priv.service.ModuleService;
+import org.scy.priv.service.PrivilegeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
 
     @Autowired
     private ModuleMapper moduleMapper;
+
+    @Autowired
+    private PrivilegeService privilegeService;
 
     @Override
     public ModuleModel getById(int id) {
@@ -75,6 +79,26 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
     }
 
     @Override
+    public List<ModuleModel> getByParentId(int parentId) {
+        return moduleMapper.getByParentId(parentId, SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<ModuleModel> getByUserId(int userId) {
+        return moduleMapper.getByUserId(userId, SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<ModuleModel> getByGroupId(int groupId) {
+        return moduleMapper.getByGroupId(groupId, SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<ModuleModel> getByRoleId(int roleId) {
+        return moduleMapper.getByRoleId(roleId, SessionManager.getAccountId());
+    }
+
+    @Override
     public ModuleModel save(Module module) {
         if (module == null)
             throw new ResultException(Const.MSG_CODE_PARAMMISSING, "对象不能为空");
@@ -89,19 +113,75 @@ public class ModuleServiceImpl extends BaseService implements ModuleService {
     public ModuleModel delete(int id) {
         ModuleModel moduleModel = getById(id);
         if (moduleModel != null) {
-            moduleModel.setState(Const.DISABLED);
-            moduleModel.setUpdatorId(SessionManager.getUserId());
-            moduleModel.setUpdateDate(new Date());
-            moduleMapper.delete(moduleModel);
+            // 判断是否存在子模块
+            List<ModuleModel> subModules = getByParentId(moduleModel.getId());
+            if (subModules != null && subModules.size() > 0)
+                throw new ResultException(10001, "存在子模块，不允许删除");
+            // 删除
+            deleteInner(moduleModel, false);
         }
         return moduleModel;
     }
 
     @Override
+    public ModuleModel forceDelete(int id) {
+        ModuleModel moduleModel = getById(id);
+        if (moduleModel != null) {
+            deleteInner(moduleModel, true);
+        }
+        return moduleModel;
+    }
+
+    /**
+     * 删除模块（内部方法）
+     * @param moduleModel 想要删除的模块
+     * @param deep 是否删除子模块（递归删除子模块）
+     */
+    private void deleteInner(ModuleModel moduleModel, boolean deep) {
+        if (deep) {
+            List<ModuleModel> subModules = getByParentId(moduleModel.getId());
+            if (subModules != null && subModules.size() > 0) {
+                for (ModuleModel module: subModules) {
+                    deleteInner(module, true);
+                }
+            }
+        }
+
+        // 删除授权信息
+        privilegeService.deleteByModuleId(moduleModel.getId());
+
+        // 删除模块
+        moduleModel.setState(Const.DISABLED);
+        moduleModel.setUpdatorId(SessionManager.getUserId());
+        moduleModel.setUpdateDate(new Date());
+        moduleMapper.delete(moduleModel);
+    }
+
+    /**
+     * 查询
+     * @param params 参数：
+     *      -param name 按名称查询
+     *      -param nameLike 按名称模糊查询
+     *      -param code 按编码查询
+     *      -param codeLike 按编码模糊查询
+     *      -param parentId 上级模块编号
+     * @param pageInfo 分页信息
+     * @return 返回模块列表
+     */
+    @Override
     public List<ModuleModel> find(Map<String, Object> params, PageInfo pageInfo) {
         Selector selector = Selector.build(pageInfo);
-        selector.addFilter("state", 0, Oper.GT);
 
+        selector.addFilterNotBlank("name", params.get("name"));
+        selector.addFilterNotBlank("name", params.get("nameLike"), Oper.LIKE);
+        selector.addFilterNotBlank("code", params.get("code"));
+        selector.addFilterNotBlank("code", params.get("codeLike"), Oper.LIKE);
+
+        int parentId = (Integer)params.get("parentId");
+        if (parentId >= 0)
+            selector.addFilter("parentId", parentId);
+
+        selector.addFilter("state", 0, Oper.GT);
         if (!SessionManager.isPlatform())
             selector.addFilter("paasId", SessionManager.getAccountId());
 

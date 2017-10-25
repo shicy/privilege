@@ -8,4 +8,6 @@ import org.scy.priv.model.PrivilegeModel;
  */
 public interface PrivilegeService {
 
+    int deleteByModuleId(int moduleId);
+
 }

@@ -10,4 +10,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PrivilegeServiceImpl extends BaseService implements PrivilegeService {
+
+    @Override
+    public int deleteByModuleId(int moduleId) {
+        return 0;
+    }
+
 }
