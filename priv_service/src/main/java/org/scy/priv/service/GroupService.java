@@ -3,6 +3,7 @@ package org.scy.priv.service;
 import org.scy.common.ds.PageInfo;
 import org.scy.priv.model.Group;
 import org.scy.priv.model.GroupModel;
+import org.scy.priv.model.GroupUserModel;
 
 import java.util.List;
 import java.util.Map;
@@ -53,5 +54,37 @@ public interface GroupService {
      * @return 返回用户组列表
      */
     List<GroupModel> find(Map<String, Object> params, PageInfo pageInfo);
+
+    /**
+     * 在某个用户组下添加用户信息
+     * @return 返回该用户组-用户关系对象
+     */
+    GroupUserModel addGroupUser(int groupId, int userId);
+
+    /**
+     * 在某个用户组下添加用户信息（去重）
+     * @param userIds 想要添加的用户编号集
+     * @return 返回新增的用户组-用户关系对象
+     */
+    List<GroupUserModel> addGroupUsers(int groupId, int[] userIds);
+
+    /**
+     * 删除某个用户组下的某个用户信息
+     * @return 返回是否删除成功
+     */
+    boolean deleteGroupUser(int groupId, int userId);
+
+    /**
+     * 删除某个用户组下的某些用户信息
+     * @param userIds 想要删除的用户编号
+     * @return 返回被删除的记录数
+     */
+    int deleteGroupUsers(int groupId, int[] userIds);
+
+    /**
+     * 删除某个用户组下的所有用户信息
+     * @return 返回被删除的记录数
+     */
+    int clearGroupUsers(int groupId);
 
 }

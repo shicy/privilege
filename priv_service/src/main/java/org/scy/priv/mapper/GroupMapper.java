@@ -4,7 +4,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.scy.common.ds.mybatis.BaseMapper;
 import org.scy.common.ds.query.Selector;
 import org.scy.priv.model.GroupModel;
-import org.scy.priv.model.GroupUser;
 import org.scy.priv.model.GroupUserModel;
 
 import java.util.List;
@@ -19,14 +18,20 @@ public interface GroupMapper extends BaseMapper<GroupModel> {
 
     GroupModel getByName(String name, int paasId);
 
-    GroupUserModel addGroupUser(GroupUser groupUser);
+    List<GroupModel> findWithUser(Selector selector);
+    int countFindWithUser(Selector selector);
+
+    GroupUserModel getGroupUser(int groupId, int userId);
+    List<GroupUserModel> getGroupUsers(int groupId, int[] userIds);
+    List<GroupUserModel> getAllGroupUsers(int groupId);
+    void addGroupUser(GroupUserModel groupUser);
+
+    int countGroupUser(int groupId);
 
     int deleteGroupUserById(int id);
     int deleteGroupUserByGroupId(int groupId);
     int deleteGroupUserByUserId(int userId);
     int deleteGroupUserByGUId(int groupId, int userId);
-
-    List<GroupModel> findWithUser(Selector selector);
-    int countFindWithUser(Selector selector);
+    int deleteGroupUserByGUIds(int groupId, int[] userIds);
 
 }

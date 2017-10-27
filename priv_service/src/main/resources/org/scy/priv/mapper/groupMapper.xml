@@ -59,11 +59,34 @@
         )
     </select>
 
+    <!-- getGroupUser -->
+    <select id="getGroupUser" resultType="GroupUserModel">
+        select * from `group_users` where groupId = #{groupId} and userId = #{userId} limit 1
+    </select>
+
+    <!-- getGroupUsers -->
+    <select id="getGroupUsers" resultType="GroupUserModel">
+        select * from `group_users` where groupId = #{groupId} and userId in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+
+    <!-- getAllGroupUsers -->
+    <select id="getAllGroupUsers" resultType="GroupUserModel">
+        select * from `group_users` where groupId = #{groupId}
+    </select>
+
     <!-- addGroupUser -->
     <insert id="addGroupUser" parameterType="GroupUserModel" useGeneratedKeys="true" keyProperty="id">
         insert into `group_users` (groupId, userId, state, creatorId, createTime, paasId)
         values (#{groupId}, #{userId}, #{state}, #{creatorId}, #{createTime}, #{paasId})
     </insert>
+
+    <!-- countGroupUser -->
+    <select id="countGroupUser" resultType="Integer">
+        select count(id) from `group_users` where groupId = #{groupId}
+    </select>
 
     <!-- deleteGroupUserById -->
     <delete id="deleteGroupUserById">
@@ -83,6 +106,14 @@
     <!-- deleteGroupUserByGUId -->
     <delete id="deleteGroupUserByGUId">
         delete from `group_users` where groupId = #{groupId} and userId = #{userId}
+    </delete>
+
+    <!-- deleteGroupUserByGUIds -->
+    <delete id="deleteGroupUserByGUIds">
+        delete from `group_users` where groupId = #{groupId} and userId in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
     </delete>
 
 </mapper>
