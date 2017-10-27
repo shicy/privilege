@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -115,7 +114,7 @@ public class GroupController extends BaseController {
      * -param id 想要删除的用户组编号
      */
     @RequestMapping(value = "/group/delete/{groupId}", method = RequestMethod.POST)
-    public Object deleteGroup(HttpServletRequest request, @PathVariable int groupId) {
+    public Object deleteGroup(int groupId) {
         if (groupId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户组编号无效");
 
@@ -136,16 +135,16 @@ public class GroupController extends BaseController {
     public Object addUsers(HttpServletRequest request) {
         int groupId = HttpUtilsEx.getIntValue(request, "groupId", -1);
         if (groupId <= 0)
-            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组编号");
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组信息");
 
         String userIds = HttpUtilsEx.getStringValue(request, "userIds");
         if (StringUtils.isBlank(userIds))
-            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户编号");
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
 
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         List<GroupUserModel> models = groupService.addGroupUsers(groupId, ids);
         if (models != null && models.size() > 0)
-            return HttpResult.ok("成功添加" + models.size() + "个用户");
+            return new HttpResult(HttpResult.OK, "添加成功", models.size());
         return HttpResult.error("没有添加任何用户信息");
     }
 
@@ -159,16 +158,16 @@ public class GroupController extends BaseController {
     public Object deleteUsers(HttpServletRequest request) {
         int groupId = HttpUtilsEx.getIntValue(request, "groupId", -1);
         if (groupId <= 0)
-            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组编号");
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组信息");
 
         String userIds = HttpUtilsEx.getStringValue(request, "userIds");
         if (StringUtils.isBlank(userIds))
-            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户编号");
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
 
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         int count = groupService.deleteGroupUsers(groupId, ids);
         if (count > 0)
-            return HttpResult.ok("成功删除" + count + "个用户");
+            return new HttpResult(HttpResult.OK, "删除成功", count);
         return HttpResult.error("没有删除任何用户信息");
     }
 
@@ -178,9 +177,9 @@ public class GroupController extends BaseController {
     @RequestMapping(value = "/group/user/clear/{groupId}", method = RequestMethod.POST)
     public Object clearUsers(int groupId) {
         if (groupId <= 0)
-            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组编号");
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组信息");
         int count = groupService.clearGroupUsers(groupId);
-        return HttpResult.ok("成功删除" + count + "个用户");
+        return new HttpResult(HttpResult.OK, "删除成功", count);
     }
 
 }
