@@ -1,9 +1,16 @@
 package org.scy.priv.controller;
 
+import org.apache.commons.lang3.StringUtils;
+import org.scy.common.Const;
 import org.scy.common.annotation.AccessToken;
+import org.scy.common.ds.PageInfo;
+import org.scy.common.utils.ArrayUtilsEx;
+import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.model.Role;
+import org.scy.priv.model.RoleModel;
+import org.scy.priv.model.RoleUserModel;
 import org.scy.priv.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 角色
@@ -37,7 +47,24 @@ public class RoleController extends BaseController {
      */
     @RequestMapping(value = "/role/list", method = RequestMethod.GET)
     public Object list(HttpServletRequest request) {
-        return HttpResult.ok();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("name", HttpUtilsEx.getStringValue(request, "name"));
+        params.put("nameLike", HttpUtilsEx.getStringValue(request, "nameLike"));
+        params.put("userId", HttpUtilsEx.getIntValue(request, "userId"));
+
+        PageInfo pageInfo = PageInfo.create(request);
+        List<RoleModel> roleModels = roleService.find(params, pageInfo);
+
+        return HttpResult.ok(roleModels, pageInfo);
+    }
+
+    /**
+     * 获取某用户的角色信息，不分页
+     */
+    @RequestMapping(value = "/role/list/user/{userId}", method = RequestMethod.GET)
+    public Object listByUser(int userId) {
+        List<RoleModel> roleModels = roleService.getByUserId(userId);
+        return HttpResult.ok(roleModels);
     }
 
     /**
@@ -50,7 +77,13 @@ public class RoleController extends BaseController {
      */
     @RequestMapping(value = "/role/add", method = RequestMethod.POST)
     public Object addRole(Role role) {
-        return HttpResult.ok();
+        if (role == null)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
+        role.setId(0);
+        RoleModel roleModel = roleService.save(role);
+
+        return HttpResult.ok(roleModel);
     }
 
     /**
@@ -63,7 +96,17 @@ public class RoleController extends BaseController {
      */
     @RequestMapping(value = "/role/update", method = RequestMethod.POST)
     public Object updateRole(Role role) {
-        return HttpResult.ok();
+        if (role == null)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
+        if (role.getId() < 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "角色编号无效");
+
+        RoleModel roleModel = roleService.save(role);
+        if (roleModel == null)
+            return HttpResult.error(Const.MSG_CODE_NOTEXIST, "角色不存在");
+
+        return HttpResult.ok(roleModel);
     }
 
     /**
@@ -71,9 +114,73 @@ public class RoleController extends BaseController {
      * 参数：
      * -param id 想要删除的角色编号
      */
-    @RequestMapping(value = "/role/delete", method = RequestMethod.POST)
-    public Object deleteRole(HttpServletRequest request) {
+    @RequestMapping(value = "/role/delete/{roleId}", method = RequestMethod.POST)
+    public Object deleteRole(int roleId) {
+        if (roleId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "角色编号无效");
+
+        RoleModel roleModel = roleService.delete(roleId);
+        if (roleModel == null)
+            return HttpResult.error(Const.MSG_CODE_NOTEXIST, "角色不存在");
+
         return HttpResult.ok();
+    }
+
+    /**
+     * 添加用户
+     * 参数：
+     * -param roleId 角色编号
+     * -param userIds 添加的用户编号集
+     */
+    @RequestMapping(value = "/role/user/add", method = RequestMethod.POST)
+    public Object addUsers(HttpServletRequest request) {
+        int roleId = HttpUtilsEx.getIntValue(request, "roleId");
+        if (roleId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少角色信息");
+
+        String userIds = HttpUtilsEx.getStringValue(request, "userIds");
+        if (StringUtils.isBlank(userIds))
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
+
+        int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
+        List<RoleUserModel> models = roleService.addRoleUsers(roleId, ids);
+        if (models != null && models.size() > 0)
+            return new HttpResult(HttpResult.OK, "添加成功", models.size());
+        return HttpResult.error("没有添加任何用户信息");
+    }
+
+    /**
+     * 删除角色下的某些用户信息
+     * 参数：
+     * -param roleId 角色编号
+     * -param userIds 想要删除的用户编号集
+     */
+    @RequestMapping(value = "/role/user/delete", method = RequestMethod.POST)
+    public Object deleteUsers(HttpServletRequest request) {
+        int roleId = HttpUtilsEx.getIntValue(request, "roleId");
+        if (roleId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少角色信息");
+
+        String userIds = HttpUtilsEx.getStringValue(request, "userIds");
+        if (StringUtils.isBlank(userIds))
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
+
+        int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
+        int count = roleService.deleteRoleUsers(roleId, ids);
+        if (count > 0)
+            return new HttpResult(HttpResult.OK, "删除成功", count);
+        return HttpResult.error("没有删除任何用户信息");
+    }
+
+    /**
+     * 删除角色的所有用户信息
+     */
+    @RequestMapping(value = "/role/user/clear/{roleId}", method = RequestMethod.POST)
+    public Object clearUsers(int roleId) {
+        if (roleId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少角色信息");
+        int count = roleService.clearRoleUsers(roleId);
+        return new HttpResult(HttpResult.OK, "删除成功", count);
     }
 
 }

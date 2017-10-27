@@ -11,6 +11,7 @@ import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.RoleMapper;
 import org.scy.priv.model.Role;
 import org.scy.priv.model.RoleModel;
+import org.scy.priv.model.RoleUserModel;
 import org.scy.priv.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,11 @@ public class RoleServiceImpl extends BaseService implements RoleService {
     @Override
     public RoleModel getByName(String name) {
         return roleMapper.getByName(name, SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<RoleModel> getByUserId(int userId) {
+        return null;
     }
 
     @Override
@@ -129,6 +135,31 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         roleMapper.update(roleModel);
 
         return roleModel;
+    }
+
+    @Override
+    public RoleUserModel addRoleUser(int roleId, int userId) {
+        return null;
+    }
+
+    @Override
+    public List<RoleUserModel> addRoleUsers(int roleId, int[] userIds) {
+        return null;
+    }
+
+    @Override
+    public boolean deleteRoleUser(int roleId, int userId) {
+        return false;
+    }
+
+    @Override
+    public int deleteRoleUsers(int roleId, int[] userIds) {
+        return 0;
+    }
+
+    @Override
+    public int clearRoleUsers(int roleId) {
+        return 0;
     }
 
 }
