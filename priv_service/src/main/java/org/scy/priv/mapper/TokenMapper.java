@@ -11,4 +11,6 @@ public interface TokenMapper extends BaseMapper<TokenModel> {
 
     TokenModel getByUserId(int userId);
 
+    void deleteByUserId(int userId);
+
 }
