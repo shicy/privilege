@@ -33,12 +33,28 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="RoleModel">
-        select * from `role` ${where} ${groupBy} ${orderBy} ${limit}
+        select r.* from `role` as r ${where} ${groupBy} ${orderBy} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) from `role` ${where} ${groupBy} ${orderBy}
+        select count(r.id) from `role` as r ${where} ${groupBy} ${orderBy}
+    </select>
+
+    <!-- findWithUser -->
+    <select id="findWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="RoleModel">
+        select r.* from `role` as r, `role_users` as ru,
+        where r.id = ru.roleId ${whereMore}
+        group by r.id ${groupMore} ${orderBy} ${limit}
+    </select>
+
+    <!-- countFindWithUser -->
+    <select id="countFindWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(id) from (
+            select r.id from `role` as r, `role_users` as ru,
+            where r.id = ru.roleId ${whereMore}
+            group by r.id ${groupMore} ${orderBy}
+        )
     </select>
 
     <!-- addRoleUser -->

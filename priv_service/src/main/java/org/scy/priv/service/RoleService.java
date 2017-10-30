@@ -49,6 +49,7 @@ public interface RoleService {
      * @param params 参数
      *      -name 按名称查询
      *      -nameLike 按名称模糊查询
+     *      -userId 用户编号
      * @param pageInfo 分页信息
      * @return 返回角色列表
      */
