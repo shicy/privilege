@@ -113,7 +113,7 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         if (groupModel != null) {
             int userCount = groupMapper.countGroupUser(id);
             if (userCount > 0)
-                throw new ResultException(10001, "组内存在用户信息，不允许删除");
+                throw new ResultException(10001, "该用户组内存在用户信息，不允许删除");
 
             groupModel.setState(Const.DISABLED);
             groupModel.setUpdatorId(SessionManager.getUserId());
