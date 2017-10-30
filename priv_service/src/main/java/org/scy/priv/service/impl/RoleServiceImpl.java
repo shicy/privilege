@@ -6,7 +6,7 @@ import org.scy.common.ds.PageInfo;
 import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
-import org.scy.common.web.service.BaseService;
+import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.RoleMapper;
 import org.scy.priv.model.*;
@@ -23,7 +23,7 @@ import java.util.*;
  */
 @Service
 @SuppressWarnings("unused")
-public class RoleServiceImpl extends BaseService implements RoleService {
+public class RoleServiceImpl extends MybatisBaseService implements RoleService {
 
     @Autowired
     private RoleMapper roleMapper;

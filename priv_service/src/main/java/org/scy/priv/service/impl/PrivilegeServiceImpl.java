@@ -1,6 +1,6 @@
 package org.scy.priv.service.impl;
 
-import org.scy.common.web.service.BaseService;
+import org.scy.common.web.service.MybatisBaseService;
 import org.scy.priv.service.PrivilegeService;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +9,12 @@ import org.springframework.stereotype.Service;
  * Created by shicy on 2017/10/19.
  */
 @Service
-public class PrivilegeServiceImpl extends BaseService implements PrivilegeService {
+public class PrivilegeServiceImpl extends MybatisBaseService implements PrivilegeService {
+
+    @Override
+    public int deleteByUserId(int userId) {
+        return 0;
+    }
 
     @Override
     public int deleteByModuleId(int moduleId) {

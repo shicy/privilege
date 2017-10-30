@@ -6,7 +6,7 @@ import org.scy.common.ds.PageInfo;
 import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
-import org.scy.common.web.service.BaseService;
+import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.ModuleMapper;
 import org.scy.priv.model.Module;
@@ -24,7 +24,7 @@ import java.util.*;
  */
 @Service
 @SuppressWarnings("unused")
-public class ModuleServiceImpl extends BaseService implements ModuleService {
+public class ModuleServiceImpl extends MybatisBaseService implements ModuleService {
 
     @Autowired
     private ModuleMapper moduleMapper;
