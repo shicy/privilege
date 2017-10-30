@@ -18,12 +18,16 @@ public interface GroupMapper extends BaseMapper<GroupModel> {
 
     GroupModel getByName(String name, int paasId);
 
+    List<GroupModel> getByIds(int[] ids, int paasId);
+
     List<GroupModel> findWithUser(Selector selector);
     int countFindWithUser(Selector selector);
 
     GroupUserModel getGroupUser(int groupId, int userId);
     List<GroupUserModel> getGroupUsers(int groupId, int[] userIds);
     List<GroupUserModel> getAllGroupUsers(int groupId);
+    List<GroupUserModel> getUserGroups(int userId, int[] groupIds);
+    List<GroupUserModel> getAllUserGroups(int userId);
     void addGroupUser(GroupUserModel groupUser);
 
     int countGroupUser(int groupId);

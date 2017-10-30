@@ -12,6 +12,15 @@
         select * from `group` where name = #{name} and paasId = #{paasId} and state > 0 limit 1
     </select>
 
+    <!-- getByIds -->
+    <select id="getByIds" resultType="GroupModel">
+        select * from `group` where id in
+        <foreach collection="ids" item="groupId" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+        and paasId = #{paasId} and state > 0
+    </select>
+
     <!-- add -->
     <insert id="add" parameterType="GroupModel" useGeneratedKeys="true" keyProperty="id">
         insert into `group` (name, remark, state, creatorId, createTime, paasId)
@@ -75,6 +84,19 @@
     <!-- getAllGroupUsers -->
     <select id="getAllGroupUsers" resultType="GroupUserModel">
         select * from `group_users` where groupId = #{groupId}
+    </select>
+
+    <!-- getUserGroups -->
+    <select id="getUserGroups" resultType="GroupUserModel">
+        select * from `group_users` where userId = #{userId} and groupId in
+        <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+    </select>
+
+    <!-- getAllUserGroups -->
+    <select id="getAllUserGroups" resultType="GroupUserModel">
+        select * from `group_users` where userId = #{userId}
     </select>
 
     <!-- addGroupUser -->

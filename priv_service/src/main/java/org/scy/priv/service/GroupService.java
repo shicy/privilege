@@ -26,6 +26,11 @@ public interface GroupService {
     GroupModel getByName(String name);
 
     /**
+     * 根据编号获取用户组信息
+     */
+    List<GroupModel> getByIds(int[] ids);
+
+    /**
      * 根据用户编号，获取该用户的所属用户组信息
      */
     List<GroupModel> getByUserId(int userId);

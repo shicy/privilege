@@ -47,6 +47,13 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     }
 
     @Override
+    public List<GroupModel> getByIds(int[] ids) {
+        if (ids == null || ids.length == 0)
+            return new ArrayList<GroupModel>();
+        return groupMapper.getByIds(ids, SessionManager.getAccountId());
+    }
+
+    @Override
     public List<GroupModel> getByUserId(int userId) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("userId", userId);
