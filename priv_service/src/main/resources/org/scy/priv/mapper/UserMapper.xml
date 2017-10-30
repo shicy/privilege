@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scy.priv.model.UserModel">
+
+    <!-- getById -->
+    <select id="getById" resultType="UserModel">
+        select * from `user` where id = #{id} and state > 0 limit 1
+    </select>
+
+    <!-- getByIds -->
+    <select id="getByIds" resultType="UserModel">
+        select * from `user` where id in
+        <foreach collection="ids" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+        and paasId = #{paasId} and state > 0
+    </select>
+
+    <!-- getByCode -->
+    <select id="getByCode" resultType="UserModel">
+        select * from `user where code = #{code} and paasId = #{paasId} and state > 0 limit 1
+    </select>
+
+    <!-- getByName -->
+    <select id="getByName" resultType="UserModel">
+        select * from `user` where name = #{name} and paasId = #{paasId} and state > 0 limit 1
+    </select>
+
+    <!-- getByMobile -->
+    <select id="getByMobile" resultType="UserModel">
+        select * from `user` where mobile = #{mobile} and paasId = #{paasId} and state > 0 limit 1
+    </select>
+
+    <!-- getByEmail -->
+    <select id="getByEmail" resultType="UserModel">
+        select * from `user` where email = #{email} and paasId = #{paasId} and state > 0 limit 1
+    </select>
+
+    <!-- add -->
+    <insert id="add" parameterType="UserModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `user` (code, name, mobile, email, password, type, accept, remark,
+            lastLoginType, lastLoginTime, sate, creatorId, createTime, paasId)
+        values (#{code}, #{name}, #{mobile}, #{email}, #{password}, #{type}, #{accept}, #{remark},
+            #{lastLoginType}, #{lastLoginTime}, #{state}, #{creatorId}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="UserModel">
+        update `user`
+        set code = #{code}, name = #{name}, mobile = #{mobile}, email = #{email}, password = #{password},
+            type = #{type}, accept = #{accept}, remark = #{remark}, lastLoginType = #{lastLoginType},
+            lastLoginTime = #{lastLoginTime}, state = #{state}, updatorId = #{updatorId},
+            updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- delete -->
+    <delete id="delete" parameterType="UserModel">
+        update `user`
+        set state = 0, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </delete>
+
+    <!-- find -->
+    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="UserModel">
+        select u.*
+        from `user` u
+            left join `group_users` gu on u.id = gu.userId
+            left join `role_users` ru on u.id = ru.userId
+        #{where} #{group} #{order} #{limit}
+    </select>
+
+    <!-- countFind -->
+    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(t.id) count
+        from (
+            select u.id id
+            from `user` u
+                left join `group_users` gu on u.id = gu.userId
+                left join `role_users` ru on u.id = ru.userId
+            #{where} #{group}
+        ) t
+    </select>
+
+    <!-- updateState -->
+    <update id="updateState" parameterType="UserModel">
+        update `user`
+        set state = #{state}, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- updatePassword -->
+    <update id="updatePassword" parameterType="UserModel">
+        update `user`
+        set password = #{password}, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+</mapper>

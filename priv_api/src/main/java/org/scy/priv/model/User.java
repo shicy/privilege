@@ -42,7 +42,7 @@ public class User extends BaseModel {
     private short lastLoginType;
 
     // 最后一次登录时间
-    private Long lastLoginDate;
+    private Long lastLoginTime;
 
     // 所在用户组
     private List<Group> groups;
@@ -181,14 +181,14 @@ public class User extends BaseModel {
      * 获取最后登录时间，返回时间戳
      */
     public Long getLastLoginTime() {
-        return lastLoginDate;
+        return lastLoginTime;
     }
 
     /**
      * 设置最后登录时间
      */
-    public void setLastLoginTime(Long lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
+    public void setLastLoginTime(Long lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
     }
 
     /**
@@ -196,14 +196,14 @@ public class User extends BaseModel {
      */
     @JSONField(serialize = false)
     public Date getLastLoginDate() {
-        return lastLoginDate != null ? new Date(lastLoginDate) : null;
+        return lastLoginTime != null ? new Date(lastLoginTime) : null;
     }
 
     /**
      * 设置最后登录时间
      */
     public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate != null ? lastLoginDate.getTime() : null;
+        this.lastLoginTime = lastLoginDate != null ? lastLoginDate.getTime() : null;
     }
 
     /**

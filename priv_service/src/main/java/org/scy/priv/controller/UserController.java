@@ -1,9 +1,15 @@
 package org.scy.priv.controller;
 
+import org.apache.commons.lang3.StringUtils;
+import org.scy.common.Const;
 import org.scy.common.annotation.AccessToken;
+import org.scy.common.ds.PageInfo;
+import org.scy.common.utils.ArrayUtilsEx;
+import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.model.User;
+import org.scy.priv.model.UserModel;
 import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户登录验证
@@ -44,7 +53,33 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/list", method = RequestMethod.GET)
     public Object list(HttpServletRequest request) {
-        return HttpResult.ok();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("code", HttpUtilsEx.getStringValue(request, "code"));
+        params.put("codeLike", HttpUtilsEx.getStringValue(request, "codeLike"));
+        params.put("name", HttpUtilsEx.getStringValue(request, "name"));
+        params.put("nameLike", HttpUtilsEx.getStringValue(request, "nameLike"));
+        params.put("mobile", HttpUtilsEx.getStringValue(request, "mobile"));
+        params.put("email", HttpUtilsEx.getStringValue(request, "email"));
+
+        String types = HttpUtilsEx.getStringValue(request, "type");
+        if (StringUtils.isNotBlank(types)) {
+            params.put("types", ArrayUtilsEx.transStrToInt(StringUtils.split(types, ',')));
+        }
+
+        String groupIds = HttpUtilsEx.getStringValue(request, "groupId");
+        if (StringUtils.isNotBlank(groupIds)) {
+            params.put("groupIds", ArrayUtilsEx.transStrToInt(StringUtils.split(groupIds, ',')));
+        }
+
+        String roleIds = HttpUtilsEx.getStringValue(request, "roleIds");
+        if (StringUtils.isNotBlank(roleIds)) {
+            params.put("roleIds", ArrayUtilsEx.transStrToInt(StringUtils.split(roleIds, ',')));
+        }
+
+        PageInfo pageInfo = PageInfo.create(request);
+        List<UserModel> userModels = userService.find(params, pageInfo);
+
+        return HttpResult.ok(userModels, pageInfo);
     }
 
     /**
@@ -64,7 +99,23 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
     public Object addUser(User user, String groupIds, String roleIds) {
-        return HttpResult.ok();
+        if (user == null)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
+
+        user.setId(0);
+        UserModel userModel = userService.save(user);
+        if (userModel != null) {
+            if (StringUtils.isNotBlank(groupIds)) {
+                int[] group_ids = ArrayUtilsEx.transStrToInt(StringUtils.split(groupIds, ','));
+                userService.addToGroups(userModel.getId(), group_ids);
+            }
+            if (StringUtils.isNotBlank(roleIds)) {
+                int[] role_ids = ArrayUtilsEx.transStrToInt(StringUtils.split(roleIds, ','));
+                userService.addRoles(userModel.getId(), role_ids);
+            }
+        }
+
+        return HttpResult.ok(userModel);
     }
 
     /**
@@ -84,7 +135,34 @@ public class UserController extends BaseController {
      */
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)
     public Object updateUser(User user, String groupIds, String roleIds) {
-        return HttpResult.ok();
+        if (user == null)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
+
+        if (user.getId() <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "无效的用户信息");
+
+        UserModel userModel = userService.save(user);
+        if (userModel != null) {
+            if (groupIds != null) {
+                userService.deleteFromAllGroups(userModel.getId());
+                if (StringUtils.isNotBlank(groupIds)) {
+                    int[] group_ids = ArrayUtilsEx.transStrToInt(StringUtils.split(groupIds, ','));
+                    userService.addToGroups(userModel.getId(), group_ids);
+                }
+            }
+            if (roleIds != null) {
+                userService.deleteAllRoles(userModel.getId());
+                if (StringUtils.isNotBlank(roleIds)) {
+                    int[] role_ids = ArrayUtilsEx.transStrToInt(StringUtils.split(roleIds, ','));
+                    userService.addRoles(userModel.getId(), role_ids);
+                }
+            }
+        }
+        else {
+            return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
+        }
+
+        return HttpResult.ok(userModel);
     }
 
     /**
@@ -92,9 +170,27 @@ public class UserController extends BaseController {
      * 参数：
      * -param id 想要删除的用户编号
      */
-    @RequestMapping(value = "/user/delete", method = RequestMethod.POST)
-    public Object deleteUser(HttpServletRequest request) {
-        return HttpResult.ok();
+    @RequestMapping(value = "/user/delete/{userId}", method = RequestMethod.POST)
+    public Object deleteUser(int userId) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
+
+        UserModel userModel = userService.delete(userId);
+        if (userModel == null)
+            return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
+
+        return HttpResult.ok(userModel);
+    }
+
+    /**
+     * 更改用户状态
+     */
+    @RequestMapping(value = "/user/changestate/{userId}/{state}", method = RequestMethod.POST)
+    public Object changeState(int userId, short state) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
+        int newState = userService.setUserState(userId, state);
+        return HttpResult.ok(newState);
     }
 
 }

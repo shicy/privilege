@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `accept` TINYINT NULL DEFAULT 7 COMMENT '允许登录方式：按位运算[email, mobile, name]，默认7-允许全部',
   `remark` VARCHAR(200) NULL,
   `lastLoginType` TINYINT NULL COMMENT '最后一次登录方法：1-帐号 2-手机号 4-邮箱',
-  `lastLoginDate` BIGINT NULL COMMENT '最后一次登录时间',
+  `lastLoginTime` BIGINT NULL COMMENT '最后一次登录时间',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-无效 1-有效',
   `creatorId` INT NULL,
   `createTime` BIGINT NULL,
