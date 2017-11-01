@@ -283,7 +283,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
     }
 
     @Override
-    public int setUserState(int userId, short state) {
+    public short setUserState(int userId, short state) {
         UserModel userModel = getById(userId);
         if (userModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户不存在");
@@ -296,7 +296,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         userModel.setUpdateDate(new Date());
         userMapper.updateState(userModel);
 
-        return state;
+        return userModel.getState();
     }
 
     @Override

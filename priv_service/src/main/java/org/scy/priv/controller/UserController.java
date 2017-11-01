@@ -44,7 +44,7 @@ public class UserController extends BaseController {
      * -param nameLike 按用户名称模糊查询
      * -param mobile 按用户手机号查询
      * -param email 按用户邮箱地址查询
-     * -param type 按用户类型查询（支持多值，逗号分隔）
+     * -param type|types 按用户类型查询（支持多值，逗号分隔）
      * -param groupId 按用户组查询（支持多值，逗号分隔）
      * -param roleId 按角色查询（支持多值，逗号分隔）
      * -param page
@@ -71,7 +71,7 @@ public class UserController extends BaseController {
             params.put("groupIds", ArrayUtilsEx.transStrToInt(StringUtils.split(groupIds, ',')));
         }
 
-        String roleIds = HttpUtilsEx.getStringValue(request, "roleIds");
+        String roleIds = HttpUtilsEx.getStringValue(request, "roleId");
         if (StringUtils.isNotBlank(roleIds)) {
             params.put("roleIds", ArrayUtilsEx.transStrToInt(StringUtils.split(roleIds, ',')));
         }
@@ -179,7 +179,7 @@ public class UserController extends BaseController {
         if (userModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
 
-        return HttpResult.ok(userModel);
+        return HttpResult.ok();
     }
 
     /**

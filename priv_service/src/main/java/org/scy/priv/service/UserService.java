@@ -77,9 +77,9 @@ public interface UserService {
 
     /**
      * 更新用户状态
-     * @return 返回用户信息
+     * @return 返回用户新状态
      */
-    int setUserState(int userId, short state);
+    short setUserState(int userId, short state);
 
     /**
      * 更新用户密码

@@ -49,8 +49,7 @@
         update `user`
         set code = #{code}, name = #{name}, mobile = #{mobile}, email = #{email}, password = #{password},
             type = #{type}, accept = #{accept}, remark = #{remark}, lastLoginType = #{lastLoginType},
-            lastLoginTime = #{lastLoginTime}, state = #{state}, updatorId = #{updatorId},
-            updateTime = #{updateTime}
+            lastLoginTime = #{lastLoginTime}, updatorId = #{updatorId}, updateTime = #{updateTime}
         where id = #{id}
     </update>
 
