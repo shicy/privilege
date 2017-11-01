@@ -7,15 +7,6 @@
         select * from `user` where id = #{id} and state > 0 limit 1
     </select>
 
-    <!-- getByIds -->
-    <select id="getByIds" resultType="UserModel">
-        select * from `user` where id in
-        <foreach collection="ids" item="userId" open="(" separator="," close=")">
-            #{userId}
-        </foreach>
-        and paasId = #{paasId} and state > 0
-    </select>
-
     <!-- getByCode -->
     <select id="getByCode" resultType="UserModel">
         select * from `user where code = #{code} and paasId = #{paasId} and state > 0 limit 1
@@ -34,6 +25,15 @@
     <!-- getByEmail -->
     <select id="getByEmail" resultType="UserModel">
         select * from `user` where email = #{email} and paasId = #{paasId} and state > 0 limit 1
+    </select>
+
+    <!-- getByIds -->
+    <select id="getByIds" resultType="UserModel">
+        select * from `user` where id in
+        <foreach collection="ids" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+        and paasId = #{paasId} and state > 0
     </select>
 
     <!-- add -->

@@ -18,7 +18,6 @@ public interface UserMapper extends BaseMapper<UserModel> {
     UserModel getByName(String name, int paasId);
     UserModel getByMobile(String mobile, int paasId);
     UserModel getByEmail(String email, int paasId);
-
     List<UserModel> getByIds(int[] ids, int paasId);
 
     int updateState(UserModel model);

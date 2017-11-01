@@ -308,7 +308,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         userModel.setPassword(getSecretPassword(password));
         userModel.setUpdatorId(SessionManager.getUserId());
         userModel.setUpdateDate(new Date());
-        userMapper.updateState(userModel);
+        userMapper.updatePassword(userModel);
     }
 
     @Override
@@ -367,42 +367,101 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
 
     @Override
     public void deleteFromGroup(int userId, int groupId) {
-
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户信息不存在");
+        groupMapper.deleteGroupUserByGUId(groupId, userId);
     }
 
     @Override
     public void deleteFromGroups(int userId, int[] groupIds) {
-
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户信息不存在");
+        groupMapper.deleteGroupUserByUGIds(userId, groupIds);
     }
 
     @Override
     public void deleteFromAllGroups(int userId) {
-
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户信息不存在");
+        groupMapper.deleteGroupUserByUserId(userId);
     }
 
     @Override
     public void addRole(int userId, int roleId) {
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(10001, "用户信息不存在");
 
+        RoleModel role = roleService.getById(roleId);
+        if (role == null)
+            throw new ResultException(10002, "角色信息不存在");
+
+        addUserRole(user, role);
     }
 
     @Override
     public void addRoles(int userId, int[] roleIds) {
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(10001, "用户信息不存在");
 
+        List<RoleModel> roles = roleService.getByIds(roleIds);
+
+        if (roles != null && roles.size() > 0) {
+            List<RoleUserModel> roleUsers = roleMapper.getUserRoles(userId, roleIds);
+            for (RoleModel role: roles) {
+                RoleUserModel model = null;
+                if (roleUsers != null && roleUsers.size() > 0) {
+                    for (RoleUserModel temp: roleUsers) {
+                        if (temp.getRoleId() == role.getId()) {
+                            model = temp;
+                            break;
+                        }
+                    }
+                }
+                if (model != null) {
+                    addUserRole(user, role);
+                }
+            }
+        }
+    }
+
+    private void addUserRole(User user, Role role) {
+        RoleUserModel roleUserModel = new RoleUserModel();
+        roleUserModel.setRoleId(role.getId());
+        roleUserModel.setUserId(user.getId());
+        roleUserModel.setState(Const.ENABLED);
+        roleUserModel.setCreatorId(SessionManager.getUserId());
+        roleUserModel.setCreateDate(new Date());
+        roleUserModel.setPaasId(SessionManager.getAccountId());
+        roleMapper.addRoleUser(roleUserModel);
     }
 
     @Override
     public void deleteRole(int userId, int roleId) {
-
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户信息不存在");
+        roleMapper.deleteRoleUserByRUId(roleId, userId);
     }
 
     @Override
     public void deleteRoles(int userId, int[] roleIds) {
-
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户信息不存在");
+        roleMapper.deleteRoleUserByURIds(userId, roleIds);
     }
 
     @Override
     public void deleteAllRoles(int userId) {
-
+        UserModel user = getById(userId);
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户信息不存在");
+        roleMapper.deleteRoleUserByUserId(userId);
     }
 
 }
