@@ -17,7 +17,6 @@ import java.util.List;
 public interface GroupMapper extends BaseMapper<GroupModel> {
 
     GroupModel getByName(String name, int paasId);
-
     List<GroupModel> getByIds(int[] ids, int paasId);
 
     List<GroupModel> findWithUser(Selector selector);
@@ -28,6 +27,7 @@ public interface GroupMapper extends BaseMapper<GroupModel> {
     List<GroupUserModel> getAllGroupUsers(int groupId);
     List<GroupUserModel> getUserGroups(int userId, int[] groupIds);
     List<GroupUserModel> getAllUserGroups(int userId);
+
     void addGroupUser(GroupUserModel groupUser);
 
     int countGroupUser(int groupId);
@@ -37,5 +37,6 @@ public interface GroupMapper extends BaseMapper<GroupModel> {
     int deleteGroupUserByUserId(int userId);
     int deleteGroupUserByGUId(int groupId, int userId);
     int deleteGroupUserByGUIds(int groupId, int[] userIds);
+    int deleteGroupUserByUGIds(int userId, int[] groupIds);
 
 }

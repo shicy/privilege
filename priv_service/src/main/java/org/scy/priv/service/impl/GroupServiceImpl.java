@@ -184,10 +184,10 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
             throw new ResultException(10002, "缺少用户信息");
 
         List<UserModel> users = userService.getByIds(userIds);
-        List<GroupUserModel> groupUsers = groupMapper.getGroupUsers(groupId, userIds);
 
         List<GroupUserModel> groupUserModels = new ArrayList<GroupUserModel>();
         if (users != null && users.size() > 0) {
+            List<GroupUserModel> groupUsers = groupMapper.getGroupUsers(groupId, userIds);
             for (UserModel user: users) {
                 GroupUserModel model = null;
                 if (groupUsers != null && groupUsers.size() > 0) {
