@@ -45,21 +45,6 @@ public interface ModuleService {
     List<ModuleModel> getByParentId(int parentId);
 
     /**
-     * 根据用户编号，获取该用户配置的模块信息
-     */
-    List<ModuleModel> getByUserId(int userId);
-
-    /**
-     * 根据用户组编号，获取该用户组配置的模块信息
-     */
-    List<ModuleModel> getByGroupId(int groupId);
-
-    /**
-     * 根据角色编号，获取该角色配置的模块信息
-     */
-    List<ModuleModel> getByRoleId(int roleId);
-
-    /**
      * 保存模块信息，新增或修改模块
      * @param module 想要保存的模块信息
      * @return 返回当前模块信息

@@ -80,21 +80,6 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
     }
 
     @Override
-    public List<ModuleModel> getByUserId(int userId) {
-        return moduleMapper.getByUserId(userId, SessionManager.getAccountId());
-    }
-
-    @Override
-    public List<ModuleModel> getByGroupId(int groupId) {
-        return moduleMapper.getByGroupId(groupId, SessionManager.getAccountId());
-    }
-
-    @Override
-    public List<ModuleModel> getByRoleId(int roleId) {
-        return moduleMapper.getByRoleId(roleId, SessionManager.getAccountId());
-    }
-
-    @Override
     public ModuleModel save(Module module) {
         if (module == null)
             throw new ResultException(Const.MSG_CODE_PARAMMISSING, "对象不能为空");

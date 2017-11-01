@@ -15,8 +15,5 @@ public interface ModuleMapper extends BaseMapper<ModuleModel> {
     ModuleModel getByName(String name, int paasId);
 
     List<ModuleModel> getByParentId(int parentId, int paasId);
-    List<ModuleModel> getByUserId(int userId, int paasId);
-    List<ModuleModel> getByGroupId(int groupId, int paasId);
-    List<ModuleModel> getByRoleId(int roleId, int paasId);
 
 }

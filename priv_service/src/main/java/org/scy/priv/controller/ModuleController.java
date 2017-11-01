@@ -62,33 +62,6 @@ public class ModuleController extends BaseController {
     }
 
     /**
-     * 获取某用户的模块配置，无分页
-     */
-    @RequestMapping(value = "/module/list/user/{userId}", method = RequestMethod.GET)
-    public Object listByUser(int userId) {
-        List<ModuleModel> moduleModels = moduleService.getByUserId(userId);
-        return HttpResult.ok(moduleModels);
-    }
-
-    /**
-     * 获取某用户组的模块配置，无分页
-     */
-    @RequestMapping(value = "/module/list/group/{groupId}", method = RequestMethod.GET)
-    public Object listByGroup(int groupId) {
-        List<ModuleModel> moduleModels = moduleService.getByGroupId(groupId);
-        return HttpResult.ok(moduleModels);
-    }
-
-    /**
-     * 获取某角色的模块配置，无分页
-     */
-    @RequestMapping(value = "/module/list/role/{roleId}", method = RequestMethod.GET)
-    public Object listByRole(int roleId) {
-        List<ModuleModel> moduleModels = moduleService.getByRoleId(roleId);
-        return HttpResult.ok(moduleModels);
-    }
-
-    /**
      * 新增模块
      * 参数：
      * -param code 模块编码

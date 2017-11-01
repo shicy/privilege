@@ -53,25 +53,4 @@
         select * from `module` where parentId = #{parentId} and paasId = #{paasId} and state > 0
     </select>
 
-    <!-- getByUserId -->
-    <select id="getByUserId" resultType="ModuleModel">
-        select m.* from `module` as m, `privs` as p
-        where m.id = p.moduleId and p.userId = #{userId} and m.paasId = #{paasId} and m.state > 0
-        group by m.id
-    </select>
-
-    <!-- getByGroupId -->
-    <select id="getByGroupId" resultType="ModuleModel">
-        select m.* from `module` as m, `privs` as p
-        where m.id = p.moduleId and p.groupId = #{groupId} and m.paasId = #{paasId} and m.state > 0
-        group by m.id
-    </select>
-
-    <!-- getByRoleId -->
-    <select id="getByRoleId" resultType="ModuleModel">
-        select m.* from `module` as m, `privs` as p
-        where m.id = p.moduleId and p.roleId = #{roleId} and m.paasId = #{paasId} and m.state > 0
-        group by m.id
-    </select>
-
 </mapper>
