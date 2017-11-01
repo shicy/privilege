@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scy.priv.mapper.GroupMapper">
+
+    <!-- getById -->
+    <select id="getById" resultType="GroupModel">
+        select * from `group` where id = ${id} and state > 0 limit 1
+    </select>
+
+    <!-- getByName -->
+    <select id="getByName" resultType="GroupModel">
+        select * from `group` where name = #{name} and paasId = #{paasId} and state > 0 limit 1
+    </select>
+
+    <!-- getByIds -->
+    <select id="getByIds" resultType="GroupModel">
+        select * from `group` where id in
+        <foreach collection="ids" item="groupId" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+        and paasId = #{paasId} and state > 0
+    </select>
+
+    <!-- add -->
+    <insert id="add" parameterType="GroupModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `group` (name, remark, state, creatorId, createTime, paasId)
+        values (#{name}, #{remark}, #{state}, #{creatorId}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="GroupModel">
+        update `group`
+        set name = #{name}, remark = #{remark}, state = #{state},
+        updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = ${id}
+    </update>
+
+    <!-- delete -->
+    <update id="delete" parameterType="GroupModel">
+        update `group`
+        set state = 0, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = ${id}
+    </update>
+
+    <!-- find -->
+    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
+        select g.* from `group` as g ${where} ${order} ${group} ${limit}
+    </select>
+
+    <!-- countFind -->
+    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(g.id) as count from `group` as g ${where} ${order} ${group}
+    </select>
+
+    <!-- findWithUser -->
+    <select id="findWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
+        select g.* from `group` as g, `group_users` as gu
+        where g.id = gu.groupId ${whereMore} ${order}
+        group by g.id ${groupMore} ${limit}
+    </select>
+
+    <!-- countFindWithUser -->
+    <select id="countFindWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
+        select count(id) from (
+        select g.id from `group` as g, `group_users` as gu
+        where g.id = gu.groupId ${whereMore} ${order}
+        group by g.id ${groupMore}
+        )
+    </select>
+
+    <!-- getGroupUser -->
+    <select id="getGroupUser" resultType="GroupUserModel">
+        select * from `group_users` where groupId = #{groupId} and userId = #{userId} limit 1
+    </select>
+
+    <!-- getGroupUsers -->
+    <select id="getGroupUsers" resultType="GroupUserModel">
+        select * from `group_users` where groupId = #{groupId} and userId in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+
+    <!-- getAllGroupUsers -->
+    <select id="getAllGroupUsers" resultType="GroupUserModel">
+        select * from `group_users` where groupId = #{groupId}
+    </select>
+
+    <!-- getUserGroups -->
+    <select id="getUserGroups" resultType="GroupUserModel">
+        select * from `group_users` where userId = #{userId} and groupId in
+        <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+    </select>
+
+    <!-- getAllUserGroups -->
+    <select id="getAllUserGroups" resultType="GroupUserModel">
+        select * from `group_users` where userId = #{userId}
+    </select>
+
+    <!-- addGroupUser -->
+    <insert id="addGroupUser" parameterType="GroupUserModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `group_users` (groupId, userId, state, creatorId, createTime, paasId)
+        values (#{groupId}, #{userId}, #{state}, #{creatorId}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- countGroupUser -->
+    <select id="countGroupUser" resultType="Integer">
+        select count(id) from `group_users` where groupId = #{groupId}
+    </select>
+
+    <!-- deleteGroupUserById -->
+    <delete id="deleteGroupUserById">
+        delete from `group_users` where id = #{id}
+    </delete>
+
+    <!-- deleteGroupUserByGroupId -->
+    <delete id="deleteGroupUserByGroupId">
+        delete from `group_users` where groupId = #{groupId}
+    </delete>
+
+    <!-- deleteGroupUserByUserId -->
+    <delete id="deleteGroupUserByUserId">
+        delete from `group_users` where userId = #{userId}
+    </delete>
+
+    <!-- deleteGroupUserByGUId -->
+    <delete id="deleteGroupUserByGUId">
+        delete from `group_users` where groupId = #{groupId} and userId = #{userId}
+    </delete>
+
+    <!-- deleteGroupUserByGUIds -->
+    <delete id="deleteGroupUserByGUIds">
+        delete from `group_users` where groupId = #{groupId} and userId in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <!-- deleteGroupUserByUGIds -->
+    <delete id="deleteGroupUserByUGIds">
+        delete from `group_users` where userId = #{userId} and groupId in
+        <foreach collection="groupIds" item="groupId" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+    </delete>
+
+</mapper>
