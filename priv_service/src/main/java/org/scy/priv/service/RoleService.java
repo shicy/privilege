@@ -26,6 +26,11 @@ public interface RoleService {
     RoleModel getByName(String name);
 
     /**
+     * 根据编号批量获取角色信息
+     */
+    List<RoleModel> getByIds(int[] ids);
+
+    /**
      * 根据用户编号，获取该用户的角色信息
      */
     List<RoleModel> getByUserId(int userId);

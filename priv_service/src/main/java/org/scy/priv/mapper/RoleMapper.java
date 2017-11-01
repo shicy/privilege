@@ -17,6 +17,7 @@ import java.util.List;
 public interface RoleMapper extends BaseMapper<RoleModel> {
 
     RoleModel getByName(String name, int paasId);
+    List<RoleModel> getByIds(int[] ids, int paasId);
 
     List<RoleModel> findWithUser(Selector selector);
     int countFindWithUser(Selector selector);
@@ -24,6 +25,8 @@ public interface RoleMapper extends BaseMapper<RoleModel> {
     RoleUserModel getRoleUser(int roleId, int userId);
     List<RoleUserModel> getRoleUsers(int roleId, int[] userIds);
     List<RoleUserModel> getAllRoleUsers(int roleId);
+    List<RoleUserModel> getUserRoles(int userId, int[] roleIds);
+    List<RoleUserModel> getAllUserRoles(int userId);
 
     void addRoleUser(RoleUserModel roleUser);
 
@@ -34,5 +37,6 @@ public interface RoleMapper extends BaseMapper<RoleModel> {
     int deleteRoleUserByUserId(int userId);
     int deleteRoleUserByRUId(int roleId, int userId);
     int deleteRoleUserByRUIds(int roleId, int[] userIds);
+    int deleteRoleUserByURIds(int userId, int[] roleIds);
 
 }

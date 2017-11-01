@@ -47,6 +47,13 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
     }
 
     @Override
+    public List<RoleModel> getByIds(int[] ids) {
+        if (ids == null || ids.length == 0)
+            return new ArrayList<RoleModel>();
+        return roleMapper.getByIds(ids, SessionManager.getAccountId());
+    }
+
+    @Override
     public List<RoleModel> getByUserId(int userId) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("userId", userId);
@@ -175,10 +182,10 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
             throw new ResultException(10002, "缺少用户信息");
 
         List<UserModel> users = userService.getByIds(userIds);
-        List<RoleUserModel> roleUsers = roleMapper.getRoleUsers(roleId, userIds);
 
         List<RoleUserModel> roleUserModels = new ArrayList<RoleUserModel>();
         if (users != null && users.size() > 0) {
+            List<RoleUserModel> roleUsers = roleMapper.getRoleUsers(roleId, userIds);
             for (UserModel user: users) {
                 RoleUserModel model = null;
                 if (roleUsers != null && roleUsers.size() > 0) {

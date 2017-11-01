@@ -12,6 +12,15 @@
         select * from `role` where name = #{name} and paasId = #{paasId} and state > 0 limit 1
     </select>
 
+    <!-- getByIds -->
+    <select id="getByIds" resultType="RoleModel">
+        select * from `role` where id in
+        <foreach collection="ids" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        and paasId = #{paasId} and state > 0
+    </select>
+
     <!-- add -->
     <insert id="add" parameterType="RoleModel" useGeneratedKeys="true" keyProperty="id">
         insert into `role` (name, remark, type, state, creatorId, createTime, paasId)
@@ -57,11 +66,47 @@
         )
     </select>
 
+    <!-- getRoleUser -->
+    <select id="getRoleUser" resultType="RoleModel">
+        select * from `role_users` where roleId = #{roleId} and userId = #{userId} limit 1
+    </select>
+
+    <!-- getRoleUsers -->
+    <select id="getRoleUsers" resultType="RoleModel">
+        select * from `role_users` where roleId = #{roleId} and userId in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+
+    <!-- getAllRoleUsers -->
+    <select id="getAllRoleUsers" resultType="RoleModel">
+        select * from `role_users` where roleId = #{roleId}
+    </select>
+
+    <!-- getUserRoles -->
+    <select id="getUserRoles" resultType="RoleModel">
+        select * from `role_users` where userId = #{userId} and roleId in
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
+    <!-- getAllUserRoles -->
+    <select id="getAllUserRoles" resultType="RoleModel">
+        select * from `role_users` where userid = #{userId}
+    </select>
+
     <!-- addRoleUser -->
     <insert id="addRoleUser" parameterType="RoleUserModel" useGeneratedKeys="true" keyProperty="id">
         insert into `role_users` (roleId, userId, state, creatorId, createTime, paasId)
         values (#{roleId}, #{userId}, #{state}, #{creatorId}, #{createTime}, #{paasId})
     </insert>
+
+    <!-- countRoleUser -->
+    <select id="countRoleUser" resultType="Integer">
+        select count(id) from `role_users` where roleId = #{roleId}
+    </select>
 
     <!-- deleteRoleUserById -->
     <delete id="deleteRoleUserById">
@@ -81,6 +126,22 @@
     <!-- deleteRoleUserByRUId -->
     <delete id="deleteRoleUserByRUId">
         delete from `role_users` where roleId = #{roleId} and userId = #{userId}
+    </delete>
+
+    <!-- deleteRoleUserByRUIds -->
+    <delete id="deleteRoleUserByRUIds">
+        delete from `role_users` where roleId = #{roleId} and userId in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <!-- deleteRoleUserByURIds -->
+    <delete id="deleteRoleUserByURIds">
+        delete from `role_users` where userid = #{userId} and roleId in
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
     </delete>
 
 </mapper>
