@@ -44,38 +44,34 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
 
     @Override
     public ModuleModel getByName(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            return moduleMapper.getByName(name, SessionManager.getAccountId());
-        }
-        return null;
+        if (StringUtils.isBlank(name))
+            return null;
+        return moduleMapper.getByName(name, SessionManager.getAccountId());
     }
 
     @Override
     public List<ModuleModel> getByNameLike(String name) {
-        if (StringUtils.isNotBlank(name)) {
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("nameLike", name);
-            return find(params, null);
-        }
-        return new ArrayList<ModuleModel>();
+        if (StringUtils.isBlank(name))
+            return new ArrayList<ModuleModel>();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("nameLike", name);
+        return find(params, null);
     }
 
     @Override
     public ModuleModel getByCode(String code) {
-        if (StringUtils.isNotBlank(code)) {
-            return moduleMapper.getByCode(code, SessionManager.getAccountId());
-        }
-        return null;
+        if (StringUtils.isBlank(code))
+            return null;
+        return moduleMapper.getByCode(code, SessionManager.getAccountId());
     }
 
     @Override
     public List<ModuleModel> getByCodeLike(String code) {
-        if (StringUtils.isNotBlank(code)) {
-            Map<String, Object> params = new HashMap<String, Object>();
-            params.put("codeLike", code);
-            return find(params, null);
-        }
-        return new ArrayList<ModuleModel>();
+        if (StringUtils.isBlank(code))
+            return new ArrayList<ModuleModel>();
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("codeLike", code);
+        return find(params, null);
     }
 
     @Override
@@ -107,6 +103,68 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
             return this.update(module);
 
         return this.add(module);
+    }
+
+    /**
+     * 新增模块
+     */
+    private ModuleModel add(Module module) {
+        ModuleModel moduleModel = new ModuleModel();
+
+        moduleModel.setCode(StringUtils.trimToEmpty(module.getCode()));
+        if (getByCode(moduleModel.getCode()) != null)
+            throw new ResultException(10001, "模块编码已存在");
+
+        moduleModel.setName(StringUtils.trimToEmpty(module.getName()));
+        if (getByName(moduleModel.getName()) != null)
+            throw new ResultException(10002, "模块名称已存在");
+
+        moduleModel.setRemark(module.getRemark());
+        moduleModel.setParentId(module.getParentId());
+        moduleModel.setState(Const.ENABLED);
+        moduleModel.setCreatorId(SessionManager.getUserId());
+        moduleModel.setCreateDate(new Date());
+        moduleModel.setPaasId(SessionManager.getAccountId());
+
+        if (moduleModel.getParentId() < 0)
+            moduleModel.setParentId(0);
+
+        moduleMapper.add(moduleModel);
+
+        return moduleModel;
+    }
+
+    /**
+     * 修改模块
+     */
+    private ModuleModel update(Module module) {
+        ModuleModel moduleModel = getById(module.getId());
+        ModuleModel moduleTemp;
+
+        if (moduleModel == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "模块信息不存在");
+
+        moduleModel.setCode(StringUtils.trimToEmpty(module.getCode()));
+        moduleTemp = getByCode(moduleModel.getCode());
+        if (moduleTemp != null && moduleTemp.getId() != module.getId())
+            throw new ResultException(10001, "模块编码已存在");
+
+        moduleModel.setName(StringUtils.trimToEmpty(module.getName()));
+        moduleTemp = getByName(moduleModel.getName());
+        if (moduleTemp != null && moduleTemp.getId() != module.getId())
+            throw new ResultException(10002, "模块名称已存在");
+
+        moduleModel.setRemark(module.getRemark());
+        moduleModel.setParentId(module.getParentId());
+        moduleModel.setUpdatorId(SessionManager.getUserId());
+        moduleModel.setUpdateDate(new Date());
+
+        if (moduleModel.getParentId() < 0)
+            moduleModel.setParentId(0);
+
+        moduleMapper.update(moduleModel);
+
+        return null;
     }
 
     @Override
@@ -178,8 +236,8 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
             selector.addFilterNotBlank("code", params.get("code"));
             selector.addFilterNotBlank("code", params.get("codeLike"), Oper.LIKE);
 
-            int parentId = (Integer)params.get("parentId");
-            if (parentId >= 0)
+            Integer parentId = (Integer)params.get("parentId");
+            if (parentId != null && parentId >= 0)
                 selector.addFilter("parentId", parentId);
         }
 
@@ -191,62 +249,6 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
             pageInfo.setTotal(moduleMapper.countFind(selector));
 
         return moduleMapper.find(selector);
-    }
-
-    /**
-     * 新增模块
-     */
-    private ModuleModel add(Module module) {
-        ModuleModel moduleModel = new ModuleModel();
-
-        moduleModel.setCode(StringUtils.trimToEmpty(module.getCode()));
-        if (getByCode(moduleModel.getCode()) != null)
-            throw new ResultException(10001, "模块编码已存在");
-
-        moduleModel.setName(StringUtils.trimToEmpty(module.getName()));
-        if (getByName(moduleModel.getName()) != null)
-            throw new ResultException(10002, "模块名称已存在");
-
-        moduleModel.setRemark(module.getRemark());
-        moduleModel.setParentId(module.getParentId());
-        moduleModel.setState(Const.ENABLED);
-        moduleModel.setCreatorId(SessionManager.getUserId());
-        moduleModel.setCreateDate(new Date());
-        moduleModel.setPaasId(SessionManager.getAccountId());
-
-        moduleMapper.add(moduleModel);
-
-        return moduleModel;
-    }
-
-    /**
-     * 修改模块
-     */
-    private ModuleModel update(Module module) {
-        ModuleModel moduleModel = getById(module.getId());
-        ModuleModel moduleTemp;
-
-        if (moduleModel == null)
-            throw new ResultException(Const.MSG_CODE_NOTEXIST, "模块信息不存在");
-
-        moduleModel.setCode(StringUtils.trimToEmpty(module.getCode()));
-        moduleTemp = getByCode(moduleModel.getCode());
-        if (moduleTemp != null && moduleTemp.getId() != module.getId())
-            throw new ResultException(10001, "模块编码已存在");
-
-        moduleModel.setName(StringUtils.trimToEmpty(module.getName()));
-        moduleTemp = getByName(moduleModel.getName());
-        if (moduleTemp != null && moduleTemp.getId() != module.getId())
-            throw new ResultException(10002, "模块名称已存在");
-
-        moduleModel.setRemark(module.getRemark());
-        moduleModel.setParentId(module.getParentId());
-        moduleModel.setUpdatorId(SessionManager.getUserId());
-        moduleModel.setUpdateDate(new Date());
-
-        moduleMapper.update(moduleModel);
-
-        return null;
     }
 
 }
