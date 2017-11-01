@@ -38,8 +38,7 @@
     <update id="update" parameterType="AccountModel">
         update `account`
         set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email},
-            secret = #{secret}, type = ${type}, state = #{state},
-            updatorId = #{updatorId}, updateTime = #{updateTime}
+            secret = #{secret}, type = ${type}, updatorId = #{updatorId}, updateTime = #{updateTime}
         where id = ${id}
     </update>
 
@@ -57,5 +56,19 @@
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
         select count(id) as count from `account` ${where} ${groupBy} ${orderBy}
     </select>
+
+    <!-- updateSecret -->
+    <update id="updateSecret" parameterType="AccountModel">
+        update `account`
+        set secret = #{secret}, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- updateState -->
+    <update id="updateState" parameterType="AccountModel">
+        update `account`
+        set state = #{state}, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
 
 </mapper>

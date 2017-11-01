@@ -1,12 +1,17 @@
 package org.scy.priv.service;
 
+import org.scy.common.ds.PageInfo;
 import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 帐户相关服务
  * Created by shicy on 2017/9/5.
  */
+@SuppressWarnings("unused")
 public interface AccountService {
 
     /**
@@ -46,5 +51,39 @@ public interface AccountService {
      * @return 返回新的帐户信息
      */
     AccountModel save(Account account);
+
+    /**
+     * 删除帐户
+     * @param id 想要删除的帐户编号
+     * @return 返回被删除的帐户信息
+     */
+    AccountModel deleteById(int id);
+
+    /**
+     * 查询帐户信息
+     * @param params 参数：
+     *      -param code 按编码查询
+     *      -param name 按名称查询
+     *      -param nameLike 按名称模糊查询
+     *      -param mobile 按手机号码查询
+     *      -param email 按邮箱地址查询
+     *      -param type|types 按类型查询
+     *      -param state|states 按状态查询
+     * @param pageInfo 分页
+     * @return 返回帐户列表
+     */
+    List<AccountModel> find(Map<String, Object> params, PageInfo pageInfo);
+
+    /**
+     * 刷新某个帐户的密钥
+     * @return 返回该帐户新密钥信息
+     */
+    String refreshSecret(int accountId);
+
+    /**
+     * 更新帐户状态
+     * @return 返回新状态
+     */
+    short setAccountState(int accountId, short state);
 
 }

@@ -17,4 +17,7 @@ public interface AccountMapper extends BaseMapper<AccountModel> {
     AccountModel getByMobile(String mobile);
     AccountModel getByEmail(String email);
 
+    int updateSecret(AccountModel accountModel);
+    int updateState(AccountModel accountModel);
+
 }
