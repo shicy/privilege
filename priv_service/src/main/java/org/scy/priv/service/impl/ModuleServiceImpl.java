@@ -80,9 +80,17 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
     }
 
     @Override
+    public List<ModuleModel> getAll() {
+        return find(null, null);
+    }
+
+    @Override
     public ModuleModel save(Module module) {
         if (module == null)
             throw new ResultException(Const.MSG_CODE_PARAMMISSING, "对象不能为空");
+
+        if (StringUtils.isBlank(module.getCode()) && StringUtils.isBlank(module.getName()))
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "编码和名称不能同时为空");
 
         if (module.getId() > 0)
             return this.update(module);

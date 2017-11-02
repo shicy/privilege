@@ -45,6 +45,11 @@ public interface ModuleService {
     List<ModuleModel> getByParentId(int parentId);
 
     /**
+     * 获取所有模块信息
+     */
+    List<ModuleModel> getAll();
+
+    /**
      * 保存模块信息，新增或修改模块
      * @param module 想要保存的模块信息
      * @return 返回当前模块信息
