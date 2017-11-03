@@ -1,7 +1,6 @@
 package org.scy.priv.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.scy.priv.model.Privilege;
 import org.scy.priv.model.PrivilegeModel;
 
 import java.util.List;
@@ -18,8 +17,9 @@ public interface PrivilegeMapper {
     List<PrivilegeModel> getByGroupId(int groupId);
     List<PrivilegeModel> getByRoleId(int roleId);
     List<PrivilegeModel> getByModuleId(int moduleId);
+    List<PrivilegeModel> getByUserReference(int userId);
 
-    void add(Privilege privilege);
+    void add(PrivilegeModel privilege);
 
     int deleteById(int id);
     int deleteByIds(int[] ids);
@@ -32,9 +32,12 @@ public interface PrivilegeMapper {
     List<PrivilegeModel> getUserPrivsByModuleIds(int userId, int[] moduleIds);
     List<PrivilegeModel> getUserPrivsByModuleCodes(int userId, String[] moduleCodes);
     List<PrivilegeModel> getUserPrivsByModuleNames(int userId, String[] moduleNames);
+    List<PrivilegeModel> getUserPrivsForRefresh(int userId);
 
-    void addUserPriv(Privilege privilege);
+    void addUserPriv(PrivilegeModel privilege);
 
-    int deleteUserPrivs(int userId);
+    int deleteUserPrivsByUserId(int userId);
+    int deleteUserPrivsByGroupId(int groupId);
+    int deleteUserPrivsByRoleId(int roleId);
 
 }

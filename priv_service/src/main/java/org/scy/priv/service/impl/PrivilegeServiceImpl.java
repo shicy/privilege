@@ -73,6 +73,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
             if (userModel == null)
                 throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户不存在");
         }
+        tryRefreshUserPrivileges(userId);
         return privilegeMapper.getUserPrivsAll(userId);
     }
 
@@ -129,6 +130,19 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
                     caches.put("role_" + privilege.getRoleId(), privilegeModels);
                 }
                 addPrivilegesInner(privilege, moduleList, privilegeModels);
+            }
+        }
+
+        // 清除用户权限，等待重置
+        for (String key: caches.keySet()) {
+            if (key.indexOf("user") == 0) {
+                privilegeMapper.deleteUserPrivsByUserId(Integer.parseInt(key.substring(5)));
+            }
+            else if (key.indexOf("group") == 0) {
+                privilegeMapper.deleteUserPrivsByGroupId(Integer.parseInt(key.substring(6)));
+            }
+            else if (key.indexOf("role") == 0) {
+                privilegeMapper.deleteUserPrivsByRoleId(Integer.parseInt(key.substring(5)));
             }
         }
     }
@@ -251,6 +265,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
         privilegeModel.setCreatorId(SessionManager.getUserId());
         privilegeModel.setCreateDate(new Date());
         privilegeModel.setPaasId(SessionManager.getAccountId());
+        privilegeMapper.add(privilegeModel);
         return privilegeModel;
     }
 
@@ -330,6 +345,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
         if (userModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户不存在：" + userId);
         privilegeMapper.deleteByUserId(userId);
+        privilegeMapper.deleteUserPrivsByUserId(userId);
     }
 
     @Override
@@ -338,6 +354,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
         if (groupModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户组不存在：" + groupId);
         privilegeMapper.deleteByGroupId(groupId);
+        privilegeMapper.deleteUserPrivsByGroupId(groupId);
     }
 
     @Override
@@ -346,6 +363,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
         if (roleModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "角色不存在：" + roleId);
         privilegeMapper.deleteByRoleId(roleId);
+        privilegeMapper.deleteUserPrivsByRoleId(roleId);
     }
 
     @Override
@@ -363,6 +381,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户不存在：" + userId);
         if (moduleIds == null || moduleIds.length == 0)
             return new ArrayList<PrivilegeModel>();
+        tryRefreshUserPrivileges(userId);
         return privilegeMapper.getUserPrivsByModuleIds(userId, moduleIds);
     }
 
@@ -373,6 +392,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户不存在：" + userId);
         if (moduleCodes == null || moduleCodes.length == 0)
             return new ArrayList<PrivilegeModel>();
+        tryRefreshUserPrivileges(userId);
         return privilegeMapper.getUserPrivsByModuleCodes(userId, moduleCodes);
     }
 
@@ -383,6 +403,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户不存在：" + userId);
         if (moduleNames == null || moduleNames.length == 0)
             return new ArrayList<PrivilegeModel>();
+        tryRefreshUserPrivileges(userId);
         return privilegeMapper.getUserPrivsByModuleNames(userId, moduleNames);
     }
 
@@ -442,6 +463,72 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
                     throw new ResultException(Const.MSG_CODE_NOTEXIST, "模块不存在：" + moduleId);
             }
         }
+    }
+
+    /**
+     * 试着刷新用户权限信息，当权限修改时，相关用户的权限信息被清除，等待适当时机刷新
+     * 当该用户没有记录，或记录的第一条 moduleId 为 0 时刷新用户权限
+     */
+    private void tryRefreshUserPrivileges(int userId) {
+        List<PrivilegeModel> privilegeModels = privilegeMapper.getUserPrivsForRefresh(userId);
+        if (privilegeModels != null && privilegeModels.size() > 0 && privilegeModels.get(0).getModuleId() > 0)
+            return ;
+        refreshUserPrivileges(userId);
+    }
+
+    /**
+     * 刷新用户权限
+     */
+    private void refreshUserPrivileges(int userId) {
+        // 获取该用户相关的所以权限配置信息
+        List<PrivilegeModel> privilegeModels = privilegeMapper.getByUserReference(userId);
+        // 该用户最终的权限信息
+        List<PrivilegeModel> newPrivilegeModels = null;
+
+        if (privilegeModels != null && privilegeModels.size() > 0) {
+            List<ModuleModel> moduleModels = moduleService.getAll();
+            if (moduleModels != null && moduleModels.size() > 0) {
+                newPrivilegeModels = buildPrivileges(privilegeModels, moduleModels, 0);
+            }
+        }
+
+        // 清除
+        privilegeMapper.deleteUserPrivsByUserId(userId);
+        // 添加
+        if (newPrivilegeModels != null && newPrivilegeModels.size() > 0) {
+            int accountId = SessionManager.getAccountId();
+            for (PrivilegeModel privilegeModel: newPrivilegeModels) {
+                privilegeModel.setUserId(userId);
+                privilegeModel.setPaasId(accountId);
+                privilegeMapper.addUserPriv(privilegeModel);
+            }
+        }
+    }
+
+    /**
+     * 自上而下，递归构建权限信息
+     */
+    private List<PrivilegeModel> buildPrivileges(List<PrivilegeModel> privilegeList, List<ModuleModel> modelList,
+            int parentModuleId) {
+        List<PrivilegeModel> privilegeModels = new ArrayList<PrivilegeModel>();
+        for (ModuleModel module: modelList) {
+            if (module.getParentId() != parentModuleId)
+                continue;
+
+            PrivilegeModel privilegeModel = new PrivilegeModel();
+            privilegeModel.setModuleId(module.getId());
+
+            for (PrivilegeModel privilege: privilegeList) {
+                if (privilege.getModuleId() == module.getId()) {
+                    int grantType = privilegeModel.getGrantType() | privilege.getGrantType();
+                    privilegeModel.setGrantType(grantType);
+                }
+            }
+
+            privilegeModels.add(privilegeModel);
+            privilegeModels.addAll(buildPrivileges(privilegeList, modelList, module.getId()));
+        }
+        return privilegeModels;
     }
 
 }

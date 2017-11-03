@@ -22,6 +22,16 @@
         select * from `privs` where moduleId = #{moduleId}
     </select>
 
+    <!-- getByUserReference -->
+    <select id="getByUserReference" resultType="PrivilegeModel">
+        select p.*
+        from `privs` as p
+            left join `group_users` as gu on p.groupId = gu.groupId and gu.state > 0
+            left join `role_users` as ru on p.roleId = ru.roleId and ru.state > 0
+        where p.userId = #{userId} or gu.userId = #{userId} or ru.userId = #{userId}
+        group by p.id
+    </select>
+
     <!-- add -->
     <insert id="add" parameterType="PrivilegeModel" useGeneratedKeys="true" keyProperty="id">
         insert into `privs` (moduleId, userId, groupId, roleId, grantType, state, creatorId, createTime, paasId)
@@ -105,15 +115,34 @@
         </foreach>
     </select>
 
+    <!-- getUserPrivsForRefresh -->
+    <select id="getUserPrivsForRefresh" resultType="PrivilegeModel">
+        select * from `user_privs` where userId = #{userId} limit 1
+    </select>
+
     <!-- addUserPriv -->
     <insert id="addUserPriv" parameterType="PrivilegeModel" useGeneratedKeys="true" keyProperty="id">
         insert into `user_privs` (userId, moduleId, grantType, paasId)
         values (#{userId}, #{moduleId}, #{grantType}, #{paasId})
     </insert>
 
-    <!-- deleteUserPrivs -->
-    <delete id="deleteUserPrivs">
+    <!-- deleteUserPrivsByUserId -->
+    <delete id="deleteUserPrivsByUserId">
         delete from `user_privs` where userId = #{userId}
+    </delete>
+
+    <!-- deleteUserPrivsByGroupId -->
+    <delete id="deleteUserPrivsByGroupId">
+        delete from `user_privs` where userId in (
+            select userId from `group_users` where groupId = #{groupId}
+        )
+    </delete>
+
+    <!-- deleteUserPrivsByRoleId -->
+    <delete id="deleteUserPrivsByRoleId">
+        delete from `user_privs` where userId in (
+            select userId from `role_users` where roleId = #{roleId}
+        )
     </delete>
 
 </mapper>
