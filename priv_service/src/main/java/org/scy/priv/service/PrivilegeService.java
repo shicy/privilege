@@ -28,6 +28,8 @@ public interface PrivilegeService {
     void deletePrivileges(Privilege privilege);
     void deletePrivileges(List<Privilege> privileges);
     void deleteByUserId(int userId);
+    void deleteByGroupId(int groupId);
+    void deleteByRoleId(int roleId);
     void deleteByModuleId(int moduleId);
 
     List<PrivilegeModel> checkByModuleIds(int userId, int[] moduleIds);

@@ -22,6 +22,7 @@ public interface PrivilegeMapper {
     void add(Privilege privilege);
 
     int deleteById(int id);
+    int deleteByIds(int[] ids);
     int deleteByUserId(int userId);
     int deleteByGroupId(int groupId);
     int deleteByRoleId(int roleId);
@@ -29,6 +30,8 @@ public interface PrivilegeMapper {
 
     List<PrivilegeModel> getUserPrivsAll(int userId);
     List<PrivilegeModel> getUserPrivsByModuleIds(int userId, int[] moduleIds);
+    List<PrivilegeModel> getUserPrivsByModuleCodes(int userId, String[] moduleCodes);
+    List<PrivilegeModel> getUserPrivsByModuleNames(int userId, String[] moduleNames);
 
     void addUserPriv(Privilege privilege);
 
