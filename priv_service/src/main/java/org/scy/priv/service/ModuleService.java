@@ -45,6 +45,21 @@ public interface ModuleService {
     List<ModuleModel> getByParentId(int parentId);
 
     /**
+     * 根据编号批量获取模块信息
+     */
+    List<ModuleModel> getByIds(int[] ids);
+
+    /**
+     * 根据编码批量获取模块信息
+     */
+    List<ModuleModel> getByCodes(String[] codes);
+
+    /**
+     * 根据名称批量获取模块信息
+     */
+    List<ModuleModel> getByNames(String[] names);
+
+    /**
      * 获取所有模块信息
      */
     List<ModuleModel> getAll();

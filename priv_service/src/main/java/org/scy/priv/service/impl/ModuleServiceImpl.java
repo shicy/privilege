@@ -80,6 +80,27 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
     }
 
     @Override
+    public List<ModuleModel> getByIds(int[] ids) {
+        if (ids == null || ids.length == 0)
+            return new ArrayList<ModuleModel>();
+        return moduleMapper.getByIds(ids, SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<ModuleModel> getByCodes(String[] codes) {
+        if (codes == null || codes.length == 0)
+            return new ArrayList<ModuleModel>();
+        return moduleMapper.getByCodes(codes, SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<ModuleModel> getByNames(String[] names) {
+        if (names == null || names.length == 0)
+            return new ArrayList<ModuleModel>();
+        return moduleMapper.getByNames(names, SessionManager.getAccountId());
+    }
+
+    @Override
     public List<ModuleModel> getAll() {
         return find(null, null);
     }

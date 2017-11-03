@@ -48,6 +48,33 @@
         select count(id) as count from `module` ${where} ${orderBy} ${groupBy}
     </select>
 
+    <!-- getByIds -->
+    <select id="getByIds" resultType="ModuleModel">
+        select * from `module` where id in
+        <foreach collection="ids" item="moduleId" open="(" separator="," close=")">
+            #{moduleId}
+        </foreach>
+        and paasId = #{paasId}
+    </select>
+
+    <!-- getByCodes -->
+    <select id="getByCodes" resultType="ModuleModel">
+        select * from `module` where code in
+        <foreach collection="codes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+        and paasId = #{paasId}
+    </select>
+
+    <!-- getByNames -->
+    <select id="getByNames" resultType="ModuleModel">
+        select * from `module` where name in
+        <foreach collection="names" item="name" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+        and paasId = #{paasId}
+    </select>
+
     <!-- getByParentId -->
     <select id="getByParentId" resultType="ModuleModel">
         select * from `module` where parentId = #{parentId} and paasId = #{paasId} and state > 0
