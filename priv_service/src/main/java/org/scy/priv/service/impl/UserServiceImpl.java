@@ -227,13 +227,13 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             deleteAllRoles(id);
             // 删除用户组信息
             deleteFromAllGroups(id);
+            // 删除Token
+            tokenService.deleteByUserId(id);
             // 删除用户
             userModel.setState(Const.DISABLED);
             userModel.setUpdatorId(SessionManager.getUserId());
             userModel.setUpdateDate(new Date());
             userMapper.delete(userModel);
-            // 删除Token
-            tokenService.deleteByUserId(id);
         }
         return userModel;
     }
@@ -464,4 +464,22 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         roleMapper.deleteRoleUserByUserId(userId);
     }
 
+    @Override
+    public boolean validUser(String username, String password, short type) {
+        UserModel userModel = null;
+
+        if (type <= 0 || type == Const.LOGIN_TYPE_NAME)
+            userModel = getByName(username);
+        if (userModel == null && (type <= 0 || type == Const.LOGIN_TYPE_MOBILE))
+            userModel = getByMobile(username);
+        if (userModel == null && (type <= 0 || type == Const.LOGIN_TYPE_EMAIL))
+            userModel = getByEmail(username);
+
+        if (userModel != null) {
+            password = getSecretPassword(password);
+            return password.equals(userModel.getPassword());
+        }
+
+        return false;
+    }
 }

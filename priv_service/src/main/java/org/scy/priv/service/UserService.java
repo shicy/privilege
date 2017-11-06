@@ -136,4 +136,12 @@ public interface UserService {
      */
     void deleteAllRoles(int userId);
 
+    /**
+     * 验证用户密码是否正确
+     * @param username 用户名称、手机号码或邮箱
+     * @param password 密码
+     * @param type 类型：1-用户名称 2-手机号码 3-邮箱 0-全部
+     */
+    boolean validUser(String username, String password, short type);
+
 }
