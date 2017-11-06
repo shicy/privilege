@@ -1,6 +1,9 @@
 package org.scy.priv.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.scy.common.web.model.BaseModel;
+
+import java.util.Date;
 
 /**
  * 用户登录状态信息
@@ -27,6 +30,9 @@ public class Token extends BaseModel {
 
     // 用户代理
     private String userAgent;
+
+    // 上一次活动时间
+    private Long lastActiveTime;
 
     /**
      * 获取用户编号
@@ -110,6 +116,23 @@ public class Token extends BaseModel {
      */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public Long getLastActiveTime() {
+        return lastActiveTime;
+    }
+
+    public void setLastActiveTime(Long lastActiveTime) {
+        this.lastActiveTime = lastActiveTime;
+    }
+
+    @JSONField(serialize = false)
+    public Date getLastActiveDate() {
+        return lastActiveTime != null ? new Date(lastActiveTime) : null;
+    }
+
+    public void setLastActiveDate(Date lastActiveDate) {
+        this.lastActiveTime = lastActiveDate != null ? lastActiveDate.getTime() : null;
     }
 
 }

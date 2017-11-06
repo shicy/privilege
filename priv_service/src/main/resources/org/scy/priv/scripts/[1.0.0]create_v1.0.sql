@@ -233,6 +233,7 @@ CREATE TABLE IF NOT EXISTS `token` (
   `client` VARCHAR(16) NULL COMMENT '客户端编号',
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
   `createTime` BIGINT NULL,
+  `lastActiveTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_token_user_idx` (`userId` ASC))
