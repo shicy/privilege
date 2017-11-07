@@ -465,21 +465,28 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
     }
 
     @Override
-    public boolean validUser(String username, String password, short type) {
-        UserModel userModel = null;
+    public UserModel validUser(String username, String password, short type) {
+        UserModel userModel;
+        password = getSecretPassword(password);
 
-        if (type <= 0 || type == Const.LOGIN_TYPE_NAME)
+        if (type <= 0 || type == Const.LOGIN_TYPE_NAME) {
             userModel = getByName(username);
-        if (userModel == null && (type <= 0 || type == Const.LOGIN_TYPE_MOBILE))
-            userModel = getByMobile(username);
-        if (userModel == null && (type <= 0 || type == Const.LOGIN_TYPE_EMAIL))
-            userModel = getByEmail(username);
-
-        if (userModel != null) {
-            password = getSecretPassword(password);
-            return password.equals(userModel.getPassword());
+            if (userModel != null && password.equals(userModel.getPassword()))
+                return userModel;
         }
 
-        return false;
+        if (type <= 0 || type == Const.LOGIN_TYPE_MOBILE) {
+            userModel = getByMobile(username);
+            if (userModel != null && password.equals(userModel.getPassword()))
+                return userModel;
+        }
+
+        if (type <= 0 || type == Const.LOGIN_TYPE_EMAIL) {
+            userModel = getByEmail(username);
+            if (userModel != null && password.equals(userModel.getPassword()))
+                return userModel;
+        }
+
+        return null;
     }
 }

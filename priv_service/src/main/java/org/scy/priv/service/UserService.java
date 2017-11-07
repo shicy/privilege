@@ -141,7 +141,8 @@ public interface UserService {
      * @param username 用户名称、手机号码或邮箱
      * @param password 密码
      * @param type 类型：1-用户名称 2-手机号码 3-邮箱 0-全部
+     * @return 验证成功后返回用户信息
      */
-    boolean validUser(String username, String password, short type);
+    UserModel validUser(String username, String password, short type);
 
 }
