@@ -201,7 +201,7 @@ COMMENT = '最终的用户权限信息表，综合用户组和角色之后的权
 -- Table `priv`.`login_recode`
 -- 登录记录表
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `login_recode` (
+CREATE TABLE IF NOT EXISTS `login_record` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `userId` INT NOT NULL,
   `loginName` VARCHAR(45) NULL COMMENT '登录名称：用户、手机号或邮箱',
@@ -211,7 +211,6 @@ CREATE TABLE IF NOT EXISTS `login_recode` (
   `domain` VARCHAR(30) NULL COMMENT '网站域名',
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
   `client` VARCHAR(16) NULL COMMENT '客户端编号',
-  `creatorId` INT NULL,
   `createTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),

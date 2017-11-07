@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.scy.priv.mapper.LoginRecodeMapper">
+<mapper namespace="org.scy.priv.mapper.LoginRecordMapper">
 
     <!-- getById -->
-    <select id="getById" resultType="LoginRecodeModel">
+    <select id="getById" resultType="LoginRecordModel">
         select * from `login_recode` where id = #{id}
     </select>
 
     <!-- add -->
-    <insert id="add" parameterType="LoginRecodeModel" useGeneratedKeys="true" keyProperty="id">
+    <insert id="add" parameterType="LoginRecordModel" useGeneratedKeys="true" keyProperty="id">
         insert into `login_recode` (userId, loginName, loginType, validcode, ip, domain, userAgent,
             client, creatorId, createTime, paasId)
         values (#{userId}, #{loginName}, #{loginType}, #{validcode}, #{ip}, #{domain}, #{userAgent},
@@ -16,7 +16,7 @@
     </insert>
 
     <!-- update -->
-    <update id="update" parameterType="LoginRecodeModel">
+    <update id="update" parameterType="LoginRecordModel">
         update `login_recode`
         set userId = #{userId}, loginName = #{loginName}, loginType = #{loginType}, validcode = #{validcode},
             ip = #{ip}, domain = #{domain}, userAgent = #{userAgent}, client = #{client}
@@ -24,17 +24,17 @@
     </update>
 
     <!-- delete -->
-    <delete id="delete" parameterType="LoginRecodeModel">
+    <delete id="delete" parameterType="LoginRecordModel">
         delete from `login_recode` where id = #{id}
     </delete>
 
     <!-- find -->
-    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecodeModel">
+    <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecordModel">
         select * from `login_recode` ${where} ${groupBy} ${orderBy} ${limit}
     </select>
 
     <!-- countFind -->
-    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecodeModel">
+    <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecordModel">
         select count(id) as count from `login_recode` ${where} ${groupBy} ${orderBy}
     </select>
 
