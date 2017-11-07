@@ -3,13 +3,13 @@ package org.scy.priv.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
 import org.scy.common.annotation.AccessToken;
-import org.scy.common.exception.ResultException;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
-import org.scy.priv.manager.TokenManager;
+import org.scy.common.web.session.SessionManager;
 import org.scy.priv.model.AccountModel;
-import org.scy.priv.service.AccountService;
+import org.scy.priv.model.UserModel;
+import org.scy.priv.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,28 +33,24 @@ import java.util.Map;
 public class SessionController extends BaseController {
 
     @Autowired
-    private AccountService accountService;
+    private TokenService tokenService;
 
     /**
      * 获取 AccessToken，新获取的 token 具有15分钟的有效期，不需要频繁获取
      * 参数：
-     * -param appid 帐户对应的应用编号
+     * -param code 帐户对应的应用编号
      * -param secret 密钥
      * @return 返回一个32位的 token 字符串
      */
     @RequestMapping(value = "/token/access", method = RequestMethod.GET)
     public Object getAccessToken(HttpServletRequest request) {
-        String appId = HttpUtilsEx.getStringValue(request, "appid");
+        String code = HttpUtilsEx.getStringValue(request, "code");
         String secret = HttpUtilsEx.getStringValue(request, "secret");
 
-        if (StringUtils.isBlank(appId) || StringUtils.isBlank(secret))
+        if (StringUtils.isBlank(code) || StringUtils.isBlank(secret))
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
-        AccountModel accountModel = accountService.getWithSecret(appId, secret);
-        if (accountModel == null)
-            return HttpResult.error(Const.MSG_CODE_ACCOUNTERROR);
-
-        String token = TokenManager.getAccessToken(accountModel.getCode());
+        String token = tokenService.getAccountAccessToken(code, secret);
         if (token == null)
             return HttpResult.error(10001, "获取 AccessToken 失败！");
 
@@ -65,17 +63,18 @@ public class SessionController extends BaseController {
      */
     @RequestMapping(value = "/valid/access/{token}", method = RequestMethod.GET)
     public Object validAccessToken(@PathVariable("token") String token) {
-        boolean validate = TokenManager.isAccessTokenValidate(token);
+        boolean validate = tokenService.isAccessTokenValidate(token);
         return HttpResult.ok(validate ? "1" : "0");
     }
 
     /**
-     * 验证用户 session 是否过期
+     * 验证用户 session 是否过期，并激活用户一次
      * @return “1” - 未过期 “0” - “过期”
      */
     @RequestMapping(value = "/valid/session/{token}", method = RequestMethod.GET)
     public Object validUserToken(@PathVariable("token") String token) {
-        return HttpResult.ok("1");
+        boolean validate = tokenService.isUserTokenValidate(token, true);
+        return HttpResult.ok(validate ? "1" : "0");
     }
 
     /**
@@ -83,17 +82,14 @@ public class SessionController extends BaseController {
      */
     @RequestMapping(value = "/session/account/{token}", method = RequestMethod.GET)
     public Object accountInfo(@PathVariable("token") String token) {
-        String code = TokenManager.getAccessTokenValue(token);
-        if (StringUtils.isNotBlank(code)) {
-            AccountModel accountModel = accountService.getByCode(code);
-            if (accountModel != null) {
-                Map<String, Object> values = new HashMap<String, Object>();
-                values.put("id", accountModel.getId());
-                values.put("name", accountModel.getName());
-                values.put("code", accountModel.getCode());
-                values.put("state", accountModel.getState());
-                return HttpResult.ok(values);
-            }
+        AccountModel accountModel = tokenService.getAccountByToken(token);
+        if (accountModel != null) {
+            Map<String, Object> values = new HashMap<String, Object>();
+            values.put("id", accountModel.getId());
+            values.put("name", accountModel.getName());
+            values.put("code", accountModel.getCode());
+            values.put("state", accountModel.getState());
+            return HttpResult.ok(values);
         }
         return HttpResult.ok();
     }
@@ -103,6 +99,16 @@ public class SessionController extends BaseController {
      */
     @RequestMapping(value = "/session/info/{token}", method = RequestMethod.GET)
     public Object userInfo(@PathVariable("token") String token) {
+        UserModel userModel = tokenService.getUserByToken(token);
+        if (userModel != null) {
+            Map<String, Object> values = new HashMap<String, Object>();
+            values.put("id", userModel.getId());
+            values.put("name", userModel.getName());
+            values.put("remark", userModel.getRemark());
+            values.put("type", userModel.getType());
+            values.put("state", userModel.getState());
+            return HttpResult.ok(values);
+        }
         return HttpResult.ok();
     }
 
@@ -112,12 +118,55 @@ public class SessionController extends BaseController {
      * -param password 登录密码
      * -param expires 有效期（秒），大于零时有效，否则无限期
      * -param loginType 登录方式，默认所有登录方式
+     * -param validCode 验证码，使用“/login/code”获取登录验证码
+     * -param validCodeId 验证码编号，获取验证码时一起返回
      * @return 登录成功将返回用户token信息
      */
     @AccessToken
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Object login(HttpServletRequest request) {
-        return HttpResult.ok(null);
+    public Object login(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("username", HttpUtilsEx.getStringValue(request, "username"));
+        params.put("password", HttpUtilsEx.getStringValue(request, "password"));
+        params.put("loginType", HttpUtilsEx.getIntValue(request, "loginType", 0));
+        params.put("validCode", HttpUtilsEx.getStringValue(request, "validCode"));
+        params.put("validCodeId", HttpUtilsEx.getStringValue(request, "validCodeId"));
+        params.put("expires", HttpUtilsEx.getIntValue(request, "expires", 0));
+        params.put("ip", HttpUtilsEx.getIP(request));
+        params.put("domain", request.getServerName());
+        params.put("userAgent", request.getHeader("User-Agent"));
+        params.put("client", SessionManager.uuid.get());
+        String token = tokenService.doLogin(params);
+
+        setTokenCookie(response, token, (Integer)params.get("expires"));
+
+        return HttpResult.ok(token);
+    }
+
+    /**
+     * 通过手机号码登录
+     * 参数
+     * -param mobile 手机号码
+     * -param validCode 手机验证码
+     * -param expires 有效期（秒），大于零时有效，否则无限期
+     * @return 登录成功将返回用户token信息
+     */
+    @AccessToken
+    @RequestMapping(value = "/login/mobile", method = RequestMethod.POST)
+    public Object loginByMobile(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("mobile", HttpUtilsEx.getStringValue(request, "mobile"));
+        params.put("validCode", HttpUtilsEx.getStringValue(request, "validCode"));
+        params.put("expires", HttpUtilsEx.getIntValue(request, "expires", 0));
+        params.put("ip", HttpUtilsEx.getIP(request));
+        params.put("domain", request.getServerName());
+        params.put("userAgent", request.getHeader("User-Agent"));
+        params.put("client", SessionManager.uuid.get());
+        String token = tokenService.doLoginByMobile(params);
+
+        setTokenCookie(response, token, (Integer)params.get("expires"));
+
+        return HttpResult.ok(token);
     }
 
     /**
@@ -127,7 +176,48 @@ public class SessionController extends BaseController {
     @AccessToken
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public Object logout(HttpServletRequest request) {
+        String token = HttpUtilsEx.getStringValue(request, "token");
+        if (StringUtils.isBlank(token))
+            token = SessionManager.getToken();
+
+        if (StringUtils.isNotBlank(token))
+            tokenService.doLogout(token);
+        else
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+
         return HttpResult.ok();
+    }
+
+    /**
+     * 获取登录验证码，图片格式
+     * @return 返回验证码信息{codeId, imageUrl}
+     */
+    @AccessToken
+    @RequestMapping(value = "/login/code", method = RequestMethod.GET)
+    public Object getValidCode() {
+        Map<String, Object> validateInfo = tokenService.getLoginValidateInfo();
+        return HttpResult.ok(validateInfo);
+    }
+
+    /**
+     * 发送登录短信验证码
+     */
+    @AccessToken
+    @RequestMapping(value = "/login/code/{mobile}", method = RequestMethod.GET)
+    public Object sendMobileCode(String mobile) {
+        tokenService.sendLoginCode(mobile);
+        return HttpResult.ok();
+    }
+
+    /**
+     * 添加 Cookie（如果是第三方，这样设置估计没用）
+     * @param expires 过期时间（秒），小于零时无限期
+     */
+    private void setTokenCookie(HttpServletResponse response, String token, int expires) {
+        Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, token);
+        cookie.setPath("/");
+        cookie.setMaxAge(expires > 0 ? expires : Integer.MAX_VALUE);
+        response.addCookie(cookie);
     }
 
 }

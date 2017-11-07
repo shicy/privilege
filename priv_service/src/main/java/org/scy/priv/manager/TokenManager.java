@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.scy.cache.CachedClientAdapter;
 import org.scy.cache.model.CachedVO;
 import org.scy.common.utils.StringUtilsEx;
+import org.scy.priv.model.UserModel;
 
 import java.util.Date;
 
@@ -12,6 +13,76 @@ import java.util.Date;
  * Created by shicy on 2017/9/30.
  */
 public final class TokenManager {
+
+    /**
+     * 获取登录用户的 Token 信息，
+     * @param userModel 用户信息
+     * @param expires 有效期（秒），小于等于0时无限期
+     */
+    public static String getLoginToken(UserModel userModel, int expires) {
+        if (userModel != null) {
+            String token = getUniqueToken("login_token-", 32);
+            String tokenKey = "login_token-" + token;
+            String tokenValue = "" + userModel.getId();
+            if (CachedClientAdapter.set(tokenKey, tokenValue, expires, expires))
+                return token;
+        }
+        return null;
+    }
+
+    /**
+     * 判断登录用户的 Token 是否有效
+     * @param token 用户 Token 信息
+     * @param active 是否激活一次 Token 信息，将延长有效期
+     */
+    public static boolean isLoginTokenValidate(String token, boolean active) {
+        if (StringUtils.isNotBlank(token)) {
+            String tokenKey = "login_token-" + token;
+            CachedVO cachedVO = CachedClientAdapter.get(tokenKey);
+            if (cachedVO != null) {
+                if (active)
+                    CachedClientAdapter.replace(tokenKey, cachedVO.getValue(), cachedVO.getFlags(), cachedVO.getFlags());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取登录用户 Token 值，这里是用户编号
+     */
+    public static String getLoginTokenValue(String token) {
+        if (StringUtils.isNotBlank(token)) {
+            CachedVO cachedVO = CachedClientAdapter.get("login_token-" + token);
+            if (cachedVO != null)
+                return cachedVO.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * 删除登录用户 Token 信息
+     */
+    public static void removeLoginToken(String token) {
+        if (StringUtils.isNotBlank(token)) {
+            CachedClientAdapter.delete("login_token-" + token);
+        }
+    }
+
+    /**
+     * 激活 Token，更新 Token 过期时间
+     */
+    public static boolean activeLoginToken(String token) {
+        if (StringUtils.isNotBlank(token)) {
+            String tokenKey = "login_token-" + token;
+            CachedVO cachedVO = CachedClientAdapter.get(tokenKey);
+            if (cachedVO != null) {
+                CachedClientAdapter.replace(tokenKey, cachedVO.getValue(), cachedVO.getFlags(), cachedVO.getFlags());
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * 获取一个 AccessToken，token 使用有效期为15分钟，因此无需频繁获取。

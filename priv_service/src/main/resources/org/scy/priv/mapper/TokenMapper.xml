@@ -7,9 +7,14 @@
         select * from `token` where id = #{id}
     </select>
 
+    <!-- getByToken -->
+    <select id="getByToken" resultType="TokenModel">
+        select * from `token` where token = #{token} limit 1
+    </select>
+
     <!-- getByUserId -->
     <select id="getByUserId" resultType="TokenModel">
-        select * from `token` where userId = #{userId}
+        select * from `token` where userId = #{userId} and paasId = #{paasId}
     </select>
 
     <!-- add -->
@@ -18,12 +23,11 @@
         values (#{userId}, #{token}, #{expires}, #{domain}, #{client}, #{userAgent}, #{createTime}, #{paasId})
     </insert>
 
-    <!-- update -->
-    <update id="update" parameterType="TokenModel">
+    <!-- setActive -->
+    <update id="setActive">
         update `token`
-        set userId = #{userId}, token = #{token}, expires = #{expires}, domain = #{domain},
-            client = #{client}, userAgent = #{userAgent}
-        where id = #{id}
+        set lastActiveTime = #{time}
+        where token = #{token}
     </update>
 
     <!-- delete -->
@@ -31,14 +35,24 @@
         delete from `token` where id = #{id}
     </delete>
 
+    <!-- deleteByUserId -->
+    <delete id="deleteByUserId">
+        delete from `token` where userId = #{userId}
+    </delete>
+
+    <!-- deleteByToken -->
+    <delete id="deleteByToken">
+        delete from `token` where token = #{token}
+    </delete>
+
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="TokenModel">
-        select * from `token` ${where} ${groupBy} ${orderBy} ${limit}
+        select * from `token` ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) as count from `token` ${where} ${groupBy} ${orderBy}
+        select count(id) as count from `token` ${where} ${group} ${order}
     </select>
 
 </mapper>
