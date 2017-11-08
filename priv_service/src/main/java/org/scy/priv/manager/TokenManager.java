@@ -122,14 +122,7 @@ public final class TokenManager {
      * @param token AccessToken
      */
     public static boolean isAccessTokenValidate(String token) {
-        if (StringUtils.isNotBlank(token)) {
-            CachedVO cachedVO = CachedClientAdapter.get("access_token_val-" + token);
-            if (cachedVO != null && StringUtils.isNotBlank(cachedVO.getValue())) {
-                if ((new Date().getTime()) / 1000 - cachedVO.getFlags() < 15 * 60)
-                    return true;
-            }
-        }
-        return false;
+        return getValidateAccessToken(token) != null;
     }
 
     /**
@@ -137,10 +130,20 @@ public final class TokenManager {
      * @param token AccessToken
      */
     public static String getAccessTokenValue(String token) {
+        CachedVO cachedVO = getValidateAccessToken(token);
+        return cachedVO != null ? cachedVO.getValue() : null;
+    }
+
+    /**
+     * 获取有效的 AccessToken 缓存对象
+     */
+    private static CachedVO getValidateAccessToken(String token) {
         if (StringUtils.isNotBlank(token)) {
             CachedVO cachedVO = CachedClientAdapter.get("access_token_val-" + token);
-            if (cachedVO != null)
-                return cachedVO.getValue();
+            if (cachedVO != null && StringUtils.isNotBlank(cachedVO.getValue())) {
+                if ((new Date().getTime()) / 1000 - cachedVO.getFlags() < 15 * 60)
+                    return cachedVO;
+            }
         }
         return null;
     }
