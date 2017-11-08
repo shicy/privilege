@@ -4,7 +4,7 @@
 
     <!-- getById -->
     <select id="getById" resultType="AccountModel">
-        select * from `account` where id = ${id} and state > 0
+        select * from `account` where id = #{id} and state > 0
     </select>
 
     <!-- getByCode -->
@@ -29,8 +29,8 @@
 
     <!-- add -->
     <insert id="add" parameterType="AccountModel" useGeneratedKeys="true" keyProperty="id">
-        insert into `account` (name, code, secret, mobile, email, type, state, creatorId, createTime)
-        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{type},
+        insert into `account` (name, code, secret, mobile, email, type, ownerId, state, creatorId, createTime)
+        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{type}, #{ownerId},
             #{state}, #{creatorId}, #{createTime})
     </insert>
 

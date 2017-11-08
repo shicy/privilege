@@ -88,6 +88,7 @@ public class SessionController extends BaseController {
             values.put("id", accountModel.getId());
             values.put("name", accountModel.getName());
             values.put("code", accountModel.getCode());
+            values.put("ownerId", accountModel.getOwnerId());
             values.put("state", accountModel.getState());
             return HttpResult.ok(values);
         }

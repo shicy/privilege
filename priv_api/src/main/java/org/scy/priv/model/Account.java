@@ -35,6 +35,9 @@ public class Account extends BaseModel {
     // 类型，0-平台 1-个人 2-企业
     private short type;
 
+    // 所有者
+    private Integer ownerId;
+
     /**
      * 获取名称
      */
@@ -117,6 +120,20 @@ public class Account extends BaseModel {
      */
     public void setType(short type) {
         this.type = type;
+    }
+
+    /**
+     * 获取所有者编号
+     */
+    public Integer getOwnerId() {
+        return ownerId;
+    }
+
+    /**
+     * 设置所有者编号
+     */
+    public void setOwnerId(Integer ownerId) {
+        this.ownerId = ownerId;
     }
 
 }

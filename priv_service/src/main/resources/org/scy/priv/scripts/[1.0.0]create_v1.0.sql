@@ -239,3 +239,6 @@ CREATE TABLE IF NOT EXISTS `token` (
 ENGINE = InnoDB
 COMMENT = '当前用户登录状态表';
 
+
+-- 帐户添加所有者 <2017-11-08 17:00:00>
+ALTER TABLE `account` ADD COLUMN `ownerId` INT(11) NULL AFTER `type`;
