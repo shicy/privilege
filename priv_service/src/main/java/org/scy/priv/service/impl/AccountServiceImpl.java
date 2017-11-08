@@ -41,7 +41,12 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
 
     @Override
     public AccountModel getById(int id) {
-        return accountMapper.getById(id);
+        AccountModel accountModel = accountMapper.getById(id);
+        if (accountModel != null && !SessionManager.isPlatform()) {
+            if (!SessionManager.isAccountOwner(accountModel.getId()))
+                return null;
+        }
+        return accountModel;
     }
 
     @Override
@@ -50,7 +55,7 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             return null;
         AccountModel accountModel = accountMapper.getByCode(code);
         if (accountModel != null && !SessionManager.isPlatform()) {
-            if (accountModel.getId() != SessionManager.getAccountId())
+            if (!SessionManager.isAccountOwner(accountModel.getId()))
                 return null;
         }
         return accountModel;
@@ -62,7 +67,7 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             return null;
         AccountModel accountModel = accountMapper.getByMobile(mobile);
         if (accountModel != null && !SessionManager.isPlatform()) {
-            if (accountModel.getId() != SessionManager.getAccountId())
+            if (!SessionManager.isAccountOwner(accountModel.getId()))
                 return null;
         }
         return accountModel;
@@ -74,7 +79,7 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             return null;
         AccountModel accountModel = accountMapper.getByEmail(email);
         if (accountModel != null && !SessionManager.isPlatform()) {
-            if (accountModel.getId() != SessionManager.getAccountId())
+            if (!SessionManager.isAccountOwner(accountModel.getId()))
                 return null;
         }
         return accountModel;
@@ -100,17 +105,6 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
         // 帐户名称和手机号码不能为空
         if (StringUtils.isBlank(account.getName()) || StringUtils.isBlank(account.getMobile()))
             throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
-
-        if (account.getId() > 0) {
-            if (SessionManager.isPlatform() || account.getId() == SessionManager.getAccountId()) {
-                return this.update(account);
-            }
-            throw new ResultException(Const.MSG_CODE_NOPERMISSION);
-        }
-
-        if (!SessionManager.isPlatform())
-            throw new ResultException(Const.MSG_CODE_NOPERMISSION);
 
         return this.add(account);
     }
@@ -138,6 +132,7 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
         accountModel.setCode(getValidateCode());
         accountModel.setSecret(makeSecret());
         accountModel.setType(account.getType());
+        accountModel.setOwnerId(account.getOwnerId());
         accountModel.setState(Const.ENABLED);
         accountModel.setCreatorId(SessionManager.getUserId());
         accountModel.setCreateDate(new Date());
@@ -156,6 +151,9 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
     private AccountModel update(Account account) {
         AccountModel accountModel = getById(account.getId());
         AccountModel tempAccount;
+
+        if (accountModel == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "帐户不存在");
 
         accountModel.setName(StringUtils.trimToEmpty(account.getName()));
         tempAccount = accountMapper.getByName(accountModel.getName());
@@ -201,9 +199,6 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
 
     @Override
     public AccountModel deleteById(int id) {
-        if (!SessionManager.isPlatform())
-            throw new ResultException(Const.MSG_CODE_NOPERMISSION);
-
         AccountModel accountModel = getById(id);
         if (accountModel != null) {
             accountModel.setState(Const.DISABLED);
@@ -211,7 +206,6 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             accountModel.setUpdateDate(new Date());
             accountMapper.delete(accountModel);
         }
-
         return accountModel;
     }
 
@@ -254,9 +248,6 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
 
     @Override
     public String refreshSecret(int accountId) {
-        if (!SessionManager.isPlatform() || SessionManager.getAccountId() == accountId)
-            throw new ResultException(Const.MSG_CODE_NOPERMISSION);
-
         AccountModel accountModel = getById(accountId);
         if (accountModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "帐户不存在");
@@ -271,9 +262,6 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
 
     @Override
     public short setAccountState(int accountId, short state) {
-        if (!SessionManager.isPlatform())
-            throw new ResultException(Const.MSG_CODE_NOPERMISSION);
-
         AccountModel accountModel = getById(accountId);
         if (accountModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "帐户不存在");
