@@ -4,7 +4,7 @@
 
     <!-- getById -->
     <select id="getById" resultType="RoleModel">
-        select * from `role` where id = #{id} and state > 0 limit 1
+        select * from `role` where id = #{id} and state > 0
     </select>
 
     <!-- getByName -->
@@ -42,19 +42,19 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="RoleModel">
-        select r.* from `role` as r ${where} ${groupBy} ${orderBy} ${limit}
+        select r.* from `role` as r ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(r.id) from `role` as r ${where} ${groupBy} ${orderBy}
+        select count(r.id) from `role` as r ${where} ${group}
     </select>
 
     <!-- findWithUser -->
     <select id="findWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="RoleModel">
         select r.* from `role` as r, `role_users` as ru,
         where r.id = ru.roleId ${whereMore}
-        group by r.id ${groupMore} ${orderBy} ${limit}
+        group by r.id ${groupMore} ${order} ${limit}
     </select>
 
     <!-- countFindWithUser -->
@@ -62,7 +62,7 @@
         select count(id) from (
             select r.id from `role` as r, `role_users` as ru,
             where r.id = ru.roleId ${whereMore}
-            group by r.id ${groupMore} ${orderBy}
+            group by r.id ${groupMore}
         )
     </select>
 

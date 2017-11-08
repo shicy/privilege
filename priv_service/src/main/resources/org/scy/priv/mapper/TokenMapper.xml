@@ -52,7 +52,14 @@
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) as count from `token` ${where} ${group} ${order}
+        select count(id) as count from `token` ${where} ${group}
     </select>
+
+    <!-- clearInvalidateTokens -->
+    <delete id="clearInvalidateTokens">
+        <![CDATA[
+        delete from `token` where (lastActiveTime + expires) < #{time}
+        ]]>
+    </delete>
 
 </mapper>

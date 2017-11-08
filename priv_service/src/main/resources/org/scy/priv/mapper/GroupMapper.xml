@@ -4,7 +4,7 @@
 
     <!-- getById -->
     <select id="getById" resultType="GroupModel">
-        select * from `group` where id = ${id} and state > 0 limit 1
+        select * from `group` where id = ${id} and state > 0
     </select>
 
     <!-- getByName -->
@@ -44,27 +44,27 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
-        select g.* from `group` as g ${where} ${order} ${group} ${limit}
+        select g.* from `group` as g ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(g.id) as count from `group` as g ${where} ${order} ${group}
+        select count(g.id) as count from `group` as g ${where} ${group} ${order}
     </select>
 
     <!-- findWithUser -->
     <select id="findWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="GroupModel">
         select g.* from `group` as g, `group_users` as gu
-        where g.id = gu.groupId ${whereMore} ${order}
-        group by g.id ${groupMore} ${limit}
+        where g.id = gu.groupId ${whereMore}
+        group by g.id ${groupMore} ${order} ${limit}
     </select>
 
     <!-- countFindWithUser -->
     <select id="countFindWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
         select count(id) from (
-        select g.id from `group` as g, `group_users` as gu
-        where g.id = gu.groupId ${whereMore} ${order}
-        group by g.id ${groupMore}
+            select g.id from `group` as g, `group_users` as gu
+            where g.id = gu.groupId ${whereMore}
+            group by g.id ${groupMore}
         )
     </select>
 

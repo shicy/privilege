@@ -4,7 +4,7 @@
 
     <!-- getById -->
     <select id="getById" resultType="AccountModel">
-        select * from `account` where id = ${id} and state > 0 limit 1
+        select * from `account` where id = ${id} and state > 0
     </select>
 
     <!-- getByCode -->
@@ -49,12 +49,12 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="AccountModel">
-        select * from `account` ${where} ${groupBy} ${orderBy} ${limit}
+        select * from `account` ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) as count from `account` ${where} ${groupBy} ${orderBy}
+        select count(id) as count from `account` ${where} ${group}
     </select>
 
     <!-- updateSecret -->

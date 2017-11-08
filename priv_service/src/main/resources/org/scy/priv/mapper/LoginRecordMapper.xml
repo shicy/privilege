@@ -30,12 +30,12 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecordModel">
-        select * from `login_recode` ${where} ${groupBy} ${orderBy} ${limit}
+        select * from `login_recode` ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecordModel">
-        select count(id) as count from `login_recode` ${where} ${groupBy} ${orderBy}
+        select count(id) as count from `login_recode` ${where} ${group}
     </select>
 
 </mapper>

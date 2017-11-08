@@ -4,7 +4,7 @@
 
     <!-- getById -->
     <select id="getById" resultType="ModuleModel">
-        select * from `module` where id = #{id} and state > 0 limit 1
+        select * from `module` where id = #{id} and state > 0
     </select>
 
     <!-- getByCode -->
@@ -40,12 +40,12 @@
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="ModuleModel">
-        select * from `module` ${where} ${orderBy} ${groupBy} ${limit}
+        select * from `module` ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
-        select count(id) as count from `module` ${where} ${orderBy} ${groupBy}
+        select count(id) as count from `module` ${where} ${group}
     </select>
 
     <!-- getByIds -->
