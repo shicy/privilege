@@ -14,6 +14,7 @@ import org.scy.common.utils.ValidCodeUtils;
 import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.manager.TokenManager;
+import org.scy.priv.mapper.AccountMapper;
 import org.scy.priv.mapper.LoginRecordMapper;
 import org.scy.priv.mapper.TokenMapper;
 import org.scy.priv.model.AccountModel;
@@ -45,6 +46,9 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
     private LoginRecordMapper loginRecodeMapper;
 
     @Autowired
+    private AccountMapper accountMapper;
+
+    @Autowired
     private AccountService accountService;
 
     @Autowired
@@ -66,7 +70,11 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
     public AccountModel getAccountByToken(String token) {
         String code = TokenManager.getAccessTokenValue(token);
         if (StringUtils.isNotBlank(code)) {
-            return accountService.getByCode(code);
+            // 该服务本身和权限相关，“/session/account/{token}”会用到
+            // 使用 accountService.getByCode(code) 的话会导致死循环
+
+            // 这里就暂时忽略权限了，接口上返回需要数据安全过滤
+            return accountMapper.getByCode(code);
         }
         return null;
     }
@@ -272,7 +280,7 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         SchedulerManager.getInstance().addScheduleJob(ClearTask.class, trigger, data);
     }
 
-    private static class ClearTask extends SchedulerManager.ThreadJob {
+    public static class ClearTask extends SchedulerManager.ThreadJob {
         @Override
         protected void executeJob(JobDataMap data) throws JobExecutionException {
             ((TokenServiceImpl) data.get("instance")).clear();

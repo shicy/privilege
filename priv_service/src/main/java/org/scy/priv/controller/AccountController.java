@@ -8,6 +8,7 @@ import org.scy.common.utils.ArrayUtilsEx;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
+import org.scy.common.web.session.SessionManager;
 import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.service.AccountService;
@@ -55,6 +56,9 @@ public class AccountController extends BaseController {
      */
     @RequestMapping(value = "/account/list", method = RequestMethod.GET)
     public Object list(HttpServletRequest request) {
+        if (!SessionManager.isPlatform())
+            return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
+
         Map<String, Object> params = new HashMap<String, Object>();
 
         params.put("code", HttpUtilsEx.getStringValue(request, "code"));

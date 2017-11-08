@@ -85,7 +85,7 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
         if (StringUtils.isBlank(code) || StringUtils.isBlank(secret))
             return null;
 
-        AccountModel account = getByCode(code);
+        AccountModel account = accountMapper.getByCode(code);
         if (account != null && secret.equals(account.getSecret()))
             return account;
 
