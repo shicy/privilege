@@ -245,3 +245,9 @@ ALTER TABLE `account` ADD COLUMN `ownerId` INT(11) NULL AFTER `type`;
 
 -- 帐户添加备注信息 <2017-11-09 09:40:00>
 ALTER TABLE `account` ADD COLUMN `remark` VARCHAR(600) NULL AFTER `email`;
+
+-- 角色表字段名称错误更正 <2017-11-09 17:30:00>
+ALTER TABLE `role` CHANGE COLUMN `createId` `creatorId` INT(11) NULL DEFAULT NULL;
+
+-- 角色表字段名称错误更正 <2017-11-09 17:40:00>
+ALTER TABLE `role` CHANGE COLUMN `updateId` `updatorId` INT(11) NULL DEFAULT NULL;
