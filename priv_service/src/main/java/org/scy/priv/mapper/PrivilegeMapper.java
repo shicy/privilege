@@ -1,6 +1,7 @@
 package org.scy.priv.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.scy.priv.model.PrivilegeModel;
 
 import java.util.List;
@@ -13,31 +14,31 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface PrivilegeMapper {
 
-    List<PrivilegeModel> getByUserId(int userId);
-    List<PrivilegeModel> getByGroupId(int groupId);
-    List<PrivilegeModel> getByRoleId(int roleId);
-    List<PrivilegeModel> getByModuleId(int moduleId);
-    List<PrivilegeModel> getByUserReference(int userId);
+    List<PrivilegeModel> getByUserId(@Param("userId") int userId);
+    List<PrivilegeModel> getByGroupId(@Param("groupId") int groupId);
+    List<PrivilegeModel> getByRoleId(@Param("roleId") int roleId);
+    List<PrivilegeModel> getByModuleId(@Param("moduleId") int moduleId);
+    List<PrivilegeModel> getByUserReference(@Param("userId") int userId);
 
     void add(PrivilegeModel privilege);
 
-    int deleteById(int id);
-    int deleteByIds(int[] ids);
-    int deleteByUserId(int userId);
-    int deleteByGroupId(int groupId);
-    int deleteByRoleId(int roleId);
-    int deleteByModuleId(int moduleId);
+    int deleteById(@Param("id") int id);
+    int deleteByIds(@Param("ids") int[] ids);
+    int deleteByUserId(@Param("userId") int userId);
+    int deleteByGroupId(@Param("groupId") int groupId);
+    int deleteByRoleId(@Param("roleId") int roleId);
+    int deleteByModuleId(@Param("moduleId") int moduleId);
 
-    List<PrivilegeModel> getUserPrivsAll(int userId);
-    List<PrivilegeModel> getUserPrivsByModuleIds(int userId, int[] moduleIds);
-    List<PrivilegeModel> getUserPrivsByModuleCodes(int userId, String[] moduleCodes);
-    List<PrivilegeModel> getUserPrivsByModuleNames(int userId, String[] moduleNames);
-    List<PrivilegeModel> getUserPrivsForRefresh(int userId);
+    List<PrivilegeModel> getUserPrivsAll(@Param("userId") int userId);
+    List<PrivilegeModel> getUserPrivsByModuleIds(@Param("userId") int userId, @Param("moduleIds") int[] moduleIds);
+    List<PrivilegeModel> getUserPrivsByModuleCodes(@Param("userId") int userId, @Param("moduleCodes") String[] moduleCodes);
+    List<PrivilegeModel> getUserPrivsByModuleNames(@Param("userId") int userId, @Param("moduleNames") String[] moduleNames);
+    List<PrivilegeModel> getUserPrivsForRefresh(@Param("userId") int userId);
 
     void addUserPriv(PrivilegeModel privilege);
 
-    int deleteUserPrivsByUserId(int userId);
-    int deleteUserPrivsByGroupId(int groupId);
-    int deleteUserPrivsByRoleId(int roleId);
+    int deleteUserPrivsByUserId(@Param("userId") int userId);
+    int deleteUserPrivsByGroupId(@Param("groupId") int groupId);
+    int deleteUserPrivsByRoleId(@Param("roleId") int roleId);
 
 }

@@ -1,6 +1,7 @@
 package org.scy.priv.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.scy.common.ds.mybatis.BaseMapper;
 import org.scy.priv.model.ModuleModel;
 
@@ -13,12 +14,12 @@ import java.util.List;
 @Mapper
 public interface ModuleMapper extends BaseMapper<ModuleModel> {
 
-    ModuleModel getByCode(String code, int paasId);
-    ModuleModel getByName(String name, int paasId);
+    ModuleModel getByCode(@Param("code") String code, @Param("paasId") int paasId);
+    ModuleModel getByName(@Param("name") String name, @Param("paasId") int paasId);
 
-    List<ModuleModel> getByIds(int[] ids, int paasId);
-    List<ModuleModel> getByCodes(String[] codes, int paasId);
-    List<ModuleModel> getByNames(String[] names, int paasId);
-    List<ModuleModel> getByParentId(int parentId, int paasId);
+    List<ModuleModel> getByIds(@Param("ids") int[] ids, @Param("paasId") int paasId);
+    List<ModuleModel> getByCodes(@Param("codes") String[] codes, @Param("paasId") int paasId);
+    List<ModuleModel> getByNames(@Param("names") String[] names, @Param("paasId") int paasId);
+    List<ModuleModel> getByParentId(@Param("parentId") int parentId, @Param("paasId") int paasId);
 
 }
