@@ -14,6 +14,7 @@ import org.scy.priv.model.RoleUserModel;
 import org.scy.priv.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -50,7 +51,7 @@ public class RoleController extends BaseController {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", HttpUtilsEx.getStringValue(request, "name"));
         params.put("nameLike", HttpUtilsEx.getStringValue(request, "nameLike"));
-        params.put("userId", HttpUtilsEx.getIntValue(request, "userId"));
+        params.put("userId", HttpUtilsEx.getIntValue(request, "userId", 0));
 
         PageInfo pageInfo = PageInfo.create(request);
         List<RoleModel> roleModels = roleService.find(params, pageInfo);
@@ -62,7 +63,7 @@ public class RoleController extends BaseController {
      * 获取某用户的角色信息，不分页
      */
     @RequestMapping(value = "/role/list/user/{userId}", method = RequestMethod.GET)
-    public Object listByUser(int userId) {
+    public Object listByUser(@PathVariable int userId) {
         List<RoleModel> roleModels = roleService.getByUserId(userId);
         return HttpResult.ok(roleModels);
     }
@@ -115,7 +116,7 @@ public class RoleController extends BaseController {
      * -param id 想要删除的角色编号
      */
     @RequestMapping(value = "/role/delete/{roleId}", method = RequestMethod.POST)
-    public Object deleteRole(int roleId) {
+    public Object deleteRole(@PathVariable int roleId) {
         if (roleId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "角色编号无效");
 
@@ -176,7 +177,7 @@ public class RoleController extends BaseController {
      * 删除角色的所有用户信息
      */
     @RequestMapping(value = "/role/user/clear/{roleId}", method = RequestMethod.POST)
-    public Object clearUsers(int roleId) {
+    public Object clearUsers(@PathVariable int roleId) {
         if (roleId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少角色信息");
         int count = roleService.clearRoleUsers(roleId);

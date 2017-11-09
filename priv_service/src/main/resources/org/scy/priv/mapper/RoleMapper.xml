@@ -52,7 +52,7 @@
 
     <!-- findWithUser -->
     <select id="findWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="RoleModel">
-        select r.* from `role` as r, `role_users` as ru,
+        select r.* from `role` as r, `role_users` as ru
         where r.id = ru.roleId ${whereMore}
         group by r.id ${groupMore} ${order} ${limit}
     </select>
@@ -60,7 +60,7 @@
     <!-- countFindWithUser -->
     <select id="countFindWithUser" parameterType="org.scy.common.ds.query.Selector" resultType="Integer">
         select count(id) from (
-            select r.id from `role` as r, `role_users` as ru,
+            select r.id from `role` as r, `role_users` as ru
             where r.id = ru.roleId ${whereMore}
             group by r.id ${groupMore}
         )

@@ -62,18 +62,18 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
 
     @Override
     public RoleModel save(Role role) {
-        if (role == null)
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
-        if (StringUtils.isBlank(role.getName()))
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
         if (role.getId() > 0)
             return this.update(role);
         return this.add(role);
     }
 
     private RoleModel add(Role role) {
+        if (role == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
+        if (StringUtils.isBlank(role.getName()))
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
         RoleModel roleModel = new RoleModel();
 
         roleModel.setName(StringUtils.trimToEmpty(role.getName()));
@@ -93,19 +93,28 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
     }
 
     private RoleModel update(Role role) {
+        if (role == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
         RoleModel roleModel = getById(role.getId());
         RoleModel roleTemp;
 
         if (roleModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "角色不存在");
 
-        roleModel.setName(StringUtils.trimToEmpty(role.getName()));
-        roleTemp = getByName(roleModel.getName());
-        if (roleTemp != null && roleTemp.getPaasId() != roleModel.getPaasId())
-            throw new ResultException(10001, "名称已存在");
+        if (StringUtils.isNotBlank(role.getName())) {
+            roleModel.setName(StringUtils.trimToEmpty(role.getName()));
+            roleTemp = getByName(roleModel.getName());
+            if (roleTemp != null && roleTemp.getPaasId() != roleModel.getPaasId())
+                throw new ResultException(10001, "名称已存在");
+        }
 
-        roleModel.setRemark(role.getRemark());
-        roleModel.setType(role.getType());
+        if (role.getRemark() != null)
+            roleModel.setRemark(StringUtils.trimToEmpty(role.getRemark()));
+
+        if (role.getType() > 0)
+            roleModel.setType(role.getType());
+
         roleModel.setUpdatorId(SessionManager.getUserId());
         roleModel.setUpdateDate(new Date());
 
@@ -119,7 +128,7 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
         RoleModel roleModel = getById(id);
         if (roleModel != null) {
             if (roleMapper.countRoleUser(id) > 0)
-                throw new ResultException(10001, "该角色包含用户信息，不允许删除");
+                throw new ResultException(10001, "包含用户信息，不允许删除");
             roleModel.setState(Const.DISABLED);
             roleModel.setUpdatorId(SessionManager.getUserId());
             roleModel.setUpdateDate(new Date());
@@ -141,10 +150,10 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
         if (!SessionManager.isPlatform())
             selector.addFilter("r.paasId", SessionManager.getAccountId());
 
-        int userId = params != null ? (Integer)params.get("userId") : 0;
+        int userId = params != null && params.get("userId") != null ? (Integer)params.get("userId") : 0;
         if (userId > 0) {
             selector.addFilter("ru.userId", userId);
-            selector.addFilter("ru..state", 0, Oper.GT);
+            selector.addFilter("ru.state", 0, Oper.GT);
 
             if (pageInfo != null)
                 pageInfo.setTotal(roleMapper.countFindWithUser(selector));
