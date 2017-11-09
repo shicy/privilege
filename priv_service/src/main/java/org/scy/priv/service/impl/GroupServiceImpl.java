@@ -62,20 +62,19 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
 
     @Override
     public GroupModel save(Group group) {
-        if (group == null)
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
         if (group.getId() > 0)
             return this.update(group);
+        return this.add(group);
+    }
+
+    private GroupModel add(Group group) {
+        if (group == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
 
         // 名称不能为空
         if (StringUtils.isBlank(group.getName()))
             throw new ResultException(Const.MSG_CODE_PARAMMISSING);
 
-        return this.add(group);
-    }
-
-    private GroupModel add(Group group) {
         GroupModel groupModel = new GroupModel();
 
         groupModel.setName(StringUtils.trimToEmpty(group.getName()));
@@ -94,6 +93,9 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     }
 
     private GroupModel update(Group group) {
+        if (group == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
         GroupModel groupModel = getById(group.getId());
         GroupModel groupTemp;
 

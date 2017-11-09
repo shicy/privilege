@@ -99,16 +99,8 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
 
     @Override
     public AccountModel save(Account account) {
-        if (account == null)
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
         if (account.getId() > 0)
             return this.update(account);
-
-        // 帐户名称和手机号码不能为空
-        if (StringUtils.isBlank(account.getName()) || StringUtils.isBlank(account.getMobile()))
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
         return this.add(account);
     }
 
@@ -116,6 +108,13 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
      * 添加帐户
      */
     private AccountModel add(Account account) {
+        if (account == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
+        // 帐户名称和手机号码不能为空
+        if (StringUtils.isBlank(account.getName()) || StringUtils.isBlank(account.getMobile()))
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
         AccountModel accountModel = new AccountModel();
 
         accountModel.setName(StringUtils.trimToEmpty(account.getName()));
@@ -157,6 +156,9 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
      * 更新帐户
      */
     private AccountModel update(Account account) {
+        if (account == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
         AccountModel accountModel = getById(account.getId());
         AccountModel tempAccount;
 
