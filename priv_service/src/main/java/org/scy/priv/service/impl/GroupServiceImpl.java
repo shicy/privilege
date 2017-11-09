@@ -65,12 +65,12 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         if (group == null)
             throw new ResultException(Const.MSG_CODE_PARAMMISSING);
 
+        if (group.getId() > 0)
+            return this.update(group);
+
         // 名称不能为空
         if (StringUtils.isBlank(group.getName()))
             throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
-        if (group.getId() > 0)
-            return this.update(group);
 
         return this.add(group);
     }
@@ -82,7 +82,7 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         if (getByName(groupModel.getName()) != null)
             throw new ResultException(10001, "名称已存在");
 
-        groupModel.setRemark(StringUtils.trimToEmpty(group.getName()));
+        groupModel.setRemark(StringUtils.trimToEmpty(group.getRemark()));
         groupModel.setState(Const.ENABLED);
         groupModel.setCreatorId(SessionManager.getUserId());
         groupModel.setCreateDate(new Date());
@@ -100,12 +100,16 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         if (groupModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户组不存在");
 
-        groupModel.setName(StringUtils.trimToEmpty(group.getName()));
-        groupTemp = getByName(groupModel.getName());
-        if (groupTemp != null && groupTemp.getId() == group.getId())
-            throw new ResultException(10001, "名称已存在");
+        if (StringUtils.isNotBlank(group.getName())) {
+            groupModel.setName(StringUtils.trimToEmpty(group.getName()));
+            groupTemp = getByName(groupModel.getName());
+            if (groupTemp != null && groupTemp.getId() == group.getId())
+                throw new ResultException(10001, "名称已存在");
+        }
 
-        groupModel.setRemark(StringUtils.trimToEmpty(group.getRemark()));
+        if (group.getRemark() != null)
+            groupModel.setRemark(StringUtils.trimToEmpty(group.getRemark()));
+
         groupModel.setUpdatorId(SessionManager.getUserId());
         groupModel.setUpdateDate(new Date());
 
@@ -120,7 +124,7 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         if (groupModel != null) {
             int userCount = groupMapper.countGroupUser(id);
             if (userCount > 0)
-                throw new ResultException(10001, "该用户组内存在用户信息，不允许删除");
+                throw new ResultException(10001, "包含用户信息，不允许删除");
 
             groupModel.setState(Const.DISABLED);
             groupModel.setUpdatorId(SessionManager.getUserId());
@@ -143,7 +147,7 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         if (!SessionManager.isPlatform())
             selector.addFilter("g.paasId", SessionManager.getAccountId());
 
-        int userId = params != null ? (Integer)params.get("userId") : 0;
+        int userId = params != null && params.get("userId") != null ? (Integer)params.get("userId") : 0;
         if (userId > 0) {
             selector.addFilter("gu.userId", userId);
             selector.addFilter("gu.state", 0, Oper.GT);

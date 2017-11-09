@@ -4,7 +4,7 @@
 
     <!-- getById -->
     <select id="getById" resultType="GroupModel">
-        select * from `group` where id = ${id} and state > 0
+        select * from `group` where id = #{id} and state > 0
     </select>
 
     <!-- getByName -->
