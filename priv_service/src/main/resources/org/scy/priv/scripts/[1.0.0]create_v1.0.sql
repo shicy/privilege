@@ -242,3 +242,6 @@ COMMENT = '当前用户登录状态表';
 
 -- 帐户添加所有者 <2017-11-08 17:00:00>
 ALTER TABLE `account` ADD COLUMN `ownerId` INT(11) NULL AFTER `type`;
+
+-- 帐户添加备注信息 <2017-11-09 09:40:00>
+ALTER TABLE `account` ADD COLUMN `remark` VARCHAR(600) NULL AFTER `email`;

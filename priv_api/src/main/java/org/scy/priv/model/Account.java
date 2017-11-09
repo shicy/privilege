@@ -32,6 +32,9 @@ public class Account extends BaseModel {
     // 绑定的邮箱
     private String email;
 
+    // 备注信息
+    private String remark;
+
     // 类型，0-平台 1-个人 2-企业
     private short type;
 
@@ -106,6 +109,20 @@ public class Account extends BaseModel {
      */
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    /**
+     * 获取备注信息
+     */
+    public String getRemark() {
+        return remark;
+    }
+
+    /**
+     * 设置备注信息
+     */
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     /**

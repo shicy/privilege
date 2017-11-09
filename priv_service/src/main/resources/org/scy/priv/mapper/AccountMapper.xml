@@ -29,15 +29,15 @@
 
     <!-- add -->
     <insert id="add" parameterType="AccountModel" useGeneratedKeys="true" keyProperty="id">
-        insert into `account` (name, code, secret, mobile, email, type, ownerId, state, creatorId, createTime)
-        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{type}, #{ownerId},
+        insert into `account` (name, code, secret, mobile, email, remark, type, ownerId, state, creatorId, createTime)
+        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{remark}, #{type}, #{ownerId},
             #{state}, #{creatorId}, #{createTime})
     </insert>
 
     <!-- update -->
     <update id="update" parameterType="AccountModel">
         update `account`
-        set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email},
+        set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email}, remark = #{remark},
             secret = #{secret}, type = ${type}, updatorId = #{updatorId}, updateTime = #{updateTime}
         where id = ${id}
     </update>
