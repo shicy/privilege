@@ -103,6 +103,7 @@ public class AccountController extends BaseController {
      * -param name 帐户名称
      * -param mobile 帐户手机号码
      * -param email 邮箱地址（可选）
+     * -param remark 备注信息
      * -param ownerId 所有者编号
      * @return 新增的帐户信息
      */
@@ -123,10 +124,10 @@ public class AccountController extends BaseController {
     /**
      * 更新帐户
      * 参数：
-     * -param type 帐户类型
      * -param name 帐户名称
      * -param mobile 帐户手机号码
      * -param email 邮箱地址
+     * -param remark 备注信息
      * @return 帐户信息
      */
     @RequestMapping(value = "/account/update", method = RequestMethod.POST)
@@ -155,6 +156,9 @@ public class AccountController extends BaseController {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
 
+        if (!SessionManager.isPlatform())
+            return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
+
         AccountModel accountModel = accountService.deleteById(accountId);
         if (accountModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "不存在的帐户信息");
@@ -172,6 +176,10 @@ public class AccountController extends BaseController {
     public Object changeSecret(@PathVariable int accountId) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
+
+        if (!SessionManager.isPlatform())
+            return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
+
         String secret = accountService.refreshSecret(accountId);
         return HttpResult.ok(secret);
     }
@@ -184,6 +192,10 @@ public class AccountController extends BaseController {
     public Object changeState(@PathVariable int accountId, @PathVariable short state) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
+
+        if (!SessionManager.isPlatform())
+            return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
+
         state = accountService.setAccountState(accountId, state);
         return HttpResult.ok(state);
     }
