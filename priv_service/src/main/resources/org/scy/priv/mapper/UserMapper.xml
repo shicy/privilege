@@ -9,7 +9,7 @@
 
     <!-- getByCode -->
     <select id="getByCode" resultType="UserModel">
-        select * from `user where code = #{code} and paasId = #{paasId} and state > 0 limit 1
+        select * from `user` where code = #{code} and paasId = #{paasId} and state > 0 limit 1
     </select>
 
     <!-- getByName -->
@@ -39,7 +39,7 @@
     <!-- add -->
     <insert id="add" parameterType="UserModel" useGeneratedKeys="true" keyProperty="id">
         insert into `user` (code, name, mobile, email, password, type, accept, remark,
-            lastLoginType, lastLoginTime, sate, creatorId, createTime, paasId)
+            lastLoginType, lastLoginTime, state, creatorId, createTime, paasId)
         values (#{code}, #{name}, #{mobile}, #{email}, #{password}, #{type}, #{accept}, #{remark},
             #{lastLoginType}, #{lastLoginTime}, #{state}, #{creatorId}, #{createTime}, #{paasId})
     </insert>
@@ -66,7 +66,7 @@
         from `user` u
             left join `group_users` gu on u.id = gu.userId
             left join `role_users` ru on u.id = ru.userId
-        #{where} #{group} #{order} #{limit}
+        ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
@@ -77,7 +77,7 @@
             from `user` u
                 left join `group_users` gu on u.id = gu.userId
                 left join `role_users` ru on u.id = ru.userId
-            #{where} #{group}
+            ${where} ${group}
         ) t
     </select>
 

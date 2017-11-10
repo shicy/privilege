@@ -13,9 +13,7 @@ import org.scy.priv.model.UserModel;
 import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -44,7 +42,7 @@ public class UserController extends BaseController {
      * -param nameLike 按用户名称模糊查询
      * -param mobile 按用户手机号查询
      * -param email 按用户邮箱地址查询
-     * -param type|types 按用户类型查询（支持多值，逗号分隔）
+     * -param type 按用户类型查询（支持多值，逗号分隔）
      * -param groupId 按用户组查询（支持多值，逗号分隔）
      * -param roleId 按角色查询（支持多值，逗号分隔）
      * -param page
@@ -98,7 +96,7 @@ public class UserController extends BaseController {
      * @return 返回新建用户信息
      */
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-    public Object addUser(User user, String groupIds, String roleIds) {
+    public Object addUser(User user, @RequestParam(required = false) String groupIds, @RequestParam(required = false) String roleIds) {
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
 
@@ -115,7 +113,7 @@ public class UserController extends BaseController {
             }
         }
 
-        return HttpResult.ok(userModel);
+        return HttpResult.ok("新建成功", userModel);
     }
 
     /**
@@ -125,7 +123,6 @@ public class UserController extends BaseController {
      * -param name 用户名称
      * -param mobile 手机号码
      * -param email 邮箱号
-     * -param password 用户名或邮箱登录使用的密码
      * -param remark 备注信息
      * -param type 用户类型（自定义）
      * -param accept 允许登录类型
@@ -134,7 +131,7 @@ public class UserController extends BaseController {
      * @return 用户信息
      */
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)
-    public Object updateUser(User user, String groupIds, String roleIds) {
+    public Object updateUser(User user, @RequestParam(required = false) String groupIds, @RequestParam(required = false) String roleIds) {
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
 
@@ -162,7 +159,7 @@ public class UserController extends BaseController {
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
         }
 
-        return HttpResult.ok(userModel);
+        return HttpResult.ok("修改成功", userModel);
     }
 
     /**
@@ -171,7 +168,7 @@ public class UserController extends BaseController {
      * -param id 想要删除的用户编号
      */
     @RequestMapping(value = "/user/delete/{userId}", method = RequestMethod.POST)
-    public Object deleteUser(int userId) {
+    public Object deleteUser(@PathVariable int userId) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
 
@@ -179,18 +176,41 @@ public class UserController extends BaseController {
         if (userModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
 
-        return HttpResult.ok();
+        return HttpResult.ok("删除成功");
+    }
+
+    /**
+     * 修改用户密码
+     * 参数：
+     * -param userId 用户编号
+     * -param password 新密码
+     * -param oldPassword 原密码
+     */
+    @RequestMapping(value = "/user/changepassword", method = RequestMethod.POST)
+    public Object changePassword(HttpServletRequest request) {
+        int userId = HttpUtilsEx.getIntValue(request, "userId", -1);
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "用户编号无效");
+
+        String password = HttpUtilsEx.getStringValue(request, "password");
+        if (StringUtils.isBlank(password))
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "密码不能为空");
+
+        String oldPassword = HttpUtilsEx.getStringValue(request, "oldPassword");
+        userService.setUserPassword(userId, password, oldPassword);
+
+        return HttpResult.ok("修改成功");
     }
 
     /**
      * 更改用户状态
      */
     @RequestMapping(value = "/user/changestate/{userId}/{state}", method = RequestMethod.POST)
-    public Object changeState(int userId, short state) {
+    public Object changeState(@PathVariable int userId, @PathVariable short state) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
         int newState = userService.setUserState(userId, state);
-        return HttpResult.ok(newState);
+        return HttpResult.ok("修改成功", newState);
     }
 
 }

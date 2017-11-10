@@ -8,11 +8,10 @@ import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
 import org.scy.common.utils.ArrayUtilsEx;
+import org.scy.common.utils.CommonUtilsEx;
 import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
-import org.scy.priv.mapper.GroupMapper;
-import org.scy.priv.mapper.RoleMapper;
-import org.scy.priv.mapper.UserMapper;
+import org.scy.priv.mapper.*;
 import org.scy.priv.model.*;
 import org.scy.priv.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,16 +42,16 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
     private RoleMapper roleMapper;
 
     @Autowired
+    private PrivilegeMapper privilegeMapper;
+
+    @Autowired
+    private TokenMapper tokenMapper;
+
+    @Autowired
     private GroupService groupService;
 
     @Autowired
     private RoleService roleService;
-
-    @Autowired
-    private PrivilegeService privilegeService;
-
-    @Autowired
-    private TokenService tokenService;
 
     @Override
     public UserModel getById(int id) {
@@ -101,19 +100,15 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
 
     @Override
     public UserModel save(User user) {
-        if (user == null)
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
-
-        if (StringUtils.isBlank(user.getName()))
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "用户名称不能为空");
-
         if (user.getId() > 0)
             return update(user);
-
         return add(user);
     }
 
     private UserModel add(User user) {
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
         UserModel userModel = new UserModel();
 
         userModel.setName(StringUtils.trimToEmpty(user.getName()));
@@ -121,12 +116,20 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             throw new ResultException(10001, "名称已存在");
 
         userModel.setMobile(StringUtils.trimToEmpty(user.getMobile()));
-        if (getByMobile(userModel.getMobile()) != null)
-            throw new ResultException(10002, "手机号码已存在");
+        if (StringUtils.isNotBlank(userModel.getMobile())) {
+            if (!CommonUtilsEx.checkMobile(userModel.getMobile()))
+                throw new ResultException(10005, "手机号码格式不正确");
+            if (getByMobile(userModel.getMobile()) != null)
+                throw new ResultException(10002, "手机号码已存在");
+        }
 
         userModel.setEmail(StringUtils.trimToEmpty(user.getEmail()));
-        if (getByEmail(userModel.getEmail()) != null)
-            throw new ResultException(10003, "邮箱已存在");
+        if (StringUtils.isNotBlank(userModel.getEmail())) {
+            if (!CommonUtilsEx.checkEmail(userModel.getEmail()))
+                throw new ResultException(10006, "邮箱格式不正确");
+            if (getByEmail(userModel.getEmail()) != null)
+                throw new ResultException(10003, "邮箱已存在");
+        }
 
         userModel.setCode(StringUtils.trimToEmpty(user.getCode()));
         if (getByCode(userModel.getCode()) != null)
@@ -134,11 +137,11 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
 
         if (StringUtils.isBlank(userModel.getName()) && StringUtils.isBlank(userModel.getMobile())
                 && StringUtils.isBlank(userModel.getEmail())) {
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "用户名、手机号码、邮箱不能同时为空");
+            throw new ResultException(Const.MSG_CODE_PARAMINVALID, "用户名、手机号码、邮箱不能同时为空");
         }
 
         userModel.setPassword(getSecretPassword(user.getPassword()));
-        userModel.setRemark(user.getRemark());
+        userModel.setRemark(StringUtils.trimToEmpty(user.getRemark()));
         userModel.setAccept(user.getAccept());
         userModel.setType(user.getType());
         userModel.setState(Const.ENABLED);
@@ -146,10 +149,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         userModel.setCreateDate(new Date());
         userModel.setPaasId(SessionManager.getAccountId());
 
-        if (userModel.getType() == Const.DISABLED)
-            userModel.setType(Const.ENABLED);
-
-        if (userModel.getAccept() < 0)
+        if (userModel.getAccept() <= 0)
             userModel.setAccept((short)0xf);
 
         userMapper.add(userModel);
@@ -158,40 +158,59 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
     }
 
     private UserModel update(User user) {
+        if (user == null)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+
         UserModel userModel = getById(user.getId());
         UserModel userTemp;
 
         if (userModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户信息不存在");
 
-        userModel.setName(StringUtils.trimToEmpty(user.getName()));
-        userTemp = getByName(userModel.getName());
-        if (userTemp != null && userTemp.getId() != user.getId())
-            throw new ResultException(10001, "名称已存在");
+        if (user.getName() != null) {
+            userModel.setName(StringUtils.trimToEmpty(user.getName()));
+            userTemp = getByName(userModel.getName());
+            if (userTemp != null && userTemp.getId() != user.getId())
+                throw new ResultException(10001, "名称已存在");
+        }
 
-        userModel.setMobile(StringUtils.trimToEmpty(user.getMobile()));
-        userTemp = getByMobile(userModel.getMobile());
-        if (userTemp != null && userTemp.getId() != user.getId())
-            throw new ResultException(10002, "手机号码已存在");
+        if (user.getMobile() != null) {
+            userModel.setMobile(StringUtils.trimToEmpty(user.getMobile()));
+            if (!CommonUtilsEx.checkMobile(userModel.getMobile()))
+                throw new ResultException(10005, "手机号码格式不正确");
+            userTemp = getByMobile(userModel.getMobile());
+            if (userTemp != null && userTemp.getId() != user.getId())
+                throw new ResultException(10002, "手机号码已存在");
+        }
 
-        userModel.setEmail(StringUtils.trimToEmpty(user.getEmail()));
-        userTemp = getByEmail(userModel.getEmail());
-        if (userTemp != null && userTemp.getId() != user.getId())
-            throw new ResultException(10003, "邮箱已存在");
+        if (user.getEmail() != null) {
+            userModel.setEmail(StringUtils.trimToEmpty(user.getEmail()));
+            if (!CommonUtilsEx.checkEmail(userModel.getEmail()))
+                throw new ResultException(10006, "邮箱格式不正确");
+            userTemp = getByEmail(userModel.getEmail());
+            if (userTemp != null && userTemp.getId() != user.getId())
+                throw new ResultException(10003, "邮箱已存在");
+        }
 
-        userModel.setCode(StringUtils.trimToEmpty(user.getCode()));
-        userTemp = getByCode(userModel.getCode());
-        if (userTemp != null && userTemp.getId() != user.getId())
-            throw new ResultException(10004, "编码已存在");
+        if (user.getCode() != null) {
+            userModel.setCode(StringUtils.trimToEmpty(user.getCode()));
+            userTemp = getByCode(userModel.getCode());
+            if (userTemp != null && userTemp.getId() != user.getId())
+                throw new ResultException(10004, "编码已存在");
+        }
 
         if (StringUtils.isBlank(userModel.getName()) && StringUtils.isBlank(userModel.getMobile())
                 && StringUtils.isBlank(userModel.getEmail())) {
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "用户名、手机号码、邮箱不能同时为空");
+            throw new ResultException(Const.MSG_CODE_PARAMINVALID, "用户名、手机号码、邮箱不能同时为空");
         }
 
-        userModel.setRemark(user.getRemark());
-        userModel.setAccept(user.getAccept());
-        userModel.setType(user.getType());
+        if (user.getRemark() != null)
+            userModel.setRemark(StringUtils.trimToEmpty(user.getRemark()));
+        if (user.getAccept() > 0)
+            userModel.setAccept(user.getAccept());
+        if (user.getType() > 0)
+            userModel.setType(user.getType());
+
         userModel.setUpdatorId(SessionManager.getUserId());
         userModel.setUpdateDate(new Date());
 
@@ -222,13 +241,14 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         UserModel userModel = getById(id);
         if (userModel != null) {
             // 删除权限
-            privilegeService.deleteByUserId(id);
+            privilegeMapper.deleteByUserId(id);
+            privilegeMapper.deleteUserPrivsByUserId(id);
             // 删除角色信息
-            deleteAllRoles(id);
+            roleMapper.deleteRoleUserByUserId(id);
             // 删除用户组信息
-            deleteFromAllGroups(id);
+            groupMapper.deleteGroupUserByUserId(id);
             // 删除Token
-            tokenService.deleteByUserId(id);
+            tokenMapper.deleteByUserId(id);
             // 删除用户
             userModel.setState(Const.DISABLED);
             userModel.setUpdatorId(SessionManager.getUserId());
@@ -246,7 +266,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             selector.addFilterNotBlank("u.code", params.get("code"));
             selector.addFilterNotBlank("u.code", params.get("codeLike"), Oper.LIKE);
             selector.addFilterNotBlank("u.name", params.get("name"));
-            selector.addFilterNotBlank("u.nameLike", params.get("nameLike"), Oper.LIKE);
+            selector.addFilterNotBlank("u.name", params.get("nameLike"), Oper.LIKE);
             selector.addFilterNotBlank("u.mobile", params.get("mobile"));
             selector.addFilterNotBlank("u.email", params.get("email"));
 
@@ -278,7 +298,8 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             }
         }
 
-        pageInfo.setTotal(userMapper.countFind(selector));
+        if (pageInfo != null)
+            pageInfo.setTotal(userMapper.countFind(selector));
         return userMapper.find(selector);
     }
 
@@ -300,10 +321,14 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
     }
 
     @Override
-    public void setUserPassword(int userId, String password) {
+    public void setUserPassword(int userId, String password, String oldPassword) {
         UserModel userModel = getById(userId);
         if (userModel == null)
             throw new ResultException(Const.MSG_CODE_NOTEXIST, "用户不存在");
+
+        oldPassword = getSecretPassword(oldPassword);
+        if (!oldPassword.equals(userModel.getPassword()))
+            throw new ResultException(Const.MSG_CODE_NOPERMISSION, "原密码错误");
 
         userModel.setPassword(getSecretPassword(password));
         userModel.setUpdatorId(SessionManager.getUserId());

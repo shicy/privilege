@@ -84,7 +84,7 @@ public interface UserService {
     /**
      * 更新用户密码
      */
-    void setUserPassword(int userId, String password);
+    void setUserPassword(int userId, String password, String oldPassword);
 
     /**
      * 添加用户所属用户组
