@@ -118,7 +118,7 @@ public class AccountController extends BaseController {
         account.setId(0);
         AccountModel accountModel = accountService.save(account);
 
-        return HttpResult.ok(accountModel);
+        return HttpResult.ok("新建成功", accountModel);
     }
 
     /**
@@ -143,7 +143,7 @@ public class AccountController extends BaseController {
 
         AccountModel accountModel = accountService.save(account);
 
-        return HttpResult.ok(accountModel);
+        return HttpResult.ok("修改成功", accountModel);
     }
 
     /**
@@ -163,7 +163,7 @@ public class AccountController extends BaseController {
         if (accountModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "不存在的帐户信息");
 
-        return HttpResult.ok();
+        return HttpResult.ok("删除成功");
     }
 
     /**
@@ -181,7 +181,7 @@ public class AccountController extends BaseController {
             return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
 
         String secret = accountService.refreshSecret(accountId);
-        return HttpResult.ok(secret);
+        return HttpResult.ok("修改成功", secret);
     }
 
     /**
@@ -197,7 +197,7 @@ public class AccountController extends BaseController {
             return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
 
         state = accountService.setAccountState(accountId, state);
-        return HttpResult.ok(state);
+        return HttpResult.ok("修改成功", state);
     }
 
 }
