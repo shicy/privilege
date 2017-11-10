@@ -8,6 +8,7 @@ import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
 import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
+import org.scy.priv.mapper.PrivilegeMapper;
 import org.scy.priv.mapper.RoleMapper;
 import org.scy.priv.model.*;
 import org.scy.priv.service.RoleService;
@@ -27,6 +28,9 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private PrivilegeMapper privilegeMapper;
 
     @Autowired
     private UserService userService;
@@ -169,11 +173,11 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
     public RoleUserModel addRoleUser(int roleId, int userId) {
         RoleModel role = getById(roleId);
         if (role == null)
-            throw new ResultException(10001, "角色信息不存在");
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "角色信息不存在");
 
         UserModel user = userService.getById(userId);
         if (user == null)
-            throw new ResultException(10002, "用户信息不存在");
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "用户信息不存在");
 
         RoleUserModel roleUser = roleMapper.getRoleUser(roleId, userId);
         if (roleUser == null)
@@ -185,10 +189,10 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
     public List<RoleUserModel> addRoleUsers(int roleId, int[] userIds) {
         RoleModel role = getById(roleId);
         if (role == null)
-            throw new ResultException(10001, "角色信息不存在");
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "角色信息不存在");
 
         if (userIds == null || userIds.length == 0)
-            throw new ResultException(10002, "缺少用户信息");
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
 
         List<UserModel> users = userService.getByIds(userIds);
 
@@ -226,6 +230,9 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
         roleUserModel.setCreateDate(new Date());
         roleUserModel.setPaasId(SessionManager.getAccountId());
         roleMapper.addRoleUser(roleUserModel);
+
+        privilegeMapper.deleteUserPrivsByUserId(user.getId());
+
         return roleUserModel;
     }
 
@@ -233,8 +240,11 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
     public boolean deleteRoleUser(int roleId, int userId) {
         RoleModel roleModel = getById(roleId);
         if (roleModel == null)
-            throw new ResultException(Const.MSG_CODE_NOTEXIST);
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "角色信息不存在：" + roleId);
         int count = roleMapper.deleteRoleUserByRUId(roleId, userId);
+        if (count > 0) {
+            privilegeMapper.deleteUserPrivsByUserId(userId);
+        }
         return count > 0;
     }
 
@@ -242,16 +252,27 @@ public class RoleServiceImpl extends MybatisBaseService implements RoleService {
     public int deleteRoleUsers(int roleId, int[] userIds) {
         RoleModel roleModel = getById(roleId);
         if (roleModel == null)
-            throw new ResultException(Const.MSG_CODE_NOTEXIST);
-        return roleMapper.deleteRoleUserByRUIds(roleId, userIds);
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "角色信息不存在：" + roleId);
+        int count = roleMapper.deleteRoleUserByRUIds(roleId, userIds);
+        if (count > 0) {
+            List<UserModel> userModels = userService.getByIds(userIds);
+            for (UserModel userModel: userModels) {
+                privilegeMapper.deleteUserPrivsByUserId(userModel.getId());
+            }
+        }
+        return count;
     }
 
     @Override
     public int clearRoleUsers(int roleId) {
         RoleModel roleModel = getById(roleId);
         if (roleModel == null)
-            throw new ResultException(Const.MSG_CODE_NOTEXIST);
-        return roleMapper.deleteRoleUserByRoleId(roleId);
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "角色信息不存在：" + roleId);
+        int count = roleMapper.deleteRoleUserByRoleId(roleId);
+        if (count > 0) {
+            privilegeMapper.deleteUserPrivsByRoleId(roleId);
+        }
+        return count;
     }
 
 }

@@ -145,9 +145,7 @@ public class RoleController extends BaseController {
 
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         List<RoleUserModel> models = roleService.addRoleUsers(roleId, ids);
-        if (models != null && models.size() > 0)
-            return HttpResult.ok("添加成功", models.size());
-        return HttpResult.error("没有添加任何用户信息");
+        return HttpResult.ok("添加成功", models != null ? models.size() : 0);
     }
 
     /**
@@ -168,9 +166,7 @@ public class RoleController extends BaseController {
 
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         int count = roleService.deleteRoleUsers(roleId, ids);
-        if (count > 0)
-            return HttpResult.ok("删除成功", count);
-        return HttpResult.error("没有删除任何用户信息");
+        return HttpResult.ok("删除成功", count);
     }
 
     /**
