@@ -87,7 +87,7 @@ public class GroupController extends BaseController {
         group.setId(0);
         GroupModel groupModel = groupService.save(group);
 
-        return HttpResult.ok(groupModel);
+        return HttpResult.ok("新建成功", groupModel);
     }
 
     /**
@@ -106,7 +106,7 @@ public class GroupController extends BaseController {
         if (groupModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户组不存在");
 
-        return HttpResult.ok(groupModel);
+        return HttpResult.ok("修改成功", groupModel);
     }
 
     /**
@@ -123,7 +123,7 @@ public class GroupController extends BaseController {
         if (groupModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "不存在的用户组编号");
 
-        return HttpResult.ok();
+        return HttpResult.ok("删除成功");
     }
 
     /**
@@ -145,7 +145,7 @@ public class GroupController extends BaseController {
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         List<GroupUserModel> models = groupService.addGroupUsers(groupId, ids);
         if (models != null && models.size() > 0)
-            return new HttpResult(HttpResult.OK, "添加成功", models.size());
+            return HttpResult.ok("添加成功", models.size());
         return HttpResult.error("没有添加任何用户信息");
     }
 
@@ -168,7 +168,7 @@ public class GroupController extends BaseController {
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         int count = groupService.deleteGroupUsers(groupId, ids);
         if (count > 0)
-            return new HttpResult(HttpResult.OK, "删除成功", count);
+            return HttpResult.ok("删除成功", count);
         return HttpResult.error("没有删除任何用户信息");
     }
 
@@ -180,7 +180,7 @@ public class GroupController extends BaseController {
         if (groupId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组信息");
         int count = groupService.clearGroupUsers(groupId);
-        return new HttpResult(HttpResult.OK, "删除成功", count);
+        return HttpResult.ok("删除成功", count);
     }
 
 }
