@@ -78,7 +78,7 @@ public class ModuleController extends BaseController {
         module.setId(0);
         ModuleModel moduleModel = moduleService.save(module);
 
-        return HttpResult.ok(moduleModel);
+        return HttpResult.ok("新建成功", moduleModel);
     }
 
     /**
@@ -96,11 +96,11 @@ public class ModuleController extends BaseController {
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
         if (module.getId() <= 0)
-            return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
+            return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "模块编号无效");
 
         ModuleModel moduleModel = moduleService.save(module);
 
-        return HttpResult.ok(moduleModel);
+        return HttpResult.ok("修改成功", moduleModel);
     }
 
     /**
@@ -115,7 +115,7 @@ public class ModuleController extends BaseController {
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "模块编号无效");
 
         ModuleModel moduleModel;
-        if (HttpUtilsEx.getIntValue(request, "force") == 1)
+        if ("1".equals(HttpUtilsEx.getStringValue(request, "force")))
             moduleModel = moduleService.forceDelete(moduleId);
         else
             moduleModel = moduleService.delete(moduleId);
@@ -123,7 +123,7 @@ public class ModuleController extends BaseController {
         if (moduleModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "模块不存在");
 
-        return HttpResult.ok();
+        return HttpResult.ok("删除成功");
     }
 
 }
