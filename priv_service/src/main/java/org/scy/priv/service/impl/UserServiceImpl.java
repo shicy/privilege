@@ -270,7 +270,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             selector.addFilterNotBlank("u.mobile", params.get("mobile"));
             selector.addFilterNotBlank("u.email", params.get("email"));
 
-            Integer type = (Integer)params.get("type");
+            Integer type = params.get("type") != null ? (Integer)params.get("type") : null;
             if (type != null)
                 selector.addFilter("u.type", type);
             else {
@@ -279,7 +279,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
                     selector.addFilter("u.type", types, Oper.IN);
             }
 
-            Integer groupId = (Integer)params.get("groupId");
+            Integer groupId = params.get("groupId") != null ? (Integer)params.get("groupId") : null;
             if (groupId != null)
                 selector.addFilter("gu.groupId", groupId);
             else {
@@ -288,7 +288,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
                     selector.addFilter("gu.groupId", groupIds, Oper.IN);
             }
 
-            Integer roleId = (Integer)params.get("roleId");
+            Integer roleId = params.get("roleId") != null ? (Integer)params.get("roleId") : null;
             if (roleId != null)
                 selector.addFilter("ru.roleId", roleId);
             else {
@@ -297,6 +297,10 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
                     selector.addFilter("ru.roleId", roleIds, Oper.IN);
             }
         }
+
+        selector.addFilter("u.state", 0, Oper.GT);
+        if (!SessionManager.isPlatform())
+            selector.addFilter("u.paasId", SessionManager.getAccountId());
 
         if (pageInfo != null)
             pageInfo.setTotal(userMapper.countFind(selector));
