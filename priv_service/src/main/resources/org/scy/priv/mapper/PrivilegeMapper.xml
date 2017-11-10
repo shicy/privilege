@@ -54,10 +54,7 @@
 
     <!-- deleteByUserId -->
     <delete id="deleteByUserId">
-        delete from `privs` where userId in
-        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
-            #{userId}
-        </foreach>
+        delete from `privs` where userId = #{userId}
     </delete>
 
     <!-- deleteByGroupId -->
