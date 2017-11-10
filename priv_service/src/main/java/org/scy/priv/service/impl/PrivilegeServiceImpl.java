@@ -261,6 +261,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
         privilegeModel.setRoleId(privilege.getRoleId());
         privilegeModel.setModuleId(privilege.getModuleId());
         privilegeModel.setModuleId(privilege.getModuleId());
+        privilegeModel.setGrantType(privilege.getGrantType());
         privilegeModel.setState(Const.ENABLED);
         privilegeModel.setCreatorId(SessionManager.getUserId());
         privilegeModel.setCreateDate(new Date());
@@ -525,7 +526,8 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
                 }
             }
 
-            privilegeModels.add(privilegeModel);
+            if (privilegeModel.getGrantType() > 0)
+                privilegeModels.add(privilegeModel);
             privilegeModels.addAll(buildPrivileges(privilegeList, modelList, module.getId()));
         }
         return privilegeModels;

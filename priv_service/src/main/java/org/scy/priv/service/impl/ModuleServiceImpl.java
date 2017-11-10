@@ -174,7 +174,7 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
                 throw new ResultException(10002, "模块名称已存在");
         }
 
-        if (StringUtils.isBlank(module.getCode()) && StringUtils.isBlank(module.getName()))
+        if (StringUtils.isBlank(moduleModel.getCode()) && StringUtils.isBlank(moduleModel.getName()))
             throw new ResultException(Const.MSG_CODE_PARAMINVALID, "编码和名称不能同时为空");
 
         if (module.getRemark() != null)
