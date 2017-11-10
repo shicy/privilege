@@ -9,6 +9,7 @@ import org.scy.common.exception.ResultException;
 import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.GroupMapper;
+import org.scy.priv.mapper.PrivilegeMapper;
 import org.scy.priv.model.*;
 import org.scy.priv.service.GroupService;
 import org.scy.priv.service.UserService;
@@ -27,6 +28,9 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
 
     @Autowired
     private GroupMapper groupMapper;
+
+    @Autowired
+    private PrivilegeMapper privilegeMapper;
 
     @Autowired
     private UserService userService;
@@ -175,8 +179,10 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
             throw new ResultException(10002, "不存在的用户：" + userId);
 
         GroupUserModel groupUser = groupMapper.getGroupUser(group.getId(), user.getId());
-        if (groupUser == null)
+        if (groupUser == null) {
             groupUser = addGroupUser(group, user);
+        }
+
         return groupUser;
     }
 
@@ -222,6 +228,10 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
         groupUser.setCreateDate(new Date());
         groupUser.setPaasId(SessionManager.getAccountId());
         groupMapper.addGroupUser(groupUser);
+
+        // 重置用户权限
+        privilegeMapper.deleteUserPrivsByUserId(user.getId());
+
         return groupUser;
     }
 
@@ -229,8 +239,11 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     public boolean deleteGroupUser(int groupId, int userId) {
         GroupModel groupModel = getById(groupId);
         if (groupModel == null)
-            throw new ResultException(Const.MSG_CODE_NOTEXIST);
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "不存在的用户组：" + groupId);
         int count = groupMapper.deleteGroupUserByGUId(groupId, userId);
+        if (count > 0) {
+            privilegeMapper.deleteUserPrivsByUserId(userId);
+        }
         return count > 0;
     }
 
@@ -238,16 +251,27 @@ public class GroupServiceImpl extends MybatisBaseService implements GroupService
     public int deleteGroupUsers(int groupId, int[] userIds) {
         GroupModel groupModel = getById(groupId);
         if (groupModel == null)
-            throw new ResultException(Const.MSG_CODE_NOTEXIST);
-        return groupMapper.deleteGroupUserByGUIds(groupId, userIds);
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "不存在的用户组：" + groupId);
+        int count = groupMapper.deleteGroupUserByGUIds(groupId, userIds);
+        if (count > 0) {
+            List<UserModel> userModels = userService.getByIds(userIds);
+            for (UserModel userModel: userModels) {
+                privilegeMapper.deleteUserPrivsByUserId(userModel.getId());
+            }
+        }
+        return count;
     }
 
     @Override
     public int clearGroupUsers(int groupId) {
         GroupModel groupModel = getById(groupId);
         if (groupModel == null)
-            throw new ResultException(Const.MSG_CODE_NOTEXIST);
-        return groupMapper.deleteGroupUserByGroupId(groupId);
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "不存在的用户组：" + groupId);
+        int count = groupMapper.deleteGroupUserByGroupId(groupId);
+        if (count > 0) {
+            privilegeMapper.deleteUserPrivsByGroupId(groupId);
+        }
+        return count;
     }
 
 }
