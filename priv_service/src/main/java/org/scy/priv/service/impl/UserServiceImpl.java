@@ -7,13 +7,14 @@ import org.scy.common.ds.PageInfo;
 import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
-import org.scy.common.utils.ArrayUtilsEx;
 import org.scy.common.utils.CommonUtilsEx;
 import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.*;
 import org.scy.priv.model.*;
-import org.scy.priv.service.*;
+import org.scy.priv.service.GroupService;
+import org.scy.priv.service.RoleService;
+import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -273,8 +274,8 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             Integer type = params.get("type") != null ? (Integer)params.get("type") : null;
             if (type != null)
                 selector.addFilter("u.type", type);
-            else {
-                int[] types = ArrayUtilsEx.transStrToInt(StringUtils.split((String)params.get("types"), ','));
+            else if (params.get("types") != null) {
+                int[] types = (int[])params.get("types");
                 if (types != null && types.length > 0)
                     selector.addFilter("u.type", types, Oper.IN);
             }
@@ -282,8 +283,8 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             Integer groupId = params.get("groupId") != null ? (Integer)params.get("groupId") : null;
             if (groupId != null)
                 selector.addFilter("gu.groupId", groupId);
-            else {
-                int[] groupIds = ArrayUtilsEx.transStrToInt(StringUtils.split((String)params.get("groupIds"), ','));
+            else if (params.get("groupIds") != null) {
+                int[] groupIds = (int[])params.get("groupIds");
                 if (groupIds != null && groupIds.length > 0)
                     selector.addFilter("gu.groupId", groupIds, Oper.IN);
             }
@@ -291,8 +292,8 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
             Integer roleId = params.get("roleId") != null ? (Integer)params.get("roleId") : null;
             if (roleId != null)
                 selector.addFilter("ru.roleId", roleId);
-            else {
-                int[] roleIds = ArrayUtilsEx.transStrToInt(StringUtils.split((String)params.get("roleIds"), ','));
+            else if (params.get("roleIds") != null) {
+                int[] roleIds = (int[])params.get("roleIds");
                 if (roleIds != null && roleIds.length > 0)
                     selector.addFilter("ru.roleId", roleIds, Oper.IN);
             }
