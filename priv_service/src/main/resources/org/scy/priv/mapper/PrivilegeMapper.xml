@@ -75,10 +75,7 @@
 
     <!-- deleteByModuleId -->
     <delete id="deleteByModuleId">
-        delete from `privs` where moduleId in
-        <foreach collection="moduleIds" item="moduleId" open="(" separator="," close=")">
-            #{moduleId}
-        </foreach>
+        delete from `privs` where moduleId = #{moduleId}
     </delete>
 
     <!-- getUserPrivsAll -->
