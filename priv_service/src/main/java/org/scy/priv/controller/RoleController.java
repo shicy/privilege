@@ -84,7 +84,7 @@ public class RoleController extends BaseController {
         role.setId(0);
         RoleModel roleModel = roleService.save(role);
 
-        return HttpResult.ok(roleModel);
+        return HttpResult.ok("新建成功", roleModel);
     }
 
     /**
@@ -107,7 +107,7 @@ public class RoleController extends BaseController {
         if (roleModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "角色不存在");
 
-        return HttpResult.ok(roleModel);
+        return HttpResult.ok("修改成功", roleModel);
     }
 
     /**
@@ -124,7 +124,7 @@ public class RoleController extends BaseController {
         if (roleModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "角色不存在");
 
-        return HttpResult.ok();
+        return HttpResult.ok("删除成功");
     }
 
     /**
@@ -146,7 +146,7 @@ public class RoleController extends BaseController {
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         List<RoleUserModel> models = roleService.addRoleUsers(roleId, ids);
         if (models != null && models.size() > 0)
-            return new HttpResult(HttpResult.OK, "添加成功", models.size());
+            return HttpResult.ok("添加成功", models.size());
         return HttpResult.error("没有添加任何用户信息");
     }
 
@@ -169,7 +169,7 @@ public class RoleController extends BaseController {
         int[] ids = ArrayUtilsEx.transStrToInt(StringUtils.split(userIds, ","));
         int count = roleService.deleteRoleUsers(roleId, ids);
         if (count > 0)
-            return new HttpResult(HttpResult.OK, "删除成功", count);
+            return HttpResult.ok("删除成功", count);
         return HttpResult.error("没有删除任何用户信息");
     }
 
@@ -181,7 +181,7 @@ public class RoleController extends BaseController {
         if (roleId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少角色信息");
         int count = roleService.clearRoleUsers(roleId);
-        return new HttpResult(HttpResult.OK, "删除成功", count);
+        return HttpResult.ok("删除成功", count);
     }
 
 }
