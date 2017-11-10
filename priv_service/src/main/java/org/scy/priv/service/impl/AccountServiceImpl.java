@@ -6,7 +6,6 @@ import org.scy.common.ds.PageInfo;
 import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
-import org.scy.common.utils.ArrayUtilsEx;
 import org.scy.common.utils.CommonUtilsEx;
 import org.scy.common.utils.StringUtilsEx;
 import org.scy.common.web.service.MybatisBaseService;
@@ -244,8 +243,8 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             Integer type = (Integer)params.get("type");
             if (type != null)
                 selector.addFilter("type", type);
-            else {
-                int[] types = ArrayUtilsEx.transStrToInt(StringUtils.split((String)params.get("types"), ','));
+            else if (params.get("types") != null) {
+                int[] types = (int[]) params.get("types");
                 if (types != null && types.length > 0)
                     selector.addFilter("type", types, Oper.IN);
             }
@@ -253,8 +252,8 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             Integer state = (Integer)params.get("state");
             if (state != null)
                 selector.addFilter("state", state);
-            else {
-                int[] states = ArrayUtilsEx.transStrToInt(StringUtils.split((String)params.get("states"), ','));
+            else if (params.get("states") != null) {
+                int[] states = (int[]) params.get("states");
                 if (states != null && states.length > 0)
                     selector.addFilter("state", states, Oper.IN);
             }
