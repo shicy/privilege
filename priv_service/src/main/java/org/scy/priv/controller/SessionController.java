@@ -80,6 +80,7 @@ public class SessionController extends BaseController {
     /**
      * 获取帐户信息
      */
+    @AccessToken
     @RequestMapping(value = "/session/account/{token}", method = RequestMethod.GET)
     public Object accountInfo(@PathVariable("token") String token) {
         AccountModel accountModel = tokenService.getAccountByToken(token);
@@ -98,6 +99,7 @@ public class SessionController extends BaseController {
     /**
      * 获取用户信息
      */
+    @AccessToken
     @RequestMapping(value = "/session/info/{token}", method = RequestMethod.GET)
     public Object userInfo(@PathVariable("token") String token) {
         UserModel userModel = tokenService.getUserByToken(token);
@@ -176,7 +178,7 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public Object logout(HttpServletRequest request) {
+    public Object logout(HttpServletRequest request, HttpServletResponse response) {
         String token = HttpUtilsEx.getStringValue(request, "token");
         if (StringUtils.isBlank(token))
             token = SessionManager.getToken();
@@ -186,6 +188,8 @@ public class SessionController extends BaseController {
         else
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
+        removeTokenCookie(response);
+
         return HttpResult.ok();
     }
 
@@ -193,7 +197,6 @@ public class SessionController extends BaseController {
      * 获取登录验证码，图片格式
      * @return 返回验证码信息{codeId, imageUrl}
      */
-    @AccessToken
     @RequestMapping(value = "/login/code", method = RequestMethod.GET)
     public Object getValidCode() {
         Map<String, Object> validateInfo = tokenService.getLoginValidateInfo();
@@ -218,6 +221,13 @@ public class SessionController extends BaseController {
         Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, token);
         cookie.setPath("/");
         cookie.setMaxAge(expires > 0 ? expires : Integer.MAX_VALUE);
+        response.addCookie(cookie);
+    }
+
+    private void removeTokenCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
 
