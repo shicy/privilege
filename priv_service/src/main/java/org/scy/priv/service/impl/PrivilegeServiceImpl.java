@@ -36,6 +36,15 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
     @Autowired
     private ModuleService moduleService;
 
+    public PrivilegeModel getById(int id) {
+        PrivilegeModel privilegeModel = privilegeMapper.getById(id);
+        if (privilegeModel != null && !SessionManager.isPlatform()) {
+            if (privilegeModel.getPaasId() != SessionManager.getAccountId())
+                return null;
+        }
+        return privilegeModel;
+    }
+
     @Override
     public List<PrivilegeModel> getByUserId(int userId) {
         if (!SessionManager.isPlatform()) {
@@ -160,6 +169,8 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
         // 当前模块权限相同的话不用处理了，否则删除原配置信息
         for (int i = privilegeModels.size() - 1; i >= 0; i--) {
             PrivilegeModel privilegeModel = privilegeModels.get(i);
+            if (privilege.getModuleId() != privilegeModel.getModuleId())
+                continue;
             if (isEqualPrivilege(privilege, privilegeModel)) {
                 if (privilege.getGrantType() == privilegeModel.getGrantType())
                     return;
@@ -318,7 +329,9 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
     @Override
     public void deletePrivileges(Privilege privilege) {
         if (privilege != null) {
-            if (privilege.getUserId() > 0)
+            if (privilege.getId() > 0)
+                deleteById(privilege.getId());
+            else if (privilege.getUserId() > 0)
                 deleteByUserId(privilege.getUserId());
             else if (privilege.getGroupId() > 0 && privilege.getRoleId() <= 0)
                 deleteByGroupId(privilege.getGroupId());
@@ -338,6 +351,20 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
                 deletePrivileges(privilege);
             }
         }
+    }
+
+    @Override
+    public void deleteById(int id) {
+        PrivilegeModel privilegeModel = getById(id);
+        if (privilegeModel == null)
+            throw new ResultException(Const.MSG_CODE_NOTEXIST, "权限不存在");
+        privilegeMapper.deleteById(id);
+        if (privilegeModel.getUserId() > 0)
+            privilegeMapper.deleteUserPrivsByUserId(privilegeModel.getUserId());
+        else if (privilegeModel.getGroupId() > 0)
+            privilegeMapper.deleteUserPrivsByGroupId(privilegeModel.getGroupId());
+        else if (privilegeModel.getRoleId() > 0)
+            privilegeMapper.deleteUserPrivsByRoleId(privilegeModel.getRoleId());
     }
 
     @Override
@@ -481,7 +508,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
      * 刷新用户权限
      */
     private void refreshUserPrivileges(int userId) {
-        // 获取该用户相关的所以权限配置信息
+        // 获取该用户相关的所以权限配置信息，包括用户组和角色
         List<PrivilegeModel> privilegeModels = privilegeMapper.getByUserReference(userId);
         // 该用户最终的权限信息
         List<PrivilegeModel> newPrivilegeModels = null;
@@ -518,19 +545,56 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
 
             PrivilegeModel privilegeModel = new PrivilegeModel();
             privilegeModel.setModuleId(module.getId());
-
-            for (PrivilegeModel privilege: privilegeList) {
-                if (privilege.getModuleId() == module.getId()) {
-                    int grantType = privilegeModel.getGrantType() | privilege.getGrantType();
-                    privilegeModel.setGrantType(grantType);
-                }
-            }
+            privilegeModel.setGrantType(getModuleGrantType(module, privilegeList, modelList));
 
             if (privilegeModel.getGrantType() > 0)
                 privilegeModels.add(privilegeModel);
             privilegeModels.addAll(buildPrivileges(privilegeList, modelList, module.getId()));
         }
         return privilegeModels;
+    }
+
+    /**
+     * 计算用户相对某个模块的授权值
+     * @param module 计算的模块信息
+     * @param privilegeList 某用户的所有授权信息，包括该用户的用户组和角色授权信息
+     * @param moduleList 所有模块信息
+     * @return 授权类型
+     */
+    private int getModuleGrantType(ModuleModel module, List<PrivilegeModel> privilegeList, List<ModuleModel> moduleList) {
+        // 优先查找有没有该模块的用户配置信息
+        for (PrivilegeModel model: privilegeList) {
+            if (model.getModuleId() == module.getId() && model.getUserId() > 0) {
+                return model.getGrantType();
+            }
+        }
+
+        // 其次看该用户的用户组和角色有没有模块配置信息，权限需要合并
+        int grantType = 0;
+        for (PrivilegeModel model: privilegeList) {
+            if (model.getModuleId() == module.getId()) {
+                grantType = grantType | model.getGrantType();
+            }
+        }
+
+        // 否则查找该模块的上级模块授权类型
+        if (grantType == 0 && module.getParentId() > 0) {
+            for (ModuleModel model: moduleList) {
+                if (model.getId() == module.getParentId()) {
+                    grantType = getModuleGrantType(model, privilegeList, moduleList);
+                    break;
+                }
+            }
+        }
+
+        // 为提高效率，减少遍历次数，添加该模块授权
+        PrivilegeModel privilegeModel = new PrivilegeModel();
+        privilegeModel.setModuleId(module.getId());
+        privilegeModel.setUserId(1); // 随便给个用户编号大于零就行
+        privilegeModel.setGrantType(grantType);
+        privilegeList.add(privilegeModel);
+
+        return grantType;
     }
 
 }

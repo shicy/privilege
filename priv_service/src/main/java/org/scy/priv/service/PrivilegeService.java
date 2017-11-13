@@ -27,6 +27,7 @@ public interface PrivilegeService {
 
     void deletePrivileges(Privilege privilege);
     void deletePrivileges(List<Privilege> privileges);
+    void deleteById(int id);
     void deleteByUserId(int userId);
     void deleteByGroupId(int groupId);
     void deleteByRoleId(int roleId);

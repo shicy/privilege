@@ -14,6 +14,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface PrivilegeMapper {
 
+    PrivilegeModel getById(@Param("id") int id);
     List<PrivilegeModel> getByUserId(@Param("userId") int userId);
     List<PrivilegeModel> getByGroupId(@Param("groupId") int groupId);
     List<PrivilegeModel> getByRoleId(@Param("roleId") int roleId);

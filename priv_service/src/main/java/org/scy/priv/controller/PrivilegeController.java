@@ -87,7 +87,7 @@ public class PrivilegeController extends BaseController {
 
         privilegeService.addPrivilege(privilege);
 
-        return HttpResult.ok();
+        return HttpResult.ok("添加成功", (Object)null);
     }
 
     /**
@@ -104,12 +104,13 @@ public class PrivilegeController extends BaseController {
         List<Privilege> privileges = JSON.parseArray(strItems, Privilege.class);
         privilegeService.addPrivileges(privileges);
 
-        return HttpResult.ok();
+        return HttpResult.ok("添加成功", (Object)null);
     }
 
     /**
      * 删除权限，其中moduleId, userId, groupId和roleId组合删除，不能同时无效（小于等于0无效）
      * 参数：
+     * -param id 授权编号
      * -param moduleId 模块编号
      * -param userId 用户编号
      * -param groupId 用户组编号
@@ -119,11 +120,8 @@ public class PrivilegeController extends BaseController {
     public Object deletePrivilege(Privilege privilege) {
         if (privilege == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
-
-        privilege.setId(0);
         privilegeService.deletePrivileges(privilege);
-
-        return HttpResult.ok();
+        return HttpResult.ok("删除成功", (Object)null);
     }
 
     /**
@@ -138,14 +136,9 @@ public class PrivilegeController extends BaseController {
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
         List<Privilege> privileges = JSON.parseArray(strItems, Privilege.class);
-        if (privileges != null && privileges.size() > 0) {
-            for (Privilege privilege: privileges) {
-                privilege.setId(0);
-            }
-            privilegeService.deletePrivileges(privileges);
-        }
+        privilegeService.deletePrivileges(privileges);
 
-        return HttpResult.ok();
+        return HttpResult.ok("删除成功", (Object)null);
     }
 
     /**
