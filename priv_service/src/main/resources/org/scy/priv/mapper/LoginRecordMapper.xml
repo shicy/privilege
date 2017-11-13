@@ -4,20 +4,20 @@
 
     <!-- getById -->
     <select id="getById" resultType="LoginRecordModel">
-        select * from `login_recode` where id = #{id}
+        select * from `login_record` where id = #{id}
     </select>
 
     <!-- add -->
     <insert id="add" parameterType="LoginRecordModel" useGeneratedKeys="true" keyProperty="id">
-        insert into `login_recode` (userId, loginName, loginType, validcode, ip, domain, userAgent,
-            client, creatorId, createTime, paasId)
+        insert into `login_record` (userId, loginName, loginType, validcode, ip, domain, userAgent,
+            client, createTime, paasId)
         values (#{userId}, #{loginName}, #{loginType}, #{validcode}, #{ip}, #{domain}, #{userAgent},
-            #{client}, #{creatorId}, #{createTime}, #{paasId})
+            #{client}, #{createTime}, #{paasId})
     </insert>
 
     <!-- update -->
     <update id="update" parameterType="LoginRecordModel">
-        update `login_recode`
+        update `login_record`
         set userId = #{userId}, loginName = #{loginName}, loginType = #{loginType}, validcode = #{validcode},
             ip = #{ip}, domain = #{domain}, userAgent = #{userAgent}, client = #{client}
         where id = #{id}
@@ -25,17 +25,17 @@
 
     <!-- delete -->
     <delete id="delete" parameterType="LoginRecordModel">
-        delete from `login_recode` where id = #{id}
+        delete from `login_record` where id = #{id}
     </delete>
 
     <!-- find -->
     <select id="find" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecordModel">
-        select * from `login_recode` ${where} ${group} ${order} ${limit}
+        select * from `login_record` ${where} ${group} ${order} ${limit}
     </select>
 
     <!-- countFind -->
     <select id="countFind" parameterType="org.scy.common.ds.query.Selector" resultType="LoginRecordModel">
-        select count(id) as count from `login_recode` ${where} ${group}
+        select count(id) as count from `login_record` ${where} ${group}
     </select>
 
 </mapper>

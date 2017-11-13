@@ -251,3 +251,7 @@ ALTER TABLE `role` CHANGE COLUMN `createId` `creatorId` INT(11) NULL DEFAULT NUL
 
 -- 角色表字段名称错误更正 <2017-11-09 17:40:00>
 ALTER TABLE `role` CHANGE COLUMN `updateId` `updatorId` INT(11) NULL DEFAULT NULL;
+
+-- 登录相关 client 字段修改 <2017-11-13 14:50:00>
+ALTER TABLE `login_record` CHANGE COLUMN `client` `client` VARCHAR(100) NULL DEFAULT NULL COMMENT '客户端编号';
+ALTER TABLE `token` CHANGE COLUMN `client` `client` VARCHAR(100) NULL DEFAULT NULL COMMENT '客户端编号';
