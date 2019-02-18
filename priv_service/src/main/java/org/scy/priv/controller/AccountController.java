@@ -55,7 +55,7 @@ public class AccountController extends BaseController {
      * -param size
      * @return 帐户信息列表
      */
-    @RequestMapping(value = "/account/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/account/list")
     public Object list(HttpServletRequest request) {
         if (!SessionManager.isPlatform())
             return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
@@ -172,7 +172,7 @@ public class AccountController extends BaseController {
      * -param id 帐户编号
      * @return 返回新密钥
      */
-    @RequestMapping(value = "/account/changesecret/{accountId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/set/secret/{accountId}", method = RequestMethod.POST)
     public Object changeSecret(@PathVariable int accountId) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
@@ -188,7 +188,7 @@ public class AccountController extends BaseController {
      * 更改帐户状态
      * @return 返回新状态
      */
-    @RequestMapping(value = "/account/changestate/{accountId}/{state}", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/set/state/{accountId}/{state}", method = RequestMethod.POST)
     public Object changeState(@PathVariable int accountId, @PathVariable short state) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);

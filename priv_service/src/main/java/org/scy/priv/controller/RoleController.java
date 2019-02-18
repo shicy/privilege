@@ -46,7 +46,7 @@ public class RoleController extends BaseController {
      * -param page 当前分页页码
      * -param limit 分页大小，默认20
      */
-    @RequestMapping(value = "/role/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/role/list")
     public Object list(HttpServletRequest request) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", HttpUtilsEx.getStringValue(request, "name"));

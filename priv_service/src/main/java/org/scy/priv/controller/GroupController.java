@@ -50,7 +50,7 @@ public class GroupController extends BaseController {
      * -param page 当前分页页码
      * -param limit 每页大小，默认20
      */
-    @RequestMapping(value = "/group/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/group/list")
     public Object list(HttpServletRequest request) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", HttpUtilsEx.getStringValue(request, "name"));

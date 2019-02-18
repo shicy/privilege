@@ -46,7 +46,7 @@ public class ModuleController extends BaseController {
      * -param size
      * @return 返回模块列表
      */
-    @RequestMapping(value = "/module/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/module/list")
     public Object list(HttpServletRequest request) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("name", HttpUtilsEx.getStringValue(request, "name"));
