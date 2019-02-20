@@ -124,7 +124,7 @@ public class RoleController extends BaseController {
         if (roleModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "角色不存在");
 
-        return HttpResult.ok("删除成功");
+        return HttpResult.ok("删除成功", roleModel);
     }
 
     /**

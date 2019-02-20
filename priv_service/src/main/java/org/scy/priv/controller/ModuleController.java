@@ -123,7 +123,7 @@ public class ModuleController extends BaseController {
         if (moduleModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "模块不存在");
 
-        return HttpResult.ok("删除成功");
+        return HttpResult.ok("删除成功", moduleModel);
     }
 
 }

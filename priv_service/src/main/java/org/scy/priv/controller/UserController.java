@@ -10,6 +10,8 @@ import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.model.User;
 import org.scy.priv.model.UserModel;
+import org.scy.priv.service.GroupService;
+import org.scy.priv.service.RoleService;
 import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,12 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GroupService groupService;
+
+    @Autowired
+    private RoleService roleService;
+
     /**
      * 查询用户信息
      * 参数：
@@ -49,7 +57,7 @@ public class UserController extends BaseController {
      * -param size
      * @return 返回用户列表
      */
-    @RequestMapping(value = "/user/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/list")
     public Object list(HttpServletRequest request) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("code", HttpUtilsEx.getStringValue(request, "code"));
@@ -163,6 +171,53 @@ public class UserController extends BaseController {
     }
 
     /**
+     * 设置用户分组
+     * 参数：
+     * -param userId 用户编号
+     * -param groupIds 分组编号（逗号分隔）
+     * @return 用户信息
+     */
+    @RequestMapping(value = "/user/set/groups", method = RequestMethod.POST)
+    public Object updateUserGroups(@RequestParam int userId, @RequestParam String groupIds) {
+        UserModel user = userService.getById(userId);
+        if (user == null)
+            return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
+
+        if (groupIds != null) {
+            userService.deleteFromAllGroups(userId);
+            if (StringUtils.isNotBlank(groupIds)) {
+                int[] group_ids = ArrayUtilsEx.transStrToInt(StringUtils.split(groupIds, ","));
+                userService.addToGroups(userId, group_ids);
+            }
+        }
+
+        return HttpResult.ok("修改成功", groupService.getByUserId(userId));
+    }
+
+    /**
+     * 设置用户角色
+     * -param userId 用户编号
+     * -param roleIds 角色编号（逗号分隔）
+     * @return 用户信息
+     */
+    @RequestMapping(value = "/user/set/roles", method = RequestMethod.POST)
+    public Object updateUserRoles(@RequestParam int userId, @RequestParam String roleIds) {
+        UserModel user = userService.getById(userId);
+        if (user == null)
+            return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
+
+        if (roleIds != null) {
+            userService.deleteAllRoles(userId);
+            if (StringUtils.isNotBlank(roleIds)) {
+                int[] role_ids = ArrayUtilsEx.transStrToInt(StringUtils.split(roleIds, ","));
+                userService.addRoles(userId, role_ids);
+            }
+        }
+
+        return HttpResult.ok("修改成功", roleService.getByUserId(userId));
+    }
+
+    /**
      * 删除用户
      * 参数：
      * -param id 想要删除的用户编号
@@ -176,7 +231,7 @@ public class UserController extends BaseController {
         if (userModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
 
-        return HttpResult.ok("删除成功");
+        return HttpResult.ok("删除成功", userModel);
     }
 
     /**
@@ -186,7 +241,7 @@ public class UserController extends BaseController {
      * -param password 新密码
      * -param oldPassword 原密码
      */
-    @RequestMapping(value = "/user/changepassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/set/password", method = RequestMethod.POST)
     public Object changePassword(HttpServletRequest request) {
         int userId = HttpUtilsEx.getIntValue(request, "userId", -1);
         if (userId <= 0)
@@ -205,7 +260,7 @@ public class UserController extends BaseController {
     /**
      * 更改用户状态
      */
-    @RequestMapping(value = "/user/changestate/{userId}/{state}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/set/state/{userId}/{state}", method = RequestMethod.POST)
     public Object changeState(@PathVariable int userId, @PathVariable short state) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");

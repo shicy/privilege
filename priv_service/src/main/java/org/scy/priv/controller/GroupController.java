@@ -123,7 +123,7 @@ public class GroupController extends BaseController {
         if (groupModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "不存在的用户组编号");
 
-        return HttpResult.ok("删除成功");
+        return HttpResult.ok("删除成功", groupModel);
     }
 
     /**

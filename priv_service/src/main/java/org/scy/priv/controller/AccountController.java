@@ -163,7 +163,7 @@ public class AccountController extends BaseController {
         if (accountModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "不存在的帐户信息");
 
-        return HttpResult.ok("删除成功");
+        return HttpResult.ok("删除成功", accountModel);
     }
 
     /**
