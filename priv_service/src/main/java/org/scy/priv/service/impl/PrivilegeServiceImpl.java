@@ -497,7 +497,7 @@ public class PrivilegeServiceImpl extends MybatisBaseService implements Privileg
      * 试着刷新用户权限信息，当权限修改时，相关用户的权限信息被清除，等待适当时机刷新
      * 当该用户没有记录，或记录的第一条 moduleId 为 0 时刷新用户权限
      */
-    private void tryRefreshUserPrivileges(int userId) {
+    public void tryRefreshUserPrivileges(int userId) {
         List<PrivilegeModel> privilegeModels = privilegeMapper.getUserPrivsForRefresh(userId);
         if (privilegeModels != null && privilegeModels.size() > 0 && privilegeModels.get(0).getModuleId() > 0)
             return ;

@@ -62,6 +62,17 @@ public class ModuleController extends BaseController {
     }
 
     /**
+     * 获取用户的模块信息
+     * -param userId 用户编号
+     * @return 返回模块列表
+     */
+    @RequestMapping(value = "/module/getbyuser/{userId}")
+    public Object getUserModules(@PathVariable int userId) {
+        List<ModuleModel> moduleModels = moduleService.findByUser(userId);
+        return HttpResult.ok(moduleModels);
+    }
+
+    /**
      * 新增模块
      * 参数：
      * -param code 模块编码

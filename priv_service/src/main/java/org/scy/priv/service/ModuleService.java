@@ -98,4 +98,11 @@ public interface ModuleService {
      */
     List<ModuleModel> find(Map<String, Object> params, PageInfo pageInfo);
 
+    /**
+     * 获取用户的模块信息
+     * @param userId 用户编号
+     * @return 返回模块列表
+     */
+    List<ModuleModel> findByUser(int userId);
+
 }

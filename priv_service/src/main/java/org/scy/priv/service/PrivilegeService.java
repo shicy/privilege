@@ -37,4 +37,6 @@ public interface PrivilegeService {
     List<PrivilegeModel> checkByModuleCodes(int userId, String[] moduleCodes);
     List<PrivilegeModel> checkByModuleNames(int userId, String[] moduleNames);
 
+    void tryRefreshUserPrivileges(int userId);
+
 }

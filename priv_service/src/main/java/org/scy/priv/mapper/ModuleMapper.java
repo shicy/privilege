@@ -22,4 +22,6 @@ public interface ModuleMapper extends BaseMapper<ModuleModel> {
     List<ModuleModel> getByNames(@Param("names") String[] names, @Param("paasId") int paasId);
     List<ModuleModel> getByParentId(@Param("parentId") int parentId, @Param("paasId") int paasId);
 
+    List<ModuleModel> getByUserId(@Param("userId") int userId);
+
 }

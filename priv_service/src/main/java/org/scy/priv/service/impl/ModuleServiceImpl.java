@@ -13,6 +13,7 @@ import org.scy.priv.mapper.PrivilegeMapper;
 import org.scy.priv.model.Module;
 import org.scy.priv.model.ModuleModel;
 import org.scy.priv.service.ModuleService;
+import org.scy.priv.service.PrivilegeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
 
     @Autowired
     private PrivilegeMapper privilegeMapper;
+
+    @Autowired
+    private PrivilegeService privilegeService;
 
     @Override
     public ModuleModel getById(int id) {
@@ -278,4 +282,14 @@ public class ModuleServiceImpl extends MybatisBaseService implements ModuleServi
         return moduleMapper.find(selector);
     }
 
+    /**
+     * 获取用户的模块信息
+     * @param userId 用户编号
+     * @return 返回模块列表
+     */
+    @Override
+    public List<ModuleModel> findByUser(int userId) {
+        privilegeService.tryRefreshUserPrivileges(userId);
+        return moduleMapper.getByUserId(userId);
+    }
 }

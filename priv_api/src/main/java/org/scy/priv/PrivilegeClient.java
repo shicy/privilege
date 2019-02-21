@@ -254,6 +254,13 @@ public interface PrivilegeClient {
     HttpResult findModule(@RequestBody ModuleForm module);
 
     /**
+     * 获取用户的模块信息
+     * @param userId 用户编号
+     */
+    @RequestMapping(value = "/module/getbyuser/{userId}", method = RequestMethod.GET)
+    HttpResult getUserModules(@PathVariable int userId);
+
+    /**
      * 添加模块
      * @param module 模块信息
      */
@@ -276,43 +283,103 @@ public interface PrivilegeClient {
     HttpResult deleteModule(@PathVariable int moduleId, @RequestParam String force);
 
 
+    /**
+     * 获取用户配置的授权信息
+     * @param userId 用户编号
+     */
     @RequestMapping(value = "/privs/list/user/{userId}", method = RequestMethod.GET)
     HttpResult getUserPrivileges(@PathVariable int userId);
 
+    /**
+     * 获取用户所有授权信息，包括该用户的分组、角色的授权信息（包含子模块）
+     * @param userId 用户编号
+     */
     @RequestMapping(value = "/privs/getallbyuser/{userId}", method = RequestMethod.GET)
     HttpResult getUserPrivilegesAll(@PathVariable int userId);
 
+    /**
+     * 获取分组配置的授权信息
+     * @param groupId 分组编号
+     */
     @RequestMapping(value = "/privs/list/group/{groupId}", method = RequestMethod.GET)
     HttpResult getGroupPrivileges(@PathVariable int groupId);
 
+    /**
+     * 获取角色配置的授权信息
+     * @param roleId 角色编号
+     */
     @RequestMapping(value = "/privs/list/role/{roleId}", method = RequestMethod.GET)
     HttpResult getRolePrivileges(@PathVariable int roleId);
 
+    /**
+     * 添加授权
+     * @param privilege 授权信息
+     */
     @RequestMapping(value = "/privs/add", method = RequestMethod.POST)
     HttpResult addPrivilege(@RequestBody Privilege privilege);
 
+    /**
+     * 批量添加授权
+     * @param items privilege的JSON格式
+     */
     @RequestMapping(value = "/privs/addbatch", method = RequestMethod.POST)
     HttpResult addPrivileges(@RequestParam String items);
 
+    /**
+     * 删除授权
+     * @param privilege 删除条件
+     */
     @RequestMapping(value = "/privs/delete", method = RequestMethod.POST)
     HttpResult deletePrivileges(@RequestBody Privilege privilege);
 
+    /**
+     * 批量删除授权
+     * @param items 删除条件，privilege的JSON格式
+     */
     @RequestMapping(value = "/privs/deletebatch", method = RequestMethod.POST)
     HttpResult deletePrivileges(@RequestParam String items);
 
+    /**
+     * 用户授权
+     * @param userId 用户编号
+     * @param items 授权信息，privilege的JSON格式
+     */
     @RequestMapping(value = "/privs/set/user", method = RequestMethod.POST)
     HttpResult setUserPrivileges(@RequestParam int userId, @RequestParam String items);
 
+    /**
+     * 分组授权
+     * @param groupId 分组编号
+     * @param items 授权信息，privilege的JSON格式
+     */
     @RequestMapping(value = "/privs/set/group", method = RequestMethod.POST)
     HttpResult setGroupPrivileges(@RequestParam int groupId, @RequestParam String items);
 
+    /**
+     * 角色授权
+     * @param roleId 角色编号
+     * @param items 授权信息，privilege的JSON格式
+     */
     @RequestMapping(value = "/privs/set/role", method = RequestMethod.POST)
     HttpResult setRolePrivileges(@RequestParam int roleId, @RequestParam String items);
 
+    /**
+     * 检查用户的授权信息
+     * @param userId 用户编号
+     * @param moduleIds 模块编号（逗号分隔）
+     * @param moduleCodes 模块编码（逗号分隔）
+     * @param moduleNames 模块名称（逗号分隔）
+     * @return 返回已授权信息
+     */
     @RequestMapping(value = "/privs/check/{userId}", method = RequestMethod.POST)
     HttpResult checkUserModules(@PathVariable int userId, @RequestParam String moduleIds,
         @RequestParam String moduleCodes, @RequestParam String moduleNames);
 
+    /**
+     * 获取用户某个模块的授权值
+     * @param userId 用户编号
+     * @param module 模块编码
+     */
     @RequestMapping(value = "/privs/check/{userId}/{module}", method = RequestMethod.POST)
     HttpResult getUserGrantType(@PathVariable int userId, @PathVariable String module);
 

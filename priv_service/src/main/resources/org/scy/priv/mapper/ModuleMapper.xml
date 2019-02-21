@@ -80,4 +80,9 @@
         select * from `module` where parentId = #{parentId} and paasId = #{paasId} and state > 0
     </select>
 
+    <!-- getByUserId -->
+    <select id="getByUserId" resultType="ModuleModel">
+        select a.* from `module` as a, `user_privs` as b where a.id = b.moduleId and b.userId = #{userId}
+    </select>
+
 </mapper>
