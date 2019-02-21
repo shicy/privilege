@@ -80,6 +80,6 @@
 * 缓存服务器：app.cache-service.url
 
 ### 启动服务
-允许 org.scy.priv.App
+运行 org.scy.priv.App
 
 需要引用`jcoms`、`cache_api`
