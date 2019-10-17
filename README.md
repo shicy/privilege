@@ -83,3 +83,11 @@
 运行 org.scy.priv.App
 
 需要引用`jcoms`、`cache_api`
+
+### 打包发布
+mvn clean package -f pom.xml -P prod   
+IDEL 配置选项 Profiles 为 prod
+
+### 部署
+cd ../privilege/priv_service/target   
+scp privilege.war root@47.111.123.77:/mnt/service/privilege.war
