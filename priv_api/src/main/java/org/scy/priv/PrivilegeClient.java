@@ -18,7 +18,7 @@ public interface PrivilegeClient {
      * @param accountId 账户编号
      */
     @RequestMapping(value = "/account/info/{accountId}", method = RequestMethod.GET)
-    HttpResult getAccountInfo(@PathVariable int accountId);
+    HttpResult getAccountInfo(@PathVariable("accountId") int accountId);
 
     /**
      * 查询账户信息
@@ -46,14 +46,14 @@ public interface PrivilegeClient {
      * @param accountId 账户编号
      */
     @RequestMapping(value = "/account/delete/{accountId}", method = RequestMethod.POST)
-    HttpResult deleteAccount(@PathVariable int accountId);
+    HttpResult deleteAccount(@PathVariable("accountId") int accountId);
 
     /**
      * 重置账户密钥
      * @param accountId 账户编号
      */
     @RequestMapping(value = "/account/set/secret/{accountId}", method = RequestMethod.POST)
-    HttpResult makeAccountSecret(@PathVariable int accountId);
+    HttpResult makeAccountSecret(@PathVariable("accountId") int accountId);
 
     /**
      * 修改账户状态
@@ -61,7 +61,7 @@ public interface PrivilegeClient {
      * @param state 新的状态
      */
     @RequestMapping(value = "/account/set/state/{accountId}/{state}", method = RequestMethod.POST)
-    HttpResult setAccountState(@PathVariable int accountId, @PathVariable short state);
+    HttpResult setAccountState(@PathVariable("accountId") int accountId, @PathVariable("state") short state);
 
 
     /**
@@ -76,7 +76,7 @@ public interface PrivilegeClient {
      * @param userId 用户编号
      */
     @RequestMapping(value = "/group/list/user/{userId}", method = RequestMethod.GET)
-    HttpResult getUserGroups(@PathVariable int userId);
+    HttpResult getUserGroups(@PathVariable("userId") int userId);
 
     /**
      * 添加分组
@@ -97,7 +97,7 @@ public interface PrivilegeClient {
      * @param groupId 被删除的分组编号
      */
     @RequestMapping(value = "/group/delete/{groupId}", method = RequestMethod.POST)
-    HttpResult deleteGroup(@PathVariable int groupId);
+    HttpResult deleteGroup(@PathVariable("groupId") int groupId);
 
     /**
      * 将一个（或多个）用户添加到分组
@@ -105,7 +105,7 @@ public interface PrivilegeClient {
      * @param userIds 用户编号，多个用户逗号分隔
      */
     @RequestMapping(value = "/group/user/add", method = RequestMethod.POST)
-    HttpResult addGroupUser(@RequestParam int groupId, @RequestParam String userIds);
+    HttpResult addGroupUser(@RequestParam("groupId") int groupId, @RequestParam("userIds") String userIds);
 
     /**
      * 将一个（或多个）用户从分组中移除
@@ -113,14 +113,14 @@ public interface PrivilegeClient {
      * @param userIds 用户编号，多个用户逗号分隔
      */
     @RequestMapping(value = "/group/user/delete", method = RequestMethod.POST)
-    HttpResult deleteGroupUser(@RequestParam int groupId, @RequestParam String userIds);
+    HttpResult deleteGroupUser(@RequestParam("groupId") int groupId, @RequestParam("userIds") String userIds);
 
     /**
      * 将多有用户从分组中移除
      * @param groupId 所属分组编号
      */
     @RequestMapping(value = "/group/user/clear/{groupId}", method = RequestMethod.POST)
-    HttpResult deleteAllGroupUsers(@PathVariable int groupId);
+    HttpResult deleteAllGroupUsers(@PathVariable("groupId") int groupId);
 
 
     /**
@@ -135,7 +135,7 @@ public interface PrivilegeClient {
      * @param userId 用户编号
      */
     @RequestMapping(value = "/role/list/user/{userId}", method = RequestMethod.GET)
-    HttpResult getUserRoles(@PathVariable int userId);
+    HttpResult getUserRoles(@PathVariable("userId") int userId);
 
     /**
      * 添加角色
@@ -156,7 +156,7 @@ public interface PrivilegeClient {
      * @param roleId 被删除的角色编号
      */
     @RequestMapping(value = "/role/delete/{roleId}", method = RequestMethod.POST)
-    HttpResult deleteRole(@PathVariable int roleId);
+    HttpResult deleteRole(@PathVariable("roleId") int roleId);
 
     /**
      * 将一个（或多个）用户赋予该角色
@@ -164,7 +164,7 @@ public interface PrivilegeClient {
      * @param userIds 用户编号，多个用户逗号分隔
      */
     @RequestMapping(value = "/role/user/add", method = RequestMethod.POST)
-    HttpResult addRoleUser(@RequestParam int roleId, @RequestParam String userIds);
+    HttpResult addRoleUser(@RequestParam("roleId") int roleId, @RequestParam("userIds") String userIds);
 
     /**
      * 将一个（或多个）用户移除该角色
@@ -172,14 +172,14 @@ public interface PrivilegeClient {
      * @param userIds 用户编号，多个用户逗号分隔
      */
     @RequestMapping(value = "/role/user/delete", method = RequestMethod.POST)
-    HttpResult deleteRoleUser(@RequestParam int roleId, @RequestParam String userIds);
+    HttpResult deleteRoleUser(@RequestParam("roleId") int roleId, @RequestParam("userIds") String userIds);
 
     /**
      * 移除该角色的所有用户信息
      * @param roleId 角色编号
      */
     @RequestMapping(value = "/role/user/clear/{roleId}", method = RequestMethod.POST)
-    HttpResult deleteAllRoleUsers(@PathVariable int roleId);
+    HttpResult deleteAllRoleUsers(@PathVariable("roleId") int roleId);
 
 
     /**
@@ -196,7 +196,8 @@ public interface PrivilegeClient {
      * @param roleIds 赋予角色
      */
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-    HttpResult addUser(@RequestBody User user, @RequestParam String groupIds, @RequestParam String roleIds);
+    HttpResult addUser(@RequestBody User user, @RequestParam("groupIds") String groupIds,
+        @RequestParam("roleIds") String roleIds);
 
     /**
      * 修改用户
@@ -210,7 +211,7 @@ public interface PrivilegeClient {
      * @param userId 被删除的用户编号
      */
     @RequestMapping(value = "/user/delete/{userId}", method = RequestMethod.POST)
-    HttpResult deleteUser(@PathVariable int userId);
+    HttpResult deleteUser(@PathVariable("userId") int userId);
 
     /**
      * 修改用户密码
@@ -219,7 +220,8 @@ public interface PrivilegeClient {
      * @param oldPassword 旧密码
      */
     @RequestMapping(value = "/user/set/password", method = RequestMethod.POST)
-    HttpResult setUserPassword(@RequestParam int userId, @RequestParam String password, @RequestParam String oldPassword);
+    HttpResult setUserPassword(@RequestParam("userId") int userId, @RequestParam("password") String password,
+        @RequestParam("oldPassword") String oldPassword);
 
     /**
      * 修改用户状态
@@ -227,7 +229,7 @@ public interface PrivilegeClient {
      * @param state 新用户状态
      */
     @RequestMapping(value = "/user/set/state/{userId}/{state}", method = RequestMethod.POST)
-    HttpResult setUserState(@PathVariable int userId, @PathVariable short state);
+    HttpResult setUserState(@PathVariable("userId") int userId, @PathVariable("state") short state);
 
     /**
      * 设置用户分组（将删除用户原分组）
@@ -235,7 +237,7 @@ public interface PrivilegeClient {
      * @param groupIds 新的分组编号，多个值逗号分隔
      */
     @RequestMapping(value = "/user/set/groups", method = RequestMethod.POST)
-    HttpResult setUserGroups(@RequestParam int userId, @RequestParam String groupIds);
+    HttpResult setUserGroups(@RequestParam("userId") int userId, @RequestParam("groupIds") String groupIds);
 
     /**
      * 设置用户角色（将删除用户原角色）
@@ -243,7 +245,7 @@ public interface PrivilegeClient {
      * @param roleIds 新的角色编号，多个值逗号分隔
      */
     @RequestMapping(value = "/user/set/roles", method = RequestMethod.POST)
-    HttpResult setUserRoles(@RequestParam int userId, @RequestParam String roleIds);
+    HttpResult setUserRoles(@RequestParam("userId") int userId, @RequestParam("roleIds") String roleIds);
 
 
     /**
@@ -258,7 +260,7 @@ public interface PrivilegeClient {
      * @param userId 用户编号
      */
     @RequestMapping(value = "/module/getbyuser/{userId}", method = RequestMethod.GET)
-    HttpResult getUserModules(@PathVariable int userId);
+    HttpResult getUserModules(@PathVariable("userId") int userId);
 
     /**
      * 添加模块
@@ -280,7 +282,7 @@ public interface PrivilegeClient {
      * @param force 是否强制删除，如果存在子模块需强制才能删除
      */
     @RequestMapping(value = "/module/delete/{moduleId}", method = RequestMethod.POST)
-    HttpResult deleteModule(@PathVariable int moduleId, @RequestParam String force);
+    HttpResult deleteModule(@PathVariable("moduleId") int moduleId, @RequestParam("force") String force);
 
 
     /**
@@ -288,28 +290,28 @@ public interface PrivilegeClient {
      * @param userId 用户编号
      */
     @RequestMapping(value = "/privs/list/user/{userId}", method = RequestMethod.GET)
-    HttpResult getUserPrivileges(@PathVariable int userId);
+    HttpResult getUserPrivileges(@PathVariable("userId") int userId);
 
     /**
      * 获取用户所有授权信息，包括该用户的分组、角色的授权信息（包含子模块）
      * @param userId 用户编号
      */
     @RequestMapping(value = "/privs/getallbyuser/{userId}", method = RequestMethod.GET)
-    HttpResult getUserPrivilegesAll(@PathVariable int userId);
+    HttpResult getUserPrivilegesAll(@PathVariable("userId") int userId);
 
     /**
      * 获取分组配置的授权信息
      * @param groupId 分组编号
      */
     @RequestMapping(value = "/privs/list/group/{groupId}", method = RequestMethod.GET)
-    HttpResult getGroupPrivileges(@PathVariable int groupId);
+    HttpResult getGroupPrivileges(@PathVariable("groupId") int groupId);
 
     /**
      * 获取角色配置的授权信息
      * @param roleId 角色编号
      */
     @RequestMapping(value = "/privs/list/role/{roleId}", method = RequestMethod.GET)
-    HttpResult getRolePrivileges(@PathVariable int roleId);
+    HttpResult getRolePrivileges(@PathVariable("roleId") int roleId);
 
     /**
      * 添加授权
@@ -323,7 +325,7 @@ public interface PrivilegeClient {
      * @param items privilege的JSON格式
      */
     @RequestMapping(value = "/privs/addbatch", method = RequestMethod.POST)
-    HttpResult addPrivileges(@RequestParam String items);
+    HttpResult addPrivileges(@RequestParam("items") String items);
 
     /**
      * 删除授权
@@ -337,7 +339,7 @@ public interface PrivilegeClient {
      * @param items 删除条件，privilege的JSON格式
      */
     @RequestMapping(value = "/privs/deletebatch", method = RequestMethod.POST)
-    HttpResult deletePrivileges(@RequestParam String items);
+    HttpResult deletePrivileges(@RequestParam("items") String items);
 
     /**
      * 用户授权
@@ -345,7 +347,7 @@ public interface PrivilegeClient {
      * @param items 授权信息，privilege的JSON格式
      */
     @RequestMapping(value = "/privs/set/user", method = RequestMethod.POST)
-    HttpResult setUserPrivileges(@RequestParam int userId, @RequestParam String items);
+    HttpResult setUserPrivileges(@RequestParam("userId") int userId, @RequestParam("items") String items);
 
     /**
      * 分组授权
@@ -353,7 +355,7 @@ public interface PrivilegeClient {
      * @param items 授权信息，privilege的JSON格式
      */
     @RequestMapping(value = "/privs/set/group", method = RequestMethod.POST)
-    HttpResult setGroupPrivileges(@RequestParam int groupId, @RequestParam String items);
+    HttpResult setGroupPrivileges(@RequestParam("groupId") int groupId, @RequestParam("items") String items);
 
     /**
      * 角色授权
@@ -361,7 +363,7 @@ public interface PrivilegeClient {
      * @param items 授权信息，privilege的JSON格式
      */
     @RequestMapping(value = "/privs/set/role", method = RequestMethod.POST)
-    HttpResult setRolePrivileges(@RequestParam int roleId, @RequestParam String items);
+    HttpResult setRolePrivileges(@RequestParam("roleId") int roleId, @RequestParam("items") String items);
 
     /**
      * 检查用户的授权信息
@@ -372,8 +374,8 @@ public interface PrivilegeClient {
      * @return 返回已授权信息
      */
     @RequestMapping(value = "/privs/check/{userId}", method = RequestMethod.POST)
-    HttpResult checkUserModules(@PathVariable int userId, @RequestParam String moduleIds,
-        @RequestParam String moduleCodes, @RequestParam String moduleNames);
+    HttpResult checkUserModules(@PathVariable("userId") int userId, @RequestParam("moduleIds") String moduleIds,
+        @RequestParam("moduleCodes") String moduleCodes, @RequestParam("moduleNames") String moduleNames);
 
     /**
      * 获取用户某个模块的授权值
@@ -381,6 +383,6 @@ public interface PrivilegeClient {
      * @param module 模块编码
      */
     @RequestMapping(value = "/privs/check/{userId}/{module}", method = RequestMethod.POST)
-    HttpResult getUserGrantType(@PathVariable int userId, @PathVariable String module);
+    HttpResult getUserGrantType(@PathVariable("userId") int userId, @PathVariable("module") String module);
 
 }
