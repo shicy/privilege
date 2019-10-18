@@ -16,7 +16,14 @@ public class App extends BaseApplication {
      * 主函数
      */
     public static void main(String[] args) throws Exception {
-        new App().run(args);
+        System.out.println("33333333333333333>>");
+        BaseApplication.startup(App.class, args);
+    }
+
+    public App() {
+        super();
+        System.out.println("aaaaaaaaaaaaaaaaaaa");
+        this.run();
     }
 
     @Override
