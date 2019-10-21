@@ -15,7 +15,6 @@ public class TomcatApp extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        System.out.println("22222222222222222222---");
         return builder.sources(App.class);
     }
 
