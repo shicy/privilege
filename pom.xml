@@ -40,6 +40,14 @@
         </profile>
 
         <profile>
+            <id>test</id>
+            <properties>
+                <env>test</env>
+                <package.type>war</package.type>
+            </properties>
+        </profile>
+
+        <profile>
             <id>prod</id>
             <properties>
                 <env>prod</env>
