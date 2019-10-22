@@ -22,5 +22,4 @@ public class IndexController extends BaseController {
         return HttpResult.ok("ok");
     }
 
-
 }
