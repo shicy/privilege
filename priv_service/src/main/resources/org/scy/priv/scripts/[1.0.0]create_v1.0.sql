@@ -256,5 +256,5 @@ ALTER TABLE `role` CHANGE COLUMN `updateId` `updatorId` INT(11) NULL DEFAULT NUL
 ALTER TABLE `login_record` CHANGE COLUMN `client` `client` VARCHAR(100) NULL DEFAULT NULL COMMENT '客户端编号';
 ALTER TABLE `token` CHANGE COLUMN `client` `client` VARCHAR(100) NULL DEFAULT NULL COMMENT '客户端编号';
 
--- 模块表字段 paasId 类型修改 <2019-10-22 09:40:00>
-ALTER TABLE db_priv_dev.module CHANGE COLUMN `paasId` `paasId` INT(11) NULL;
+-- 模块表字段 paasId 类型修改 <2019-10-23 10:40:00>
+ALTER TABLE `module` CHANGE COLUMN `paasId` `paasId` INT(11) NULL;
