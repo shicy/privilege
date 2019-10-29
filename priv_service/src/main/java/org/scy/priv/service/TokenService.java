@@ -1,5 +1,6 @@
 package org.scy.priv.service;
 
+import org.scy.common.web.model.ValidInfo;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.model.UserModel;
 
@@ -89,9 +90,8 @@ public interface TokenService {
 
     /**
      * 获取登录验证码
-     * @return 返回{codeId, imageUrl}
      */
-    Map<String, Object> getLoginValidateInfo();
+    ValidInfo getLoginValidateInfo();
 
     /**
      * 发送登录手机验证码

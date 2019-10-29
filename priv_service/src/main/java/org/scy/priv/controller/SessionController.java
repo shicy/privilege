@@ -6,6 +6,7 @@ import org.scy.common.annotation.AccessToken;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
+import org.scy.common.web.model.ValidInfo;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.model.UserModel;
@@ -199,8 +200,8 @@ public class SessionController extends BaseController {
      */
     @RequestMapping(value = "/login/code", method = RequestMethod.GET)
     public Object getValidCode() {
-        Map<String, Object> validateInfo = tokenService.getLoginValidateInfo();
-        return HttpResult.ok(validateInfo);
+        ValidInfo validInfo = tokenService.getLoginValidateInfo();
+        return HttpResult.ok(validInfo);
     }
 
     /**

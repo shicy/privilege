@@ -11,6 +11,7 @@ import org.scy.common.exception.ResultException;
 import org.scy.common.manager.SchedulerManager;
 import org.scy.common.utils.StringUtilsEx;
 import org.scy.common.utils.ValidCodeUtils;
+import org.scy.common.web.model.ValidInfo;
 import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.manager.TokenManager;
@@ -229,7 +230,7 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
     }
 
     @Override
-    public Map<String, Object> getLoginValidateInfo() {
+    public ValidInfo getLoginValidateInfo() {
         String codeId = null;
         while (codeId == null) {
             // 生成 8 位验证码编号
@@ -244,11 +245,10 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         // 放入缓存，有效期 15 分钟
         CachedClientAdapter.set("login_code_" + codeId, codeValue, 15 * 60);
 
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("codeId", codeId);
-        data.put("imageUrl", image);
-
-        return data;
+        ValidInfo validInfo = new ValidInfo();
+        validInfo.setCode(codeId);
+        validInfo.setImageUrl(image);
+        return validInfo;
     }
 
     @Override
