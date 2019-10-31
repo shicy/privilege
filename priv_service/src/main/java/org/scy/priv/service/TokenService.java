@@ -58,19 +58,18 @@ public interface TokenService {
     String doLogin(Map<String, Object> params);
 
     /**
-     * 用户通过手机短信验证码登录
-     *
-     * @param params 参数
-     *      -mobile 登录名称：用户名、手机号或邮箱
+     * 用户免密登录
+     * @param params 参数：
+     *      -username 登录名称：用户名、手机号或邮箱
      *      -expires Token 有效期限（秒）
-     *      -validCode 验证码
+     *      -loginType 指定登录方式，1-用户名称 2-手机号码 3-邮箱 0-所有
      *      -ip 用户 IP 地址
      *      -domain 域名
      *      -userAgent 浏览器信息
      *      -client 客户端编号 uuid
      * @return 返回该用户的 Token 信息
      */
-    String doLoginByMobile(Map<String, Object> params);
+    String doLoginWithoutPassword(Map<String, Object> params);
 
     /**
      * 用户退出登录

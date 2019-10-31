@@ -136,29 +136,39 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
     }
 
     /**
-     * @param params 参数
-     *      -mobile 登录名称：用户名、手机号或邮箱
+     * 用户免密登录
+     * @param params 参数：
+     *      -username 登录名称：用户名、手机号或邮箱
      *      -expires Token 有效期限（秒）
-     *      -validCode 验证码
+     *      -loginType 指定登录方式，1-用户名称 2-手机号码 3-邮箱 0-所有
      *      -ip 用户 IP 地址
      *      -domain 域名
      *      -userAgent 浏览器信息
      *      -client 客户端编号 uuid
+     * @return 返回该用户的 Token 信息
      */
     @Override
-    public String doLoginByMobile(Map<String, Object> params) {
-        // 手机号码
-        String mobile = (String)params.get("mobile");
-        if (StringUtils.isBlank(mobile))
-            throw new ResultException(10001, "手机号码不能为空");
+    public String doLoginWithoutPassword(Map<String, Object> params) {
+        // 登录名称
+        String username = (String)params.get("username");
+        if (StringUtils.isBlank(username))
+            throw new ResultException(10001, "登录名称不能为空");
 
-        // 验证码
-        if (!checkValidCode(mobile, (String)params.get("validCode")))
-            throw new ResultException(10002, "验证码错误");
+        UserModel userModel = null;
 
-        UserModel userModel = userService.getByMobile(mobile);
+        int loginType = (Integer)params.get("loginType");
+        if (loginType <= 0 || loginType == Const.LOGIN_TYPE_NAME) {
+            userModel = userService.getByName(username);
+        }
+        if (userModel == null && (loginType <= 0 || loginType == Const.LOGIN_TYPE_MOBILE)) {
+            userModel = userService.getByMobile(username);
+        }
+        if (userModel == null && (loginType <= 0 || loginType == Const.LOGIN_TYPE_EMAIL)) {
+            userModel = userService.getByEmail(username);
+        }
+
         if (userModel == null)
-            throw new ResultException(10003, "用户不存在");
+            throw new ResultException(10004, "用户名不存在");
 
         return doLoginInner(userModel, params);
     }
@@ -246,7 +256,7 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         CachedClientAdapter.set("login_code_" + codeId, codeValue, 15 * 60);
 
         ValidInfo validInfo = new ValidInfo();
-        validInfo.setCode(codeId);
+        validInfo.setCodeId(codeId);
         validInfo.setImageUrl(image);
         return validInfo;
     }

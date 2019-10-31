@@ -7,6 +7,7 @@ import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.common.web.model.ValidInfo;
+import org.scy.common.web.session.LoginForm;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.model.UserModel;
@@ -128,49 +129,46 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Object login(HttpServletRequest request, HttpServletResponse response) {
+    public Object login(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("username", HttpUtilsEx.getStringValue(request, "username"));
-        params.put("password", HttpUtilsEx.getStringValue(request, "password"));
-        params.put("loginType", HttpUtilsEx.getIntValue(request, "loginType", 0));
-        params.put("validCode", HttpUtilsEx.getStringValue(request, "validCode"));
-        params.put("validCodeId", HttpUtilsEx.getStringValue(request, "validCodeId"));
-        params.put("expires", HttpUtilsEx.getIntValue(request, "expires", 0));
+        params.put("username", loginForm.getUsername());
+        params.put("password", loginForm.getPassword());
+        params.put("loginType", loginForm.getLoginType());
+        params.put("validCode", loginForm.getValidCode());
+        params.put("validCodeId", loginForm.getValidCodeId());
+        params.put("expires", loginForm.getExpires());
         params.put("ip", HttpUtilsEx.getIP(request));
         params.put("domain", request.getServerName());
         params.put("userAgent", request.getHeader("User-Agent"));
         params.put("client", SessionManager.uuid.get());
+
         String token = tokenService.doLogin(params);
-
         setTokenCookie(response, token, (Integer)params.get("expires"));
-
         return HttpResult.ok(token);
     }
 
     /**
-     * 通过手机号码登录
-     * 参数
-     * -param mobile 手机号码
-     * -param validCode 手机验证码
+     * 免密登录
+     * -param username 用户名称、手机号或邮箱
      * -param expires 有效期（秒），大于零时有效，否则无限期
+     * -param loginType 登录方式，默认所有登录方式
      * @return 登录成功将返回用户token信息
      */
     @AccessToken
-    @RequestMapping(value = "/login/mobile", method = RequestMethod.POST)
-    public Object loginByMobile(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/loginWithoutPassword", method = RequestMethod.POST)
+    public Object loginWithoutPassword(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm) {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("mobile", HttpUtilsEx.getStringValue(request, "mobile"));
-        params.put("validCode", HttpUtilsEx.getStringValue(request, "validCode"));
+        params.put("username", loginForm.getUsername());
+        params.put("loginType", loginForm.getLoginType());
         params.put("expires", HttpUtilsEx.getIntValue(request, "expires", 0));
         params.put("ip", HttpUtilsEx.getIP(request));
         params.put("domain", request.getServerName());
         params.put("userAgent", request.getHeader("User-Agent"));
         params.put("client", SessionManager.uuid.get());
-        String token = tokenService.doLoginByMobile(params);
 
+        String token = tokenService.doLoginWithoutPassword(params);
         setTokenCookie(response, token, (Integer)params.get("expires"));
-
-        return HttpResult.ok(token);
+        return null;
     }
 
     /**
