@@ -89,8 +89,14 @@ public interface TokenService {
 
     /**
      * 获取登录验证码
+     * @param expires 有效期，分钟（默认15分钟）
      */
-    ValidInfo getLoginValidateInfo();
+    ValidInfo getValidateInfo(int expires);
+
+    /**
+     * 验证码校验
+     */
+    boolean checkValidateCode(String codeId, String code);
 
     /**
      * 发送登录手机验证码

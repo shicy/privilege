@@ -80,6 +80,25 @@ public class SessionController extends BaseController {
     }
 
     /**
+     * 获取登录验证码，图片格式
+     * @return 返回验证码信息{codeId, imageUrl}
+     */
+    @RequestMapping(value = {"/valid/code", "/valid/code/{expires}"}, method = RequestMethod.GET)
+    public Object getValidCode(@PathVariable(value = "expires", required = false) Integer expires) {
+        ValidInfo validInfo = tokenService.getValidateInfo(expires == null ? 0 : expires);
+        return HttpResult.ok(validInfo);
+    }
+
+    /**
+     * 验证码校验
+     */
+    @RequestMapping(value = "/valid/code/{codeId}/{code}", method = RequestMethod.GET)
+    public Object checkValidCode(@PathVariable("codeId") String codeId, @PathVariable("code") String code) {
+        boolean validate = tokenService.checkValidateCode(codeId, code);
+        return HttpResult.ok(validate ? "1" : "0");
+    }
+
+    /**
      * 获取帐户信息
      */
     @AccessToken
@@ -190,16 +209,6 @@ public class SessionController extends BaseController {
         removeTokenCookie(response);
 
         return HttpResult.ok();
-    }
-
-    /**
-     * 获取登录验证码，图片格式
-     * @return 返回验证码信息{codeId, imageUrl}
-     */
-    @RequestMapping(value = "/login/code", method = RequestMethod.GET)
-    public Object getValidCode() {
-        ValidInfo validInfo = tokenService.getLoginValidateInfo();
-        return HttpResult.ok(validInfo);
     }
 
     /**

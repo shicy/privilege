@@ -1,6 +1,7 @@
 package org.scy.priv.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import org.apache.commons.lang3.StringUtils;
 import org.scy.common.web.model.BaseModel;
 
 import java.util.Date;
@@ -49,6 +50,24 @@ public class User extends BaseModel {
 
     // 用户角色信息
     private List<Role> roles;
+
+    /**
+     * 转化为平台用户
+     */
+    public org.scy.common.web.session.User toPlatUser() {
+        org.scy.common.web.session.User user = new org.scy.common.web.session.User();
+        user.setId(this.getId());
+        if (StringUtils.isBlank(name))
+            user.setName(name);
+        else if (StringUtils.isBlank(mobile))
+            user.setName(mobile);
+        else if (StringUtils.isBlank(email))
+            user.setName(email);
+        user.setRemark(this.getRemark());
+        user.setType(this.getType());
+        user.setState(getState());
+        return null;
+    }
 
     /**
      * 获取用户编码

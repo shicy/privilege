@@ -240,7 +240,7 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
     }
 
     @Override
-    public ValidInfo getLoginValidateInfo() {
+    public ValidInfo getValidateInfo(int expires) {
         String codeId = null;
         while (codeId == null) {
             // 生成 8 位验证码编号
@@ -253,12 +253,18 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         String image = ValidCodeUtils.getBase64CodeImage(codeValue);
 
         // 放入缓存，有效期 15 分钟
-        CachedClientAdapter.set("login_code_" + codeId, codeValue, 15 * 60);
+        expires = expires <= 0 ? 15 : expires;
+        CachedClientAdapter.set("login_code_" + codeId, codeValue, expires * 60);
 
         ValidInfo validInfo = new ValidInfo();
         validInfo.setCodeId(codeId);
         validInfo.setImageUrl(image);
         return validInfo;
+    }
+
+    @Override
+    public boolean checkValidateCode(String codeId, String code) {
+        return checkValidCode(codeId, code);
     }
 
     @Override
