@@ -13,10 +13,7 @@ import org.scy.priv.model.PrivilegeModel;
 import org.scy.priv.service.PrivilegeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ public class PrivilegeController extends BaseController {
      * 获取某个用户的权限配置信息
      */
     @RequestMapping(value = "/privs/list/user/{userId}", method = RequestMethod.GET)
-    public Object getUserPrivs(@PathVariable int userId) {
+    public Object getUserPrivs(@PathVariable("userId") int userId) {
         List<PrivilegeModel> privilegeModels = privilegeService.getByUserId(userId);
         return HttpResult.ok(privilegeModels);
     }
@@ -48,7 +45,7 @@ public class PrivilegeController extends BaseController {
      * 获取某个用户组的权限配置信息
      */
     @RequestMapping(value = "/privs/list/group/{groupId}", method = RequestMethod.GET)
-    public Object getGroupPrivs(@PathVariable int groupId) {
+    public Object getGroupPrivs(@PathVariable("groupId") int groupId) {
         List<PrivilegeModel> privilegeModels = privilegeService.getByGroupId(groupId);
         return HttpResult.ok(privilegeModels);
     }
@@ -57,7 +54,7 @@ public class PrivilegeController extends BaseController {
      * 获取某个角色的权限配置信息
      */
     @RequestMapping(value = "/privs/list/role/{roleId}", method = RequestMethod.GET)
-    public Object getRolePrivs(@PathVariable int roleId) {
+    public Object getRolePrivs(@PathVariable("roleId") int roleId) {
         List<PrivilegeModel> privilegeModels = privilegeService.getByRoleId(roleId);
         return HttpResult.ok(privilegeModels);
     }
@@ -66,7 +63,7 @@ public class PrivilegeController extends BaseController {
      * 获取某用户的所有权限信息，包括子模块的配置信息
      */
     @RequestMapping(value = "/privs/getallbyuser/{userId}", method = RequestMethod.GET)
-    public Object getUserAllPrivs(@PathVariable int userId) {
+    public Object getUserAllPrivs(@PathVariable("userId") int userId) {
         List<PrivilegeModel> privilegeModels = privilegeService.getUserAllPrivileges(userId);
         return HttpResult.ok(privilegeModels);
     }
@@ -81,7 +78,7 @@ public class PrivilegeController extends BaseController {
      * -param grantType 授权方式
      */
     @RequestMapping(value = "/privs/add", method = RequestMethod.POST)
-    public Object addPrivilege(Privilege privilege) {
+    public Object addPrivilege(@RequestBody Privilege privilege) {
         if (privilege == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -117,7 +114,7 @@ public class PrivilegeController extends BaseController {
      * -param roleId 角色编号
      */
     @RequestMapping(value = "/privs/delete", method = RequestMethod.POST)
-    public Object deletePrivilege(Privilege privilege) {
+    public Object deletePrivilege(@RequestBody Privilege privilege) {
         if (privilege == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
         privilegeService.deletePrivileges(privilege);
@@ -217,7 +214,7 @@ public class PrivilegeController extends BaseController {
      * @return 返回该用户已授权的模块以及权限值
      */
     @RequestMapping(value = "/privs/check/{userId}", method = RequestMethod.POST)
-    public Object checkPrivileges(HttpServletRequest request, @PathVariable int userId) {
+    public Object checkPrivileges(HttpServletRequest request, @PathVariable("userId") int userId) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "用户编号无效");
 
@@ -267,7 +264,8 @@ public class PrivilegeController extends BaseController {
      * @return 返回该模块的权限值
      */
     @RequestMapping(value = "/privs/check/{userId}/{module}", method = RequestMethod.POST)
-    public Object checkPrivilege(HttpServletRequest request, @PathVariable int userId, @PathVariable String module) {
+    public Object checkPrivilege(HttpServletRequest request, @PathVariable("userId") int userId,
+            @PathVariable("module") String module) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "用户编号无效");
 

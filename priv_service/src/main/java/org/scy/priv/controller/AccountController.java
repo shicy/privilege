@@ -16,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -88,7 +85,7 @@ public class AccountController extends BaseController {
      * 获取帐户信息
      */
     @RequestMapping(value = "/account/info/{accountId}", method = RequestMethod.GET)
-    public Object detail(@PathVariable int accountId) {
+    public Object detail(@PathVariable("accountId") int accountId) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
         // 仅平台帐户或者帐户本身可以得到数据
@@ -108,7 +105,7 @@ public class AccountController extends BaseController {
      * @return 新增的帐户信息
      */
     @RequestMapping(value = "/account/add", method = RequestMethod.POST)
-    public Object addAccount(Account account) {
+    public Object addAccount(@RequestBody Account account) {
         if (!SessionManager.isPlatform())
             return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
 
@@ -131,7 +128,7 @@ public class AccountController extends BaseController {
      * @return 帐户信息
      */
     @RequestMapping(value = "/account/update", method = RequestMethod.POST)
-    public Object updateAccount(Account account) {
+    public Object updateAccount(@RequestBody Account account) {
         if (account == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -152,7 +149,7 @@ public class AccountController extends BaseController {
      * -param id 想要删除的帐户编号
      */
     @RequestMapping(value = "/account/delete/{accountId}", method = RequestMethod.POST)
-    public Object deleteAccount(@PathVariable int accountId) {
+    public Object deleteAccount(@PathVariable("accountId") int accountId) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
 
@@ -173,7 +170,7 @@ public class AccountController extends BaseController {
      * @return 返回新密钥
      */
     @RequestMapping(value = "/account/set/secret/{accountId}", method = RequestMethod.POST)
-    public Object changeSecret(@PathVariable int accountId) {
+    public Object changeSecret(@PathVariable("accountId") int accountId) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
 
@@ -189,7 +186,7 @@ public class AccountController extends BaseController {
      * @return 返回新状态
      */
     @RequestMapping(value = "/account/set/state/{accountId}/{state}", method = RequestMethod.POST)
-    public Object changeState(@PathVariable int accountId, @PathVariable short state) {
+    public Object changeState(@PathVariable("accountId") int accountId, @PathVariable("state") short state) {
         if (accountId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMINVALID);
 

@@ -14,10 +14,7 @@ import org.scy.priv.model.UserModel;
 import org.scy.priv.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -44,11 +41,8 @@ public class SessionController extends BaseController {
      * -param secret 密钥
      * @return 返回一个32位的 token 字符串
      */
-    @RequestMapping(value = "/token/access", method = RequestMethod.GET)
-    public Object getAccessToken(HttpServletRequest request) {
-        String code = HttpUtilsEx.getStringValue(request, "code");
-        String secret = HttpUtilsEx.getStringValue(request, "secret");
-
+    @RequestMapping(value = "/token/access/{code}/{secret}", method = RequestMethod.GET)
+    public Object getAccessToken(@PathVariable("code") String code, @PathVariable("secret") String secret) {
         if (StringUtils.isBlank(code) || StringUtils.isBlank(secret))
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -148,7 +142,7 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Object login(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm) {
+    public Object login(HttpServletRequest request, HttpServletResponse response, @RequestBody LoginForm loginForm) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", loginForm.getUsername());
         params.put("password", loginForm.getPassword());
@@ -175,7 +169,8 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/loginWithoutPassword", method = RequestMethod.POST)
-    public Object loginWithoutPassword(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm) {
+    public Object loginWithoutPassword(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody LoginForm loginForm) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", loginForm.getUsername());
         params.put("loginType", loginForm.getLoginType());
@@ -216,7 +211,7 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/login/code/{mobile}", method = RequestMethod.GET)
-    public Object sendMobileCode(String mobile) {
+    public Object sendMobileCode(@PathVariable("mobile") String mobile) {
         tokenService.sendLoginCode(mobile);
         return HttpResult.ok();
     }

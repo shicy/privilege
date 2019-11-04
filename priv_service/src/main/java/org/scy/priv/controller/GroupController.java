@@ -16,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -67,7 +64,7 @@ public class GroupController extends BaseController {
      * 获取某用户的所属用户组信息，不分页
      */
     @RequestMapping(value = "/group/list/user/{userId}", method = RequestMethod.GET)
-    public Object getByUser(@PathVariable int userId) {
+    public Object getByUser(@PathVariable("userId") int userId) {
         List<GroupModel> groupModels = groupService.getByUserId(userId);
         return HttpResult.ok(groupModels);
     }
@@ -80,7 +77,7 @@ public class GroupController extends BaseController {
      * @return 返回新建用户组信息
      */
     @RequestMapping(value = "/group/add", method = RequestMethod.POST)
-    public Object addGroup(Group group) {
+    public Object addGroup(@RequestBody Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -95,7 +92,7 @@ public class GroupController extends BaseController {
      * @return 返回用户信息
      */
     @RequestMapping(value = "/group/update", method = RequestMethod.POST)
-    public Object updateGroup(Group group) {
+    public Object updateGroup(@RequestBody Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -115,7 +112,7 @@ public class GroupController extends BaseController {
      * -param id 想要删除的用户组编号
      */
     @RequestMapping(value = "/group/delete/{groupId}", method = RequestMethod.POST)
-    public Object deleteGroup(@PathVariable int groupId) {
+    public Object deleteGroup(@PathVariable("groupId") int groupId) {
         if (groupId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户组编号无效");
 
@@ -172,7 +169,7 @@ public class GroupController extends BaseController {
      * 删除用户组下的所有用户信息
      */
     @RequestMapping(value = "/group/user/clear/{groupId}", method = RequestMethod.POST)
-    public Object clearUsers(@PathVariable int groupId) {
+    public Object clearUsers(@PathVariable("groupId") int groupId) {
         if (groupId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户组信息");
         int count = groupService.clearGroupUsers(groupId);

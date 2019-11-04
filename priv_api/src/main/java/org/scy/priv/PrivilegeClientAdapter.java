@@ -1,6 +1,7 @@
 package org.scy.priv;
 
 import com.alibaba.fastjson.JSON;
+import org.scy.common.exception.ResultException;
 import org.scy.common.utils.ArrayUtilsEx;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.form.*;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 /**
  * 授权服务客户端适配器
@@ -35,6 +35,7 @@ public class PrivilegeClientAdapter {
      */
     public static Account getAccountInfo(int accountId) {
         HttpResult result = privilegeClient.getAccountInfo(accountId);
+        checkResult(result);
         return result.getData(Account.class);
     }
 
@@ -44,7 +45,8 @@ public class PrivilegeClientAdapter {
      */
     public static Account[] findAccount(AccountForm account) {
         HttpResult result = privilegeClient.findAccount(account);
-        return getResultDatas(result, new Account[0]);
+        checkResult(result);
+        return result.getDatas(Account.class);
     }
 
     /**
@@ -53,6 +55,7 @@ public class PrivilegeClientAdapter {
      */
     public static Account addAccount(Account account) {
         HttpResult result = privilegeClient.addAccount(account);
+        checkResult(result);
         return result.getData(Account.class);
     }
 
@@ -62,6 +65,7 @@ public class PrivilegeClientAdapter {
      */
     public static Account setAccount(Account account) {
         HttpResult result = privilegeClient.setAccount(account);
+        checkResult(result);
         return result.getData(Account.class);
     }
 
@@ -71,6 +75,7 @@ public class PrivilegeClientAdapter {
      */
     public static Account deleteAccount(int accountId) {
         HttpResult result = privilegeClient.deleteAccount(accountId);
+        checkResult(result);
         return result.getData(Account.class);
     }
 
@@ -80,6 +85,7 @@ public class PrivilegeClientAdapter {
      */
     public static String makeAccountSecret(int accountId) {
         HttpResult result = privilegeClient.makeAccountSecret(accountId);
+        checkResult(result);
         return result.getData(String.class);
     }
 
@@ -90,6 +96,7 @@ public class PrivilegeClientAdapter {
      */
     public static short setAccountState(int accountId, short state) {
         HttpResult result = privilegeClient.setAccountState(accountId, state);
+        checkResult(result);
         return result.getData(Short.class);
     }
 
@@ -99,7 +106,8 @@ public class PrivilegeClientAdapter {
      */
     public static Group[] findGroup(GroupForm group) {
         HttpResult result = privilegeClient.findGroup(group);
-        return getResultDatas(result, new Group[0]);
+        checkResult(result);
+        return result.getDatas(Group.class);
     }
 
     /**
@@ -108,7 +116,8 @@ public class PrivilegeClientAdapter {
      */
     public static Group[] getUserGroups(int userId) {
         HttpResult result = privilegeClient.getUserGroups(userId);
-        return getResultDatas(result, new Group[0]);
+        checkResult(result);
+        return result.getDatas(Group.class);
     }
 
     /**
@@ -117,6 +126,7 @@ public class PrivilegeClientAdapter {
      */
     public static Group addGroup(Group group) {
         HttpResult result = privilegeClient.addGroup(group);
+        checkResult(result);
         return result.getData(Group.class);
     }
 
@@ -126,6 +136,7 @@ public class PrivilegeClientAdapter {
      */
     public static Group setGroup(Group group) {
         HttpResult result = privilegeClient.setGroup(group);
+        checkResult(result);
         return result.getData(Group.class);
     }
 
@@ -135,6 +146,7 @@ public class PrivilegeClientAdapter {
      */
     public static Group deleteGroup(int groupId) {
         HttpResult result = privilegeClient.deleteGroup(groupId);
+        checkResult(result);
         return result.getData(Group.class);
     }
 
@@ -154,6 +166,7 @@ public class PrivilegeClientAdapter {
      */
     public static int addGroupUser(int groupId, String userIds) {
         HttpResult result = privilegeClient.addGroupUser(groupId, userIds);
+        checkResult(result);
         return result.getData(Integer.class);
     }
 
@@ -170,7 +183,6 @@ public class PrivilegeClientAdapter {
      * 将用户从分组中移除
      * @param groupId 所属分组编号
      * @param userId 用户编号
-     * @return
      */
     public static int deleteGroupUser(int groupId, int userId) {
         return deleteGroupUser(groupId, "" + userId);
@@ -183,6 +195,7 @@ public class PrivilegeClientAdapter {
      */
     public static int deleteGroupUser(int groupId, String userIds) {
         HttpResult result = privilegeClient.deleteGroupUser(groupId, userIds);
+        checkResult(result);
         return result.getData(Integer.class);
     }
 
@@ -201,6 +214,7 @@ public class PrivilegeClientAdapter {
      */
     public static int deleteAllGroupUsers(int groupId) {
         HttpResult result = privilegeClient.deleteAllGroupUsers(groupId);
+        checkResult(result);
         return result.getData(Integer.class);
     }
 
@@ -210,7 +224,8 @@ public class PrivilegeClientAdapter {
      */
     public static Role[] findRole(RoleForm role) {
         HttpResult result = privilegeClient.findRole(role);
-        return getResultDatas(result, new Role[0]);
+        checkResult(result);
+        return result.getDatas(Role.class);
     }
 
     /**
@@ -219,7 +234,8 @@ public class PrivilegeClientAdapter {
      */
     public static Role[] getUserRoles(int userId) {
         HttpResult result = privilegeClient.getUserRoles(userId);
-        return getResultDatas(result, new Role[0]);
+        checkResult(result);
+        return result.getDatas(Role.class);
     }
 
     /**
@@ -228,6 +244,7 @@ public class PrivilegeClientAdapter {
      */
     public static Role addRole(Role role) {
         HttpResult result = privilegeClient.addRole(role);
+        checkResult(result);
         return result.getData(Role.class);
     }
 
@@ -237,6 +254,7 @@ public class PrivilegeClientAdapter {
      */
     public static Role setRole(Role role) {
         HttpResult result = privilegeClient.setRole(role);
+        checkResult(result);
         return result.getData(Role.class);
     }
 
@@ -246,6 +264,7 @@ public class PrivilegeClientAdapter {
      */
     public static Role deleteRole(int roleId) {
         HttpResult result = privilegeClient.deleteRole(roleId);
+        checkResult(result);
         return result.getData(Role.class);
     }
 
@@ -265,6 +284,7 @@ public class PrivilegeClientAdapter {
      */
     public static int addRoleUser(int roleId, String userIds) {
         HttpResult result = privilegeClient.addRoleUser(roleId, userIds);
+        checkResult(result);
         return result.getData(Integer.class);
     }
 
@@ -293,6 +313,7 @@ public class PrivilegeClientAdapter {
      */
     public static int deleteRoleUser(int roleId, String userIds) {
         HttpResult result = privilegeClient.deleteRoleUser(roleId, userIds);
+        checkResult(result);
         return result.getData(Integer.class);
     }
 
@@ -311,6 +332,7 @@ public class PrivilegeClientAdapter {
      */
     public static int deleteAllRoleUsers(int roleId) {
         HttpResult result = privilegeClient.deleteAllRoleUsers(roleId);
+        checkResult(result);
         return result.getData(Integer.class);
     }
 
@@ -320,7 +342,8 @@ public class PrivilegeClientAdapter {
      */
     public static User[] findUser(UserForm user) {
         HttpResult result = privilegeClient.findUser(user);
-        return getResultDatas(result, new User[0]);
+        checkResult(result);
+        return result.getDatas(User.class);
     }
 
     /**
@@ -343,6 +366,7 @@ public class PrivilegeClientAdapter {
      */
     public static User addUser(User user, String groupIds, String roleIds) {
         HttpResult result = privilegeClient.addUser(user, groupIds, roleIds);
+        checkResult(result);
         return result.getData(User.class);
     }
 
@@ -364,6 +388,7 @@ public class PrivilegeClientAdapter {
      */
     public static User setUser(User user) {
         HttpResult result = privilegeClient.setUser(user);
+        checkResult(result);
         return result.getData(User.class);
     }
 
@@ -373,6 +398,7 @@ public class PrivilegeClientAdapter {
      */
     public static User deleteUser(int userId) {
         HttpResult result = privilegeClient.deleteUser(userId);
+        checkResult(result);
         return result.getData(User.class);
     }
 
@@ -382,9 +408,9 @@ public class PrivilegeClientAdapter {
      * @param password 新密码
      * @param oldPassword 旧密码
      */
-    public static boolean setUserPassword(int userId, String password, String oldPassword) {
+    public static void setUserPassword(int userId, String password, String oldPassword) {
         HttpResult result = privilegeClient.setUserPassword(userId, password, oldPassword);
-        return result.getCode() == HttpResult.OK;
+        checkResult(result);
     }
 
     /**
@@ -394,6 +420,7 @@ public class PrivilegeClientAdapter {
      */
     public static short setUserState(int userId, short state) {
         HttpResult result = privilegeClient.setUserState(userId, state);
+        checkResult(result);
         return result.getData(Short.class);
     }
 
@@ -414,7 +441,8 @@ public class PrivilegeClientAdapter {
      */
     public static Group[] setUserGroups(int userId, String groupIds) {
         HttpResult result = privilegeClient.setUserGroups(userId, groupIds);
-        return getResultDatas(result, new Group[0]);
+        checkResult(result);
+        return result.getDatas(Group.class);
     }
 
     /**
@@ -434,7 +462,8 @@ public class PrivilegeClientAdapter {
      */
     public static Role[] setUserRoles(int userId, String roleIds) {
         HttpResult result = privilegeClient.setUserRoles(userId, roleIds);
-        return getResultDatas(result, new Role[0]);
+        checkResult(result);
+        return result.getDatas(Role.class);
     }
 
     /**
@@ -443,7 +472,8 @@ public class PrivilegeClientAdapter {
      */
     public static Module[] findModule(ModuleForm module) {
         HttpResult result = privilegeClient.findModule(module);
-        return getResultDatas(result, new Module[0]);
+        checkResult(result);
+        return result.getDatas(Module.class);
     }
 
     /**
@@ -452,7 +482,8 @@ public class PrivilegeClientAdapter {
      */
     public static Module[] getUserModules(int userId) {
         HttpResult result = privilegeClient.getUserModules(userId);
-        return getResultDatas(result, new Module[0]);
+        checkResult(result);
+        return result.getDatas(Module.class);
     }
 
     /**
@@ -461,6 +492,7 @@ public class PrivilegeClientAdapter {
      */
     public static Module addModule(Module module) {
         HttpResult result = privilegeClient.addModule(module);
+        checkResult(result);
         return  result.getData(Module.class);
     }
 
@@ -470,6 +502,7 @@ public class PrivilegeClientAdapter {
      */
     public static Module setModule(Module module) {
         HttpResult result = privilegeClient.setModule(module);
+        checkResult(result);
         return result.getData(Module.class);
     }
 
@@ -480,6 +513,7 @@ public class PrivilegeClientAdapter {
      */
     public static Module deleteModule(int moduleId, boolean force) {
         HttpResult result = privilegeClient.deleteModule(moduleId, force ? "1" : "0");
+        checkResult(result);
         return result.getData(Module.class);
     }
 
@@ -489,7 +523,8 @@ public class PrivilegeClientAdapter {
      */
     public static Privilege[] getUserPrivileges(int userId) {
         HttpResult result = privilegeClient.getUserPrivileges(userId);
-        return getResultDatas(result, new Privilege[0]);
+        checkResult(result);
+        return result.getDatas(Privilege.class);
     }
 
     /**
@@ -498,7 +533,8 @@ public class PrivilegeClientAdapter {
      */
     public static Privilege[] getUserPrivilegesAll(int userId) {
         HttpResult result = privilegeClient.getUserPrivilegesAll(userId);
-        return getResultDatas(result, new Privilege[0]);
+        checkResult(result);
+        return result.getDatas(Privilege.class);
     }
 
     /**
@@ -507,7 +543,8 @@ public class PrivilegeClientAdapter {
      */
     public static Privilege[] getGroupPrivileges(int groupId) {
         HttpResult result = privilegeClient.getGroupPrivileges(groupId);
-        return getResultDatas(result, new Privilege[0]);
+        checkResult(result);
+        return result.getDatas(Privilege.class);
     }
 
     /**
@@ -516,7 +553,8 @@ public class PrivilegeClientAdapter {
      */
     public static Privilege[] getRolePrivileges(int roleId) {
         HttpResult result = privilegeClient.getRolePrivileges(roleId);
-        return getResultDatas(result, new Privilege[0]);
+        checkResult(result);
+        return result.getDatas(Privilege.class);
     }
 
     /**
@@ -525,6 +563,7 @@ public class PrivilegeClientAdapter {
      */
     public static boolean addPrivilege(Privilege privilege) {
         HttpResult result = privilegeClient.addPrivilege(privilege);
+        checkResult(result);
         return result.getCode() == HttpResult.OK;
     }
 
@@ -532,29 +571,29 @@ public class PrivilegeClientAdapter {
      * 批量添加授权
      * @param privileges 授权信息集
      */
-    public static boolean addPrivileges(Privilege[] privileges) {
+    public static void addPrivileges(Privilege[] privileges) {
         String items = JSON.toJSONString(privileges);
         HttpResult result = privilegeClient.addPrivileges(items);
-        return result.getCode() == HttpResult.OK;
+        checkResult(result);
     }
 
     /**
      * 删除授权信息
      * @param privilege 删除条件
      */
-    public static boolean deletePrivileges(Privilege privilege) {
+    public static void deletePrivileges(Privilege privilege) {
         HttpResult result = privilegeClient.deletePrivileges(privilege);
-        return result.getCode() == HttpResult.OK;
+        checkResult(result);
     }
 
     /**
      * 批量删除授权信息
      * @param privileges 删除条件
      */
-    public static boolean deletePrivileges(Privilege[] privileges) {
+    public static void deletePrivileges(Privilege[] privileges) {
         String items = JSON.toJSONString(privileges);
         HttpResult result = privilegeClient.deletePrivileges(items);
-        return result.getCode() == HttpResult.OK;
+        checkResult(result);
     }
 
     /**
@@ -563,12 +602,12 @@ public class PrivilegeClientAdapter {
      * @param moduleId 模块编号
      * @param grantType 授权类型
      */
-    public static boolean setUserPrivilege(int userId, int moduleId, int grantType) {
+    public static void setUserPrivilege(int userId, int moduleId, int grantType) {
         Privilege privilege = new Privilege();
         privilege.setUserId(userId);
         privilege.setModuleId(moduleId);
         privilege.setGrantType(grantType);
-        return setUserPrivilege(userId, privilege);
+        setUserPrivilege(userId, privilege);
     }
 
     /**
@@ -576,8 +615,8 @@ public class PrivilegeClientAdapter {
      * @param userId 用户编号
      * @param privilege 授权信息
      */
-    public static boolean setUserPrivilege(int userId, Privilege privilege) {
-        return setUserPrivileges(userId, new Privilege[]{privilege});
+    public static void setUserPrivilege(int userId, Privilege privilege) {
+        setUserPrivileges(userId, new Privilege[]{privilege});
     }
 
     /**
@@ -585,10 +624,10 @@ public class PrivilegeClientAdapter {
      * @param userId 用户编号
      * @param privileges 授权信息
      */
-    public static boolean setUserPrivileges(int userId, Privilege[] privileges) {
+    public static void setUserPrivileges(int userId, Privilege[] privileges) {
         String items = JSON.toJSONString(privileges);
         HttpResult result = privilegeClient.setUserPrivileges(userId, items);
-        return result.getCode() == HttpResult.OK;
+        checkResult(result);
     }
 
     /**
@@ -597,12 +636,12 @@ public class PrivilegeClientAdapter {
      * @param moduleId 模块编号
      * @param grantType 授权类型
      */
-    public static boolean setGroupPrivilege(int groupId, int moduleId, int grantType) {
+    public static void setGroupPrivilege(int groupId, int moduleId, int grantType) {
         Privilege privilege = new Privilege();
         privilege.setGroupId(groupId);
         privilege.setModuleId(moduleId);
         privilege.setGrantType(grantType);
-        return setGroupPrivilege(groupId, privilege);
+        setGroupPrivilege(groupId, privilege);
     }
 
     /**
@@ -610,8 +649,8 @@ public class PrivilegeClientAdapter {
      * @param groupId 分组编号
      * @param privilege 授权信息
      */
-    public static boolean setGroupPrivilege(int groupId, Privilege privilege) {
-        return setGroupPrivileges(groupId, new Privilege[]{privilege});
+    public static void setGroupPrivilege(int groupId, Privilege privilege) {
+        setGroupPrivileges(groupId, new Privilege[]{privilege});
     }
 
     /**
@@ -619,10 +658,10 @@ public class PrivilegeClientAdapter {
      * @param groupId 分组编号
      * @param privileges 授权信息
      */
-    public static boolean setGroupPrivileges(int groupId, Privilege[] privileges) {
+    public static void setGroupPrivileges(int groupId, Privilege[] privileges) {
         String items = JSON.toJSONString(privileges);
         HttpResult result = privilegeClient.setGroupPrivileges(groupId, items);
-        return result.getCode() == HttpResult.OK;
+        checkResult(result);
     }
 
     /**
@@ -631,12 +670,12 @@ public class PrivilegeClientAdapter {
      * @param moduleId 模块编号
      * @param grantType 授权类型
      */
-    public static boolean setRolePrivilege(int roleId, int moduleId, int grantType) {
+    public static void setRolePrivilege(int roleId, int moduleId, int grantType) {
         Privilege privilege = new Privilege();
         privilege.setRoleId(roleId);
         privilege.setModuleId(moduleId);
         privilege.setGrantType(grantType);
-        return setRolePrivilege(roleId, privilege);
+        setRolePrivilege(roleId, privilege);
     }
 
     /**
@@ -644,8 +683,8 @@ public class PrivilegeClientAdapter {
      * @param roleId 角色编号
      * @param privilege 授权信息
      */
-    public static boolean setRolePrivilege(int roleId, Privilege privilege) {
-        return setRolePrivileges(roleId, new Privilege[]{privilege});
+    public static void setRolePrivilege(int roleId, Privilege privilege) {
+        setRolePrivileges(roleId, new Privilege[]{privilege});
     }
 
     /**
@@ -653,10 +692,10 @@ public class PrivilegeClientAdapter {
      * @param roleId 角色编号
      * @param privileges 授权信息
      */
-    public static boolean setRolePrivileges(int roleId, Privilege[] privileges) {
+    public static void setRolePrivileges(int roleId, Privilege[] privileges) {
         String items = JSON.toJSONString(privileges);
         HttpResult result = privilegeClient.setRolePrivileges(roleId, items);
-        return result.getCode() == HttpResult.OK;
+        checkResult(result);
     }
 
     /**
@@ -669,7 +708,8 @@ public class PrivilegeClientAdapter {
      */
     public static Privilege[] checkUserModules(int userId, String moduleIds, String moduleCodes, String moduleNames) {
         HttpResult result = privilegeClient.checkUserModules(userId, moduleIds, moduleCodes, moduleNames);
-        return getResultDatas(result, new Privilege[0]);
+        checkResult(result);
+        return result.getDatas(Privilege.class);
     }
 
     /**
@@ -692,22 +732,22 @@ public class PrivilegeClientAdapter {
      */
     public static int getUserGrantType(int userId, String moduleCode) {
         HttpResult result = privilegeClient.getUserGrantType(userId, moduleCode);
+        checkResult(result);
         return result.getData(Integer.class);
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T> T[] getResultDatas (HttpResult result, T[] t) {
-        Object resultData = result.getData();
-        if (resultData != null) {
-            try {
-                List<T> accounts = (List<T>)resultData;
-                return accounts.toArray(t);
-            }
-            catch (Exception e) {
-                //
-            }
-        }
-        return null;
+    /**
+     * 测试对象接口
+     */
+    public static Object testBean(User user, String g, String u) {
+        HttpResult result = privilegeClient.testBean(user, g, u);
+        checkResult(result);
+        return result.getData();
+    }
+
+    private static void checkResult(HttpResult result) {
+        if (result.getCode() != HttpResult.OK)
+            throw new ResultException(result);
     }
 
 }
