@@ -66,7 +66,7 @@ public class User extends BaseModel {
         user.setRemark(this.getRemark());
         user.setType(this.getType());
         user.setState(getState());
-        return null;
+        return user;
     }
 
     /**
@@ -128,7 +128,7 @@ public class User extends BaseModel {
     /**
      * 获取登录密码
      */
-    @JSONField(serialize = false)
+//    @JSONField(serialize = false)
     public String getPassword() {
         return password;
     }

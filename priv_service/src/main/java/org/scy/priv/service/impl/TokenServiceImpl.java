@@ -157,13 +157,13 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         UserModel userModel = null;
 
         int loginType = (Integer)params.get("loginType");
-        if (loginType <= 0 || loginType == Const.LOGIN_TYPE_NAME) {
+        if (loginType <= 0 || (loginType & Const.LOGIN_TYPE_NAME) != 0) {
             userModel = userService.getByName(username);
         }
-        if (userModel == null && (loginType <= 0 || loginType == Const.LOGIN_TYPE_MOBILE)) {
+        if (userModel == null && (loginType <= 0 || (loginType & Const.LOGIN_TYPE_MOBILE) != 0)) {
             userModel = userService.getByMobile(username);
         }
-        if (userModel == null && (loginType <= 0 || loginType == Const.LOGIN_TYPE_EMAIL)) {
+        if (userModel == null && (loginType <= 0 || (loginType & Const.LOGIN_TYPE_EMAIL) != 0)) {
             userModel = userService.getByEmail(username);
         }
 

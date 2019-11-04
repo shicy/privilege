@@ -14,6 +14,7 @@ import org.scy.priv.service.GroupService;
 import org.scy.priv.service.RoleService;
 import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,6 +85,9 @@ public class UserController extends BaseController {
 
         PageInfo pageInfo = PageInfo.create(request);
         List<UserModel> userModels = userService.find(params, pageInfo);
+        for (UserModel userModel: userModels) {
+            userModel.setPassword(null);
+        }
 
         return HttpResult.ok(userModels, pageInfo);
     }
@@ -104,7 +108,8 @@ public class UserController extends BaseController {
      * @return 返回新建用户信息
      */
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-    public Object addUser(User user, @RequestParam(required = false) String groupIds, @RequestParam(required = false) String roleIds) {
+    public Object addUser(@RequestBody User user, @RequestParam(value = "groupIds", required = false) String groupIds,
+            @RequestParam(value = "roleIds", required = false) String roleIds) {
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
 
@@ -119,6 +124,7 @@ public class UserController extends BaseController {
                 int[] role_ids = ArrayUtilsEx.transStrToInt(StringUtils.split(roleIds, ','));
                 userService.addRoles(userModel.getId(), role_ids);
             }
+            userModel.setPassword(null);
         }
 
         return HttpResult.ok("新建成功", userModel);
@@ -139,7 +145,8 @@ public class UserController extends BaseController {
      * @return 用户信息
      */
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)
-    public Object updateUser(User user, @RequestParam(required = false) String groupIds, @RequestParam(required = false) String roleIds) {
+    public Object updateUser(@RequestBody User user, @RequestParam(value = "groupIds", required = false) String groupIds,
+            @RequestParam(value = "roleIds", required = false) String roleIds) {
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
 
@@ -162,6 +169,7 @@ public class UserController extends BaseController {
                     userService.addRoles(userModel.getId(), role_ids);
                 }
             }
+            userModel.setPassword(null);
         }
         else {
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
@@ -178,7 +186,7 @@ public class UserController extends BaseController {
      * @return 用户信息
      */
     @RequestMapping(value = "/user/set/groups", method = RequestMethod.POST)
-    public Object updateUserGroups(@RequestParam int userId, @RequestParam String groupIds) {
+    public Object updateUserGroups(@RequestParam("userId") int userId, @RequestParam("groupIds") String groupIds) {
         UserModel user = userService.getById(userId);
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
@@ -201,7 +209,7 @@ public class UserController extends BaseController {
      * @return 用户信息
      */
     @RequestMapping(value = "/user/set/roles", method = RequestMethod.POST)
-    public Object updateUserRoles(@RequestParam int userId, @RequestParam String roleIds) {
+    public Object updateUserRoles(@RequestParam("userId") int userId, @RequestParam("roleIds") String roleIds) {
         UserModel user = userService.getById(userId);
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
@@ -223,13 +231,14 @@ public class UserController extends BaseController {
      * -param id 想要删除的用户编号
      */
     @RequestMapping(value = "/user/delete/{userId}", method = RequestMethod.POST)
-    public Object deleteUser(@PathVariable int userId) {
+    public Object deleteUser(@PathVariable("userId") int userId) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
 
         UserModel userModel = userService.delete(userId);
         if (userModel == null)
             return HttpResult.error(Const.MSG_CODE_NOTEXIST, "用户不存在");
+        userModel.setPassword(null);
 
         return HttpResult.ok("删除成功", userModel);
     }
@@ -261,7 +270,7 @@ public class UserController extends BaseController {
      * 更改用户状态
      */
     @RequestMapping(value = "/user/set/state/{userId}/{state}", method = RequestMethod.POST)
-    public Object changeState(@PathVariable int userId, @PathVariable short state) {
+    public Object changeState(@PathVariable("userId") int userId, @PathVariable("state") short state) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
         int newState = userService.setUserState(userId, state);
