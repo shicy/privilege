@@ -385,4 +385,11 @@ public interface PrivilegeClient {
     @RequestMapping(value = "/privs/check/{userId}/{module}", method = RequestMethod.POST)
     HttpResult getUserGrantType(@PathVariable("userId") int userId, @PathVariable("module") String module);
 
+    /**
+     * 对象接口测试
+     */
+    @RequestMapping(value = "/test/bean", method = RequestMethod.POST)
+    HttpResult testBean(@RequestBody User user, @RequestParam("groupIds") String groupIds,
+        @RequestParam("roleIds") String roleIds);
+
 }
