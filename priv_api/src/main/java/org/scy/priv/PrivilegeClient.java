@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
  * 授权服务客户端
  * Create by shicy on 2017/9/4.
  */
-@FeignClient(name = "priv-service", url = "${app.priv-service.url:/}")
+@FeignClient(name = "priv-service", url = "${app.priv-service.url:/}",
+        configuration = {PrivilegeClientConfiguration.class})
 public interface PrivilegeClient {
 
     /**
@@ -180,6 +181,13 @@ public interface PrivilegeClient {
      */
     @RequestMapping(value = "/role/user/clear/{roleId}", method = RequestMethod.POST)
     HttpResult deleteAllRoleUsers(@PathVariable("roleId") int roleId);
+
+    /**
+     * 根据编号获取用户信息
+     * @param userId 用户编号
+     */
+    @RequestMapping(value = "/user/info/{userId}", method = RequestMethod.GET)
+    HttpResult getUser(@PathVariable("userId") int userId);
 
 
     /**
