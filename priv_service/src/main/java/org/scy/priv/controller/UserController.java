@@ -14,7 +14,6 @@ import org.scy.priv.service.GroupService;
 import org.scy.priv.service.RoleService;
 import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,6 +89,14 @@ public class UserController extends BaseController {
         }
 
         return HttpResult.ok(userModels, pageInfo);
+    }
+
+    @RequestMapping(value = "/user/info/{userId}", method = RequestMethod.GET)
+    public Object getUser(@PathVariable("userId") int userId) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
+        UserModel userModel = userService.getById(userId);
+        return HttpResult.ok(userModel);
     }
 
     /**

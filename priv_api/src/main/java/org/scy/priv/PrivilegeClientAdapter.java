@@ -337,6 +337,19 @@ public class PrivilegeClientAdapter {
     }
 
     /**
+     * 根据编号获取用户信息
+     * @param userId 用户编号
+     */
+    public static User getUser(int userId) {
+        if (userId > 0) {
+            HttpResult result = privilegeClient.getUser(userId);
+            checkResult(result);
+            return result.getData(User.class);
+        }
+        return null;
+    }
+
+    /**
      * 查询用户
      * @param user 查询条件
      */

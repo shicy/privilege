@@ -194,7 +194,7 @@ public class SessionController extends BaseController {
     public Object logout(HttpServletRequest request, HttpServletResponse response) {
         String token = HttpUtilsEx.getStringValue(request, "token");
         if (StringUtils.isBlank(token))
-            token = SessionManager.getToken();
+            token = SessionManager.token.get();
 
         if (StringUtils.isNotBlank(token))
             tokenService.doLogout(token);

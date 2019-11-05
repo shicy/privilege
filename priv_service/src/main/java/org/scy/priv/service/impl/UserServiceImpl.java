@@ -499,19 +499,19 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         UserModel userModel;
         password = getSecretPassword(password);
 
-        if (type <= 0 || type == Const.LOGIN_TYPE_NAME) {
+        if (type <= 0 || ((type & Const.LOGIN_TYPE_NAME) != 0)) {
             userModel = getByName(username);
             if (userModel != null && password.equals(userModel.getPassword()))
                 return userModel;
         }
 
-        if (type <= 0 || type == Const.LOGIN_TYPE_MOBILE) {
+        if (type <= 0 || ((type & Const.LOGIN_TYPE_MOBILE) != 0)) {
             userModel = getByMobile(username);
             if (userModel != null && password.equals(userModel.getPassword()))
                 return userModel;
         }
 
-        if (type <= 0 || type == Const.LOGIN_TYPE_EMAIL) {
+        if (type <= 0 || ((type & Const.LOGIN_TYPE_EMAIL) != 0)) {
             userModel = getByEmail(username);
             if (userModel != null && password.equals(userModel.getPassword()))
                 return userModel;
