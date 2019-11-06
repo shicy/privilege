@@ -96,6 +96,8 @@ public class UserController extends BaseController {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
         UserModel userModel = userService.getById(userId);
+        if (userModel != null)
+            userModel.setPassword(null);
         return HttpResult.ok(userModel);
     }
 

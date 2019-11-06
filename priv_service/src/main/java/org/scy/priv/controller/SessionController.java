@@ -223,7 +223,7 @@ public class SessionController extends BaseController {
     private void setTokenCookie(HttpServletResponse response, String token, int expires) {
         Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, token);
         cookie.setPath("/");
-        cookie.setMaxAge(expires > 0 ? expires : Integer.MAX_VALUE);
+        cookie.setMaxAge(expires != 0 ? expires : Integer.MAX_VALUE);
         response.addCookie(cookie);
     }
 
