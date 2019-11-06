@@ -58,7 +58,7 @@
     <!-- clearInvalidateTokens -->
     <delete id="clearInvalidateTokens">
         <![CDATA[
-        delete from `token` where (lastActiveTime + expires) < #{time}
+        delete from `token` where expires > 0 and (lastActiveTime + expires) < #{time}
         ]]>
     </delete>
 

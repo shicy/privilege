@@ -4,30 +4,49 @@ import org.apache.commons.lang3.StringUtils;
 import org.scy.cache.CachedClientAdapter;
 import org.scy.cache.model.CachedVO;
 import org.scy.common.utils.StringUtilsEx;
+import org.scy.common.web.session.SessionManager;
+import org.scy.priv.mapper.TokenMapper;
+import org.scy.priv.model.TokenModel;
 import org.scy.priv.model.UserModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 
 /**
  * Token 管理类
  * Created by shicy on 2017/9/30.
  */
+@Component
+@SuppressWarnings("unused")
 public final class TokenManager {
 
+    private static TokenMapper tokenMapper;
+
+    @Autowired
+    private TokenMapper tokenMapperTemp;
+
+    @PostConstruct
+    public void init() {
+        tokenMapper = tokenMapperTemp;
+    }
+
     /**
-     * 获取登录用户的 Token 信息，
+     * 添加用户登录信息
      * @param userModel 用户信息
-     * @param expires 有效期（秒），小于等于0时无限期
+     * @param tokenModel token 相关信息，其中 token 值非必要，会在方法内初始化
+     * @return 返回 token
      */
-    public static String getLoginToken(UserModel userModel, int expires) {
-        if (userModel != null) {
-            String token = getUniqueToken("login_token-", 32);
-            String tokenKey = "login_token-" + token;
-            String tokenValue = "" + userModel.getId();
-            if (CachedClientAdapter.set(tokenKey, tokenValue, expires, expires))
-                return token;
-        }
-        return null;
+    public static String addUserLoginToken(UserModel userModel, TokenModel tokenModel) {
+        tokenModel.setId(0);
+        tokenModel.setUserId(userModel.getId());
+        tokenModel.setToken(getLoginTokenUnique());
+        tokenModel.setLastActiveDate(new Date());
+        tokenModel.setCreateDate(new Date());
+        tokenModel.setPaasId(SessionManager.getAccountId());
+        tokenMapper.add(tokenModel);
+        return tokenModel.getToken();
     }
 
     /**
@@ -37,27 +56,36 @@ public final class TokenManager {
      */
     public static boolean isLoginTokenValidate(String token, boolean active) {
         if (StringUtils.isNotBlank(token)) {
-            String tokenKey = "login_token-" + token;
-            CachedVO cachedVO = CachedClientAdapter.get(tokenKey);
-            if (cachedVO != null) {
-                if (active)
-                    CachedClientAdapter.replace(tokenKey, cachedVO.getValue(), cachedVO.getFlags(), cachedVO.getFlags());
-                return true;
+            TokenModel tokenModel = tokenMapper.getByToken(token);
+            if (tokenModel != null) {
+                long now = new Date().getTime();
+                long expires = tokenModel.getExpires();
+                if (expires > 0 && expires + tokenModel.getLastActiveTime() < now) {
+                    tokenMapper.delete(tokenModel);
+                }
+                else {
+                    if (active) {
+                        // 防止频繁操作，最多30秒激活一次
+                        if (now - tokenModel.getLastActiveTime() < 30 * 1000)
+                            tokenMapper.setActive(token, now);
+                    }
+                    return true;
+                }
             }
         }
         return false;
     }
 
     /**
-     * 获取登录用户 Token 值，这里是用户编号
+     * 根据 token 获取用户编号
      */
-    public static String getLoginTokenValue(String token) {
+    public static int getLoginTokenUserId(String token) {
         if (StringUtils.isNotBlank(token)) {
-            CachedVO cachedVO = CachedClientAdapter.get("login_token-" + token);
-            if (cachedVO != null)
-                return cachedVO.getValue();
+            TokenModel tokenModel = tokenMapper.getByToken(token);
+            if (tokenModel != null)
+                return tokenModel.getUserId();
         }
-        return null;
+        return 0;
     }
 
     /**
@@ -65,7 +93,7 @@ public final class TokenManager {
      */
     public static void removeLoginToken(String token) {
         if (StringUtils.isNotBlank(token)) {
-            CachedClientAdapter.delete("login_token-" + token);
+            tokenMapper.deleteByToken(token);
         }
     }
 
@@ -74,12 +102,8 @@ public final class TokenManager {
      */
     public static boolean activeLoginToken(String token) {
         if (StringUtils.isNotBlank(token)) {
-            String tokenKey = "login_token-" + token;
-            CachedVO cachedVO = CachedClientAdapter.get(tokenKey);
-            if (cachedVO != null) {
-                CachedClientAdapter.replace(tokenKey, cachedVO.getValue(), cachedVO.getFlags(), cachedVO.getFlags());
-                return true;
-            }
+            tokenMapper.setActive(token, new Date().getTime());
+            return true;
         }
         return false;
     }
@@ -106,7 +130,7 @@ public final class TokenManager {
             }
 
             // 生成一个32位的 token 信息
-            String token = getUniqueToken("access_token_val-", 32);
+            String token = getAccessTokenUnique("access_token_val-", 32);
             // 将 token 存储到缓存，有效期15分钟
             if (CachedClientAdapter.set(tokenKey, token, 15 * 60, flags)) {
                 // 将 key 绑定到 token，支持反向查询校验，有效期3天防止 token 互串
@@ -151,14 +175,25 @@ public final class TokenManager {
     /**
      * 获取一个唯一的 token 信息
      */
-    private static String getUniqueToken(String prefix, int length) {
+    private static String getAccessTokenUnique(String prefix, int length) {
         String token = StringUtilsEx.getRandomString(length);
         String tokenKey = prefix != null ? (prefix + token) : token;
         CachedVO cachedVO = CachedClientAdapter.get(tokenKey);
         if (cachedVO == null)
             return token;
         // 已经存在缓存中，重新获取
-        return getUniqueToken(prefix, length);
+        return getAccessTokenUnique(prefix, length);
+    }
+
+    /**
+     * 获取唯一的用户登录 token
+     */
+    private static String getLoginTokenUnique() {
+        String token = StringUtilsEx.getRandomString(32);
+        TokenModel tokenModel = tokenMapper.getByToken(token);
+        if (tokenModel == null)
+            return token;
+        return getLoginTokenUnique();
     }
 
 }

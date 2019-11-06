@@ -174,7 +174,7 @@ public class SessionController extends BaseController {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", loginForm.getUsername());
         params.put("loginType", loginForm.getLoginType());
-        params.put("expires", HttpUtilsEx.getIntValue(request, "expires", 0));
+        params.put("expires", loginForm.getExpires());
         params.put("ip", HttpUtilsEx.getIP(request));
         params.put("domain", request.getServerName());
         params.put("userAgent", request.getHeader("User-Agent"));

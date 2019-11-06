@@ -22,13 +22,13 @@ public interface TokenMapper {
     void add(TokenModel tokenModel);
     void setActive(@Param("token") String token, @Param("time") long time);
 
-    int delete(TokenModel tokenModel);
-    int deleteByUserId(@Param("userId") int userId);
-    int deleteByToken(@Param("token") String token);
+    void delete(TokenModel tokenModel);
+    void deleteByUserId(@Param("userId") int userId);
+    void deleteByToken(@Param("token") String token);
 
     List<TokenModel> find(Selector selector);
     int countFind(Selector selector);
 
-    int clearInvalidateTokens(@Param("time") long time);
+    void clearInvalidateTokens(@Param("time") long time);
 
 }

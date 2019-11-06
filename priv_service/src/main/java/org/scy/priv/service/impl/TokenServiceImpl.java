@@ -1,7 +1,6 @@
 package org.scy.priv.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionException;
 import org.quartz.Trigger;
@@ -82,12 +81,9 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
 
     @Override
     public UserModel getUserByToken(String token) {
-        String tokenValue = TokenManager.getLoginTokenValue(token);
-        if (tokenValue != null) {
-            int userId = NumberUtils.toInt(tokenValue, 0);
-            if (userId > 0)
-                return userService.getById(userId);
-        }
+        int userId = TokenManager.getLoginTokenUserId(token);
+        if (userId > 0)
+            return userService.getById(userId);
         return null;
     }
 
@@ -180,20 +176,12 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
      * @return 返回 Token 信息
      */
     private String doLoginInner(UserModel user, Map<String, Object> params) {
-        int expires = (Integer)params.get("expires");
-        String token = TokenManager.getLoginToken(user, expires);
-
         TokenModel tokenModel = new TokenModel();
-        tokenModel.setUserId(user.getId());
-        tokenModel.setToken(token);
-        tokenModel.setExpires(expires);
+        tokenModel.setExpires((Integer)params.get("expires"));
         tokenModel.setDomain((String)params.get("domain"));
         tokenModel.setClient((String)params.get("client"));
         tokenModel.setUserAgent((String)params.get("userAgent"));
-        tokenModel.setCreateDate(new Date());
-        tokenModel.setLastActiveDate(new Date());
-        tokenModel.setPaasId(SessionManager.getAccountId());
-        tokenMapper.add(tokenModel);
+        String token = TokenManager.addUserLoginToken(user, tokenModel);
 
         LoginRecordModel loginRecordModel = new LoginRecordModel();
         loginRecordModel.setUserId(user.getId());
