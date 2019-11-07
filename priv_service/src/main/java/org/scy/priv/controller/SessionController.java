@@ -182,7 +182,7 @@ public class SessionController extends BaseController {
 
         String token = tokenService.doLoginWithoutPassword(params);
         setTokenCookie(response, token, (Integer)params.get("expires"));
-        return null;
+        return HttpResult.ok(token);
     }
 
     /**
