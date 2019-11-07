@@ -156,7 +156,7 @@ public class SessionController extends BaseController {
         params.put("client", SessionManager.uuid.get());
 
         String token = tokenService.doLogin(params);
-        setTokenCookie(response, token, (Integer)params.get("expires"));
+        setTokenCookie(response, token, loginForm.getExpires());
         return HttpResult.ok(token);
     }
 
@@ -223,14 +223,14 @@ public class SessionController extends BaseController {
     private void setTokenCookie(HttpServletResponse response, String token, int expires) {
         Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, token);
         cookie.setPath("/");
-        cookie.setMaxAge(expires != 0 ? expires : Integer.MAX_VALUE);
+        cookie.setMaxAge(expires > 0 ? expires : Integer.MAX_VALUE);
         response.addCookie(cookie);
     }
 
     private void removeTokenCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, null);
         cookie.setPath("/");
-        cookie.setMaxAge(0);
+        cookie.setMaxAge(-1);
         response.addCookie(cookie);
     }
 

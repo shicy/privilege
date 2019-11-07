@@ -19,8 +19,8 @@
 
     <!-- add -->
     <insert id="add" parameterType="TokenModel" useGeneratedKeys="true" keyProperty="id">
-        insert into `token` (userId, token, expires, domain, client, userAgent, createTime, paasId)
-        values (#{userId}, #{token}, #{expires}, #{domain}, #{client}, #{userAgent}, #{createTime}, #{paasId})
+        insert into `token` (userId, token, expires, domain, client, userAgent, createTime, lastActiveTime, paasId)
+        values (#{userId}, #{token}, #{expires}, #{domain}, #{client}, #{userAgent}, #{createTime}, #{lastActiveTime}, #{paasId})
     </insert>
 
     <!-- setActive -->
@@ -55,10 +55,11 @@
         select count(id) as count from `token` ${where} ${group}
     </select>
 
-    <!-- clearInvalidateTokens -->
+    <!-- clearInvalidateTokens，100 * 24 * 60 * 60 = 8640000000 -->
     <delete id="clearInvalidateTokens">
         <![CDATA[
-        delete from `token` where expires > 0 and (lastActiveTime + expires) < #{time}
+        delete from `token`
+        where (expires > 0 and (lastActiveTime + expires) < #{time}) or (#{time} - lastActiveTime > 8640000000)
         ]]>
     </delete>
 

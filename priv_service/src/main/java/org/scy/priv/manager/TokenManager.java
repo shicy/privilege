@@ -1,8 +1,11 @@
 package org.scy.priv.manager;
 
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.JobDataMap;
+import org.quartz.Trigger;
 import org.scy.cache.CachedClientAdapter;
 import org.scy.cache.model.CachedVO;
+import org.scy.common.manager.SchedulerManager;
 import org.scy.common.utils.StringUtilsEx;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.TokenMapper;
@@ -30,6 +33,7 @@ public final class TokenManager {
     @PostConstruct
     public void init() {
         tokenMapper = tokenMapperTemp;
+        startTokenClearTask();
     }
 
     /**
@@ -194,6 +198,22 @@ public final class TokenManager {
         if (tokenModel == null)
             return token;
         return getLoginTokenUnique();
+    }
+
+    /**
+     * 开启 Token 过期自动清理任务
+     */
+    private static void startTokenClearTask() {
+        // 每小时执行一次任务
+        Trigger trigger = SchedulerManager.newCronTrigger("0 0 * * * ? *");
+        SchedulerManager.getInstance().addScheduleJob(TokenClearTask.class, trigger);
+    }
+
+    private static class TokenClearTask extends SchedulerManager.ThreadJob {
+        @Override
+        protected void executeJob(JobDataMap data) {
+            tokenMapper.clearInvalidateTokens(new Date().getTime());
+        }
     }
 
 }

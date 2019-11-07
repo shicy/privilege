@@ -1,13 +1,9 @@
 package org.scy.priv.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionException;
-import org.quartz.Trigger;
 import org.scy.cache.CachedClientAdapter;
 import org.scy.common.Const;
 import org.scy.common.exception.ResultException;
-import org.scy.common.manager.SchedulerManager;
 import org.scy.common.utils.StringUtilsEx;
 import org.scy.common.utils.ValidCodeUtils;
 import org.scy.common.web.model.ValidInfo;
@@ -28,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -53,10 +48,6 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
 
     @Autowired
     private UserService userService;
-
-    public TokenServiceImpl() {
-        startClearTask();
-    }
 
     @Override
     public String getAccountAccessToken(String code, String secret) {
@@ -176,8 +167,9 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
      * @return 返回 Token 信息
      */
     private String doLoginInner(UserModel user, Map<String, Object> params) {
+        long expires = params.get("expires") == null ? 0 : ((Integer)params.get("expires") * 1000);
         TokenModel tokenModel = new TokenModel();
-        tokenModel.setExpires((Integer)params.get("expires"));
+        tokenModel.setExpires(expires); // 这里需要单位毫秒
         tokenModel.setDomain((String)params.get("domain"));
         tokenModel.setClient((String)params.get("client"));
         tokenModel.setUserAgent((String)params.get("userAgent"));
@@ -264,30 +256,6 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
     public void doActive(String token) {
         if (TokenManager.activeLoginToken(token)) {
             tokenMapper.setActive(token, new Date().getTime());
-        }
-    }
-
-    /**
-     * 删除过期的Token信息
-     */
-    private void clear() {
-        tokenMapper.clearInvalidateTokens(new Date().getTime());
-    }
-
-    private void startClearTask() {
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("instance", this);
-
-        // 每小时执行一次
-        Trigger trigger = SchedulerManager.newCronTrigger("0 0 * * * ? *");
-
-        SchedulerManager.getInstance().addScheduleJob(ClearTask.class, trigger, data);
-    }
-
-    public static class ClearTask extends SchedulerManager.ThreadJob {
-        @Override
-        protected void executeJob(JobDataMap data) throws JobExecutionException {
-            ((TokenServiceImpl) data.get("instance")).clear();
         }
     }
 

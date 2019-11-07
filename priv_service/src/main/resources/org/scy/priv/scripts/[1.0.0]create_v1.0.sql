@@ -258,3 +258,6 @@ ALTER TABLE `token` CHANGE COLUMN `client` `client` VARCHAR(100) NULL DEFAULT NU
 
 -- 模块表字段 paasId 类型修改 <2019-10-23 10:40:00>
 ALTER TABLE `module` CHANGE COLUMN `paasId` `paasId` INT(11) NULL;
+
+-- 登录用户表添加 token 字段索引 <2019-11-07 10:40:00>
+ALTER TABLE `token` ADD UNIQUE `u_token_token_idx` (`token`);

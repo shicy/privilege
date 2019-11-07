@@ -19,7 +19,7 @@ public class Token extends BaseModel {
     // 用户 Token 信息
     private String token;
 
-    // Token 到期时间
+    // Token 到期时间（毫秒）
     private long expires;
 
     // 登录时的域名
