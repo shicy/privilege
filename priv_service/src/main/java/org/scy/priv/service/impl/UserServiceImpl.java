@@ -8,6 +8,7 @@ import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
 import org.scy.common.utils.CommonUtilsEx;
+import org.scy.common.utils.StringUtilsEx;
 import org.scy.common.web.service.MybatisBaseService;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.*;
@@ -149,6 +150,9 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         userModel.setCreatorId(SessionManager.getUserId());
         userModel.setCreateDate(new Date());
         userModel.setPaasId(SessionManager.getAccountId());
+
+        if (StringUtils.isBlank(userModel.getCode()))
+            userModel.setCode(getUniqueCode(SessionManager.getAccountId()));
 
         if (userModel.getAccept() <= 0)
             userModel.setAccept((short)0xf);
@@ -518,5 +522,16 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         }
 
         return null;
+    }
+
+    /**
+     * 获取用户唯一编码
+     */
+    private String getUniqueCode(int paasId) {
+        String code = StringUtilsEx.getRandomString(32);
+        UserModel userModel = userMapper.getByCode(code, paasId);
+        if (userModel != null)
+            return getUniqueCode(paasId);
+        return code;
     }
 }
