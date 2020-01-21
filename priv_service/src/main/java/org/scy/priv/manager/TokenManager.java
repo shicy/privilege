@@ -11,6 +11,8 @@ import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.TokenMapper;
 import org.scy.priv.model.TokenModel;
 import org.scy.priv.model.UserModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -203,15 +205,18 @@ public final class TokenManager {
     /**
      * 开启 Token 过期自动清理任务
      */
-    private static void startTokenClearTask() {
+    private void startTokenClearTask() {
         // 每小时执行一次任务
-        Trigger trigger = SchedulerManager.newCronTrigger("0 0 * * * ? *");
-        SchedulerManager.getInstance().addScheduleJob(TokenClearTask.class, trigger);
+        Trigger trigger = SchedulerManager.newCronTrigger("0 0 * * * ? *", true);
+        SchedulerManager.getInstance().addScheduleJob(TokenCleanTask.class, trigger);
     }
 
-    private static class TokenClearTask extends SchedulerManager.ThreadJob {
+    public static class TokenCleanTask extends SchedulerManager.ThreadJob {
+        private Logger logger = LoggerFactory.getLogger(TokenCleanTask.class);
+
         @Override
         protected void executeJob(JobDataMap data) {
+            logger.debug("execute job TokenCleanTask.");
             tokenMapper.clearInvalidateTokens(new Date().getTime());
         }
     }
