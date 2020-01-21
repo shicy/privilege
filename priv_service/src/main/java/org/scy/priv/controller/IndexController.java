@@ -15,6 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @SuppressWarnings("unused")
 public class IndexController extends BaseController {
 
+    @RequestMapping(value = "/version", method = RequestMethod.GET)
+    @ResponseBody
+    public Object version() {
+        return HttpResult.ok(getAppVersion());
+    }
+
     @Auth
     @RequestMapping("/test/auth")
     @ResponseBody
