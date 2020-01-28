@@ -17,16 +17,17 @@ CREATE TABLE IF NOT EXISTS `account` (
   `secret` VARCHAR(32) NOT NULL COMMENT '密钥，用于第三方验证',
   `mobile` VARCHAR(20) NULL COMMENT '绑定手机号',
   `email` VARCHAR(50) NULL COMMENT '绑定邮箱',
+  `remark` VARCHAR(600) NULL COMMENT '备注信息',
   `type` TINYINT NULL DEFAULT 1 COMMENT '0-平台 1-个人 2-企业',
+  `ownerId` INT NULL COMMENT '所有者编号',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-失效 1-有效',
   `creatorId` INT NULL,
   `createTime` BIGINT NULL,
   `updatorId` INT NULL,
   `updateTime` BIGINT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC),
-  UNIQUE INDEX `code_UNIQUE` (`code` ASC))
-ENGINE = InnoDB
+  UNIQUE INDEX `u_account_name_idx` (`name` ASC),
+  UNIQUE INDEX `u_account_code_idx` (`code` ASC))
 COMMENT = '账户表，平台账户信息';
 
 
@@ -53,9 +54,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `updateTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
 COMMENT = '用户表';
-
 
 
 -- -----------------------------------------------------
@@ -73,7 +72,6 @@ CREATE TABLE IF NOT EXISTS `group` (
   `updateTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
 COMMENT = '用户分组表';
 
 
@@ -87,13 +85,12 @@ CREATE TABLE IF NOT EXISTS `role` (
   `remark` VARCHAR(200) NULL,
   `type` TINYINT NULL DEFAULT 0 COMMENT '0-默认',
   `state` TINYINT NULL DEFAULT 1 COMMENT '0-无效 1-有效',
-  `createId` INT NULL,
+  `creatorId` INT NULL,
   `createTime` BIGINT NULL,
-  `updateId` INT NULL,
+  `updatorId` INT NULL,
   `updateTime` BIGINT NULL,
   `paasId` INT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
 COMMENT = '角色表';
 
 
@@ -112,9 +109,8 @@ CREATE TABLE IF NOT EXISTS `module` (
   `createTime` BIGINT NULL,
   `updatorId` INT NULL,
   `updateTime` BIGINT NULL,
-  `paasId` VARCHAR(45) NULL,
+  `paasId` INT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
 COMMENT = '权限项表';
 
 
@@ -133,12 +129,7 @@ CREATE TABLE IF NOT EXISTS `privs` (
   `creatorId` INT NULL,
   `createTime` BIGINT NULL,
   `paasId` INT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_privs_module_idx` (`moduleId` ASC),
-  INDEX `fk_privs_user_idx` (`userId` ASC),
-  INDEX `fk_privs_group_idx` (`groupId` ASC),
-  INDEX `fk_privs_role_idx` (`roleId` ASC))
-ENGINE = InnoDB
+  PRIMARY KEY (`id`))
 COMMENT = '权限明细表';
 
 
@@ -154,10 +145,7 @@ CREATE TABLE IF NOT EXISTS `group_users` (
   `creatorId` INT NULL COMMENT '	',
   `createTime` BIGINT NULL,
   `paasId` INT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_group_users_group_idx` (`groupId` ASC),
-  INDEX `fk_group_users_user_idx` (`userId` ASC))
-ENGINE = InnoDB
+  PRIMARY KEY (`id`))
 COMMENT = '用户和用户组关联表';
 
 
@@ -173,10 +161,7 @@ CREATE TABLE IF NOT EXISTS `role_users` (
   `creatorId` INT NULL,
   `createTime` BIGINT NULL,
   `paasId` INT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_role_users_role_idx` (`roleId` ASC),
-  INDEX `fk_role_users_user_idx` (`userId` ASC))
-ENGINE = InnoDB
+  PRIMARY KEY (`id`))
 COMMENT = '用户和角色关联表';
 
 
@@ -190,10 +175,7 @@ CREATE TABLE IF NOT EXISTS `user_privs` (
   `moduleId` INT NULL,
   `grantType` INT NULL DEFAULT 1,
   `paasId` INT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_user_privs_user_idx` (`userId` ASC),
-  INDEX `fk_user_privs_module_idx` (`moduleId` ASC))
-ENGINE = InnoDB
+  PRIMARY KEY (`id`))
 COMMENT = '最终的用户权限信息表，综合用户组和角色之后的权限列表';
 
 
@@ -210,12 +192,10 @@ CREATE TABLE IF NOT EXISTS `login_record` (
   `ip` VARCHAR(20) NULL COMMENT 'IP地址',
   `domain` VARCHAR(30) NULL COMMENT '网站域名',
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
-  `client` VARCHAR(16) NULL COMMENT '客户端编号',
+  `client` VARCHAR(100) NULL COMMENT '客户端编号'
   `createTime` BIGINT NULL,
   `paasId` INT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_login_recode_user_idx` (`userId` ASC))
-ENGINE = InnoDB
+  PRIMARY KEY (`id`))
 COMMENT = '用户登录记录表';
 
 
@@ -229,35 +209,27 @@ CREATE TABLE IF NOT EXISTS `token` (
   `token` VARCHAR(64) NULL COMMENT '登录用户token信息',
   `expires` BIGINT NULL COMMENT '到期时间',
   `domain` VARCHAR(30) NULL COMMENT '登录时的域名',
-  `client` VARCHAR(16) NULL COMMENT '客户端编号',
+  `client` VARCHAR(100) NULL COMMENT '客户端编号'
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
   `createTime` BIGINT NULL,
   `lastActiveTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_token_user_idx` (`userId` ASC))
-ENGINE = InnoDB
+  UNIQUE INDEX `u_token_token_idx` (`token` ASC))
 COMMENT = '当前用户登录状态表';
 
 
--- 帐户添加所有者 <2017-11-08 17:00:00>
-ALTER TABLE `account` ADD COLUMN `ownerId` INT(11) NULL AFTER `type`;
-
--- 帐户添加备注信息 <2017-11-09 09:40:00>
-ALTER TABLE `account` ADD COLUMN `remark` VARCHAR(600) NULL AFTER `email`;
-
--- 角色表字段名称错误更正 <2017-11-09 17:30:00>
-ALTER TABLE `role` CHANGE COLUMN `createId` `creatorId` INT(11) NULL DEFAULT NULL;
-
--- 角色表字段名称错误更正 <2017-11-09 17:40:00>
-ALTER TABLE `role` CHANGE COLUMN `updateId` `updatorId` INT(11) NULL DEFAULT NULL;
-
--- 登录相关 client 字段修改 <2017-11-13 14:50:00>
-ALTER TABLE `login_record` CHANGE COLUMN `client` `client` VARCHAR(100) NULL DEFAULT NULL COMMENT '客户端编号';
-ALTER TABLE `token` CHANGE COLUMN `client` `client` VARCHAR(100) NULL DEFAULT NULL COMMENT '客户端编号';
-
--- 模块表字段 paasId 类型修改 <2019-10-23 10:40:00>
-ALTER TABLE `module` CHANGE COLUMN `paasId` `paasId` INT(11) NULL;
-
--- 登录用户表添加 token 字段索引 <2019-11-07 10:40:00>
-ALTER TABLE `token` ADD UNIQUE `u_token_token_idx` (`token`);
+-- -----------------------------------------------------
+-- Table `priv`.`user_profile`
+-- 用户属性 <2020-01-22 14:00:00>
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_profile` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userId` INT NOT NULL,
+  `name` VARCHAR(64) NULL COMMENT '属性名称',
+  `value` TEXT NULL COMMENT '属性值',
+  `createTime` BIGINT NULL,
+  `updateTime` BIGINT NULL,
+  `paasId` INT NULL,
+  PRIMARY KEY (`id`))
+COMMENT = '当前用户属性表';

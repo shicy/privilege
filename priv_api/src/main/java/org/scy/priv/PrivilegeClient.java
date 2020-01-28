@@ -255,6 +255,70 @@ public interface PrivilegeClient {
     @RequestMapping(value = "/user/set/roles", method = RequestMethod.POST)
     HttpResult setUserRoles(@RequestParam("userId") int userId, @RequestParam("roleIds") String roleIds);
 
+    /**
+     * 获取用户属性列表
+     * @param userId 用户编号
+     */
+    @RequestMapping(value = "/user/profile/{userId}", method = RequestMethod.GET)
+    HttpResult getUserProfiles(@PathVariable("userId") int userId);
+
+    /**
+     * 获取用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     */
+    @RequestMapping(value = "/user/profile/{userId}/{name}", method = RequestMethod.GET)
+    HttpResult getUserProfile(@PathVariable("userId") int userId, @PathVariable("name") String name);
+
+    /**
+     * 按名称模块查询用户属性
+     * @param userId 用户编号
+     * @param form 查询表单
+     */
+    @RequestMapping(value = "/user/profile/find/{userId}", method = RequestMethod.GET)
+    HttpResult getUserProfiles(@PathVariable("userId") int userId, @RequestBody ProfileForm form);
+
+    /**
+     * 设置用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     * @param value 属性值
+     */
+    @RequestMapping(value = "/user/profile/set/{userId}/{name}/{value}", method = RequestMethod.POST)
+    HttpResult setUserProfile(@PathVariable("user") int userId, @PathVariable("name") String name,
+        @PathVariable("value") String value);
+
+    /**
+     * 批量设置用户属性
+     * @param userId 用户编号
+     * @param profiles 用户属性集
+     */
+    @RequestMapping(value = "/user/profile/set_batch/{userId}", method = RequestMethod.POST)
+    HttpResult setUserProfile(@PathVariable("userId") int userId, @RequestBody UserProfile[] profiles);
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     */
+    @RequestMapping(value = "/user/profile/delete/{userId}", method = RequestMethod.POST)
+    HttpResult deleteUserProfile(@PathVariable("userId") int userId);
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     */
+    @RequestMapping(value = "/user/profile/delete/{userId}/{name}", method = RequestMethod.POST)
+    HttpResult deleteUserProfile(@PathVariable("userId") int userId, @PathVariable("name") String name);
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param form 查询表单
+     */
+    @RequestMapping(value = "/user/profile/delete_batch/{userId}", method = RequestMethod.POST)
+    HttpResult deleteUserProfile(@PathVariable("userId") int userId, @RequestBody ProfileForm form);
+
 
     /**
      * 查询模块

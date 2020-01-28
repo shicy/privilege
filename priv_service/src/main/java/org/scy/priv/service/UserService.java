@@ -3,6 +3,8 @@ package org.scy.priv.service;
 import org.scy.common.ds.PageInfo;
 import org.scy.priv.model.User;
 import org.scy.priv.model.UserModel;
+import org.scy.priv.model.UserProfile;
+import org.scy.priv.model.UserProfileModel;
 
 import java.util.List;
 import java.util.Map;
@@ -144,5 +146,69 @@ public interface UserService {
      * @return 验证成功后返回用户信息
      */
     UserModel validUser(String username, String password, short type);
+
+    /**
+     * 获取用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     */
+    UserProfileModel getProfile(int userId, String name);
+
+    /**
+     * 获取用户属性
+     * @param userId 用户编号
+     */
+    List<UserProfileModel> getProfiles(int userId);
+
+    /**
+     * 获取用户属性
+     * @param userId 用户编号
+     * @param names 属性名称集
+     */
+    List<UserProfileModel> getProfiles(int userId, String[] names);
+
+    /**
+     * 获取用户属性（按名称模糊查询）
+     * @param userId 用户编号
+     * @param nameLike 属性名称（模糊匹配）
+     */
+    List<UserProfileModel> getProfilesLike(int userId, String nameLike);
+
+    /**
+     * 保存用户属性
+     */
+    UserProfileModel saveProfile(int userId, UserProfile profile);
+
+    /**
+     * 批量保存用户属性
+     */
+    List<UserProfileModel> saveProfiles(int userId, UserProfile[] profiles);
+
+    /**
+     * 删除所有用户属性
+     * @param userId 用户编号
+     */
+    void deleteProfile(int userId);
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     */
+    void deleteProfile(int userId, String name);
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param names 属性名称集
+     */
+    void deleteProfile(int userId, String[] names);
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param nameLike 属性名称（模糊匹配）
+     */
+    void deleteProfileLike(int userId, String nameLike);
 
 }

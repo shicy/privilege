@@ -7,6 +7,7 @@ import org.scy.common.ds.PageInfo;
 import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
+import org.scy.common.utils.ArrayUtilsEx;
 import org.scy.common.utils.CommonUtilsEx;
 import org.scy.common.utils.StringUtilsEx;
 import org.scy.common.web.service.MybatisBaseService;
@@ -48,6 +49,9 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
 
     @Autowired
     private TokenMapper tokenMapper;
+
+    @Autowired
+    private ProfileMapper profileMapper;
 
     @Autowired
     private GroupService groupService;
@@ -522,6 +526,95 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
         }
 
         return null;
+    }
+
+    @Override
+    public UserProfileModel getProfile(int userId, String name) {
+        if (StringUtils.isBlank(name))
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "属性名称不能为空");
+        UserProfileModel profileModel = profileMapper.getProfile(userId, name);
+        if (profileModel != null) {
+            if (profileModel.getPaasId() != SessionManager.getAccountId())
+                return null;
+        }
+        return profileModel;
+    }
+
+    @Override
+    public List<UserProfileModel> getProfiles(int userId) {
+        return profileMapper.getProfilesAll(userId, SessionManager.getAccountId());
+    }
+
+    @Override
+    public List<UserProfileModel> getProfiles(int userId, String[] names) {
+        if (names != null && names.length > 0) {
+            String _names = ArrayUtilsEx.join(names, ",");
+            return profileMapper.getProfilesIn(userId, _names, SessionManager.getAccountId());
+        }
+        return new ArrayList<UserProfileModel>();
+    }
+
+    @Override
+    public List<UserProfileModel> getProfilesLike(int userId, String nameLike) {
+        if (StringUtils.isBlank(nameLike))
+            return getProfiles(userId);
+        return profileMapper.getProfilesLike(userId, nameLike, SessionManager.getAccountId());
+    }
+
+    @Override
+    public UserProfileModel saveProfile(int userId, UserProfile profile) {
+        if (profile != null && StringUtils.isNotBlank(profile.getName())) {
+            int paasId = SessionManager.getAccountId();
+            profileMapper.deleteByName(userId, profile.getName(), paasId);
+
+            UserProfileModel profileModel = new UserProfileModel();
+            profileModel.setUserId(userId);
+            profileModel.setName(profile.getName());
+            profileModel.setValue(profile.getValue());
+            profileModel.setCreateDate(new Date());
+            profileModel.setPaasId(paasId);
+            profileMapper.add(profileModel);
+            return profileModel;
+        }
+        return null;
+    }
+
+    @Override
+    public List<UserProfileModel> saveProfiles(int userId, UserProfile[] profiles) {
+        List<UserProfileModel> profileModels = new ArrayList<UserProfileModel>();
+        if (profiles != null) {
+            for (UserProfile profile: profiles) {
+                UserProfileModel profileModel = saveProfile(userId, profile);
+                if (profileModel != null)
+                    profileModels.add(profileModel);
+            }
+        }
+        return profileModels;
+    }
+
+    @Override
+    public void deleteProfile(int userId) {
+        profileMapper.deleteByUserId(userId, SessionManager.getAccountId());
+    }
+
+    @Override
+    public void deleteProfile(int userId, String name) {
+        if (StringUtils.isNotBlank(name))
+            profileMapper.deleteByName(userId, name, SessionManager.getAccountId());
+    }
+
+    @Override
+    public void deleteProfile(int userId, String[] names) {
+        if (names != null && names.length > 0) {
+            String _names = ArrayUtilsEx.join(names, ",");
+            profileMapper.deleteByNames(userId, _names, SessionManager.getAccountId());
+        }
+    }
+
+    @Override
+    public void deleteProfileLike(int userId, String nameLike) {
+        if (StringUtils.isNotBlank(nameLike))
+            profileMapper.deleteLikeName(userId, nameLike, SessionManager.getAccountId());
     }
 
     /**

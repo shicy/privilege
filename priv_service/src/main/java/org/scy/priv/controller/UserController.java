@@ -10,6 +10,8 @@ import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.priv.model.User;
 import org.scy.priv.model.UserModel;
+import org.scy.priv.model.UserProfile;
+import org.scy.priv.model.UserProfileModel;
 import org.scy.priv.service.GroupService;
 import org.scy.priv.service.RoleService;
 import org.scy.priv.service.UserService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -237,7 +240,7 @@ public class UserController extends BaseController {
     /**
      * 删除用户
      * 参数：
-     * -param id 想要删除的用户编号
+     * -param userId 想要删除的用户编号
      */
     @RequestMapping(value = "/user/delete/{userId}", method = RequestMethod.POST)
     public Object deleteUser(@PathVariable("userId") int userId) {
@@ -277,6 +280,9 @@ public class UserController extends BaseController {
 
     /**
      * 更改用户状态
+     * 参数：
+     * -param userId 用户编号
+     * -param state 新用户状态
      */
     @RequestMapping(value = "/user/set/state/{userId}/{state}", method = RequestMethod.POST)
     public Object changeState(@PathVariable("userId") int userId, @PathVariable("state") short state) {
@@ -284,6 +290,136 @@ public class UserController extends BaseController {
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
         int newState = userService.setUserState(userId, state);
         return HttpResult.ok("修改成功", newState);
+    }
+
+    /**
+     * 获取用户属性列表
+     * 参数：
+     * -param userId 用户编号
+     */
+    @RequestMapping(value = "/user/profile/{userId}", method = RequestMethod.GET)
+    public Object getProfilesAll(@PathVariable("userId") int userId) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
+        List<UserProfileModel> profiles = userService.getProfiles(userId);
+        return HttpResult.ok(profiles);
+    }
+
+    /**
+     * 获取用户属性
+     * 参数：
+     * -param userId 用户编号
+     * -param name 属性名称，多值用逗号分隔
+     */
+    @RequestMapping(value = "/user/profile/{userId}/{name}", method = RequestMethod.GET)
+    public Object getProfile(@PathVariable("userId") int userId, @PathVariable("name") String name) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
+        if (StringUtils.isBlank(name))
+            return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "属性名称不能为空");
+        UserProfile profile = userService.getProfile(userId, name);
+        return HttpResult.ok(profile);
+    }
+
+    /**
+     * 查找用户属性信息
+     * 参数：
+     * -param userId 用户编号
+     * -param nameLike 按属性名称模糊查询
+     */
+    @RequestMapping(value = "/user/profile/find/{userId}", method = RequestMethod.GET)
+    public Object findProfiles(HttpServletRequest request, @PathVariable("userId") int userId) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
+        // 按名称模糊查询
+        String nameLike = HttpUtilsEx.getStringValue(request, "nameLike");
+        if (StringUtils.isNotBlank(nameLike)) {
+            List<UserProfileModel> profiles = userService.getProfilesLike(userId, nameLike);
+            return HttpResult.ok(profiles);
+        }
+        // 按名称集批量查询
+        String names = HttpUtilsEx.getStringValue(request, "names");
+        if (StringUtils.isNotBlank(names)) {
+            List<UserProfileModel> profiles = userService.getProfiles(userId, names.split(","));
+            return HttpResult.ok(profiles);
+        }
+        return HttpResult.ok(new ArrayList<UserProfileModel>());
+    }
+
+    /**
+     * 设置用户属性
+     * 参数：
+     * -param userId 用户编号
+     * -param name 属性名称
+     * -param value 属性值
+     */
+    @RequestMapping(value = "/user/profile/set/{userId}/{name}/{value}", method = RequestMethod.POST)
+    public Object setProfile(@PathVariable("userId") int userId, @PathVariable("name") String name,
+            @PathVariable("value") String value) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
+        if (StringUtils.isBlank(name))
+            return HttpResult.error(Const.MSG_CODE_PARAMINVALID, "属性名称不能为空");
+        UserProfile profile = new UserProfile();
+        profile.setName(name);
+        profile.setValue(value);
+        return HttpResult.ok(userService.saveProfile(userId, profile));
+    }
+
+    /**
+     * 设置用户属性
+     * 参数：
+     * -param userId 用户编号
+     */
+    @RequestMapping(value = "/user/profile/set_batch/{userId}", method = RequestMethod.POST)
+    public Object setProfile(@PathVariable("userId") int userId, @RequestBody UserProfile[] profiles) {
+        if (userId <= 0)
+            return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
+        return HttpResult.ok(userService.saveProfiles(userId, profiles));
+    }
+
+    /**
+     * 删除用户属性
+     * 参数：
+     * -param userId 用户编号
+     */
+    @RequestMapping(value = "/user/profile/delete/{userId}", method = RequestMethod.POST)
+    public Object deleteProfile(@PathVariable("userId") int userId) {
+        userService.deleteProfile(userId);
+        return HttpResult.ok("删除成功");
+    }
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     */
+    @RequestMapping(value = "/user/profile/delete/{userId}/{name}", method = RequestMethod.POST)
+    public Object deleteProfile(@PathVariable("userId") int userId, @PathVariable("name") String name) {
+        userService.deleteProfile(userId, name);
+        return HttpResult.ok("删除成功");
+    }
+
+    /**
+     * 批量删除用户属性
+     * 参数：
+     * -param userId 用户编号
+     * -param nameLike 属性名称（模糊匹配）
+     * -param names 属性名称集
+     */
+    @RequestMapping("/user/profile/delete_batch/{userId}")
+    public Object deleteProfile(HttpServletRequest request, @PathVariable("userId") int userId) {
+        if (userId >= 0) {
+            String nameLike = HttpUtilsEx.getStringValue(request, "nameLike");
+            if (StringUtils.isNotBlank(nameLike)) {
+                userService.deleteProfileLike(userId, nameLike);
+            }
+            String names = HttpUtilsEx.getStringValue(request, "names");
+            if (StringUtils.isNotBlank(names)) {
+                userService.deleteProfile(userId, names.split(","));
+            }
+        }
+        return HttpResult.ok("删除成功");
     }
 
 }

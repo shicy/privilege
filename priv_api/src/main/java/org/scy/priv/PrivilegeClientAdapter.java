@@ -399,10 +399,9 @@ public class PrivilegeClientAdapter {
      * 修改用户
      * @param user 用户信息
      */
-    public static User setUser(User user) {
+    public static void setUser(User user) {
         HttpResult result = privilegeClient.setUser(user);
         checkResult(result);
-        return result.getData(User.class);
     }
 
     /**
@@ -477,6 +476,117 @@ public class PrivilegeClientAdapter {
         HttpResult result = privilegeClient.setUserRoles(userId, roleIds);
         checkResult(result);
         return result.getDatas(Role.class);
+    }
+
+    /**
+     * 获取用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     */
+    public static UserProfile getUserProfile(int userId, String name) {
+        HttpResult result = privilegeClient.getUserProfile(userId, name);
+        checkResult(result);
+        return result.getData(UserProfile.class);
+    }
+
+    /**
+     * 获取用户所有属性
+     * @param userId 用户编号
+     */
+    public static UserProfile[] getUserProfiles(int userId) {
+        HttpResult result = privilegeClient.getUserProfiles(userId);
+        checkResult(result);
+        return result.getDatas(UserProfile.class);
+    }
+
+    /**
+     * 获取用户属性
+     * @param userId 用户编号
+     * @param names 属性名称集
+     */
+    public static UserProfile[] getUserProfiles(int userId, String[] names) {
+        ProfileForm form = new ProfileForm();
+        form.setNames(names);
+        HttpResult result = privilegeClient.getUserProfiles(userId, form);
+        checkResult(result);
+        return result.getDatas(UserProfile.class);
+    }
+
+    /**
+     * 获取用户属性
+     * @param userId 用户名称
+     * @param nameLike 属性名称模糊匹配
+     */
+    public static UserProfile[] getUserProfilesLike(int userId, String nameLike) {
+        ProfileForm form = new ProfileForm();
+        form.setNameLike(nameLike);
+        HttpResult result = privilegeClient.getUserProfiles(userId, form);
+        checkResult(result);
+        return result.getDatas(UserProfile.class);
+    }
+
+    /**
+     * 设置用户属性（新增或修改）
+     * @param userId 用户编号
+     * @param name 属性名称
+     * @param value 属性值
+     */
+    public static void setUserProfile(int userId, String name, String value) {
+        HttpResult result = privilegeClient.setUserProfile(userId, name, value);
+        checkResult(result);
+    }
+
+    /**
+     * 批量设置用户属性（新增或修改）
+     * @param userId 用户编号
+     * @param profiles 属性集
+     */
+    public static void setUserProfiles(int userId, UserProfile[] profiles) {
+        HttpResult result = privilegeClient.setUserProfile(userId, profiles);
+        checkResult(result);
+    }
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param name 属性名称
+     */
+    public static void deleteUserProfile(int userId, String name) {
+        HttpResult result = privilegeClient.deleteUserProfile(userId, name);
+        checkResult(result);
+    }
+
+    /**
+     * 删除用户所有属性
+     * @param userId 编号编号
+     */
+    public static void deleteUserProfiles(int userId) {
+        HttpResult result = privilegeClient.deleteUserProfile(userId);
+        checkResult(result);
+    }
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param names 属性名称集
+     */
+    public static void deleteUserProfiles(int userId, String[] names) {
+        ProfileForm form = new ProfileForm();
+        form.setNames(names);
+        HttpResult result = privilegeClient.deleteUserProfile(userId, form);
+        checkResult(result);
+    }
+
+    /**
+     * 删除用户属性
+     * @param userId 用户编号
+     * @param nameLike 属性名称（模糊匹配）
+     */
+    public static void deleteUserProfilesLike(int userId, String nameLike) {
+        ProfileForm form = new ProfileForm();
+        form.setNameLike(nameLike);
+        HttpResult result = privilegeClient.deleteUserProfile(userId, form);
+        checkResult(result);
     }
 
     /**

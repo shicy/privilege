@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scy.priv.mapper.ProfileMapper">
+
+    <!-- getById -->
+    <select id="getById" resultType="UserProfileModel">
+        select * from `user_profile` where id = #{id}
+    </select>
+
+    <!-- getProfile -->
+    <select id="getProfile" resultType="UserProfileModel">
+        select * from `user_profile`
+        where userId = #{userId} and name = #{name}
+    </select>
+
+    <!-- getProfilesAll -->
+    <select id="getProfilesAll" resultType="UserProfileModel">
+        select * from `user_profile`
+        where userId = #{userId} and paasId = #{paasId}
+    </select>
+
+    <!-- getProfilesLike -->
+    <select id="getProfilesLike" resultType="UserProfileModel">
+        select * from `user_profile`
+        where userId = #{userId} and name like "%"#{nameLike}"%" and paasId = ${paasId}
+    </select>
+
+    <!-- getProfilesIn -->
+    <select id="getProfilesIn" resultType="UserProfileModel">
+        select * from `user_profile`
+        where userId = #{userId} and name in (#{names}) and paasId = ${paasId}
+    </select>
+
+    <!-- add -->
+    <insert id="add" parameterType="UserProfileModel" useGeneratedKeys="true" keyProperty="id">
+        insert into `user_profile` (userId, name, value, createTime, paasId)
+        values (#{userId}, #{name}, #{value}, #{createTime}, #{paasId})
+    </insert>
+
+    <!-- update -->
+    <update id="update" parameterType="UserProfileModel">
+        update `user_profile`
+        set userId = #{userId}, name = #{name}, value = #{value}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- deleteByUserId -->
+    <delete id="deleteByUserId" parameterType="UserProfileModel">
+        delete from `user_profile`
+        where userId = #{userId} and paasId = ${paasId}
+    </delete>
+
+    <!-- deleteByName -->
+    <delete id="deleteByName" parameterType="UserProfileModel">
+        delete from `user_profile`
+        where userId = #{userId} and name = #{name} and paasId = ${paasId}
+    </delete>
+
+    <!-- deleteByNames -->
+    <delete id="deleteByNames" parameterType="UserProfileModel">
+        delete from `user_profile`
+        where userId = #{userId} and name in (#{names}) and paasId = ${paasId}
+    </delete>
+
+    <!-- deleteLikeName -->
+    <delete id="deleteLikeName" parameterType="UserProfileModel">
+        delete from `user_profile`
+        where userId = #{userId} and name like "%"#{nameLike}"%" and paasId = ${paasId}
+    </delete>
+
+</mapper>

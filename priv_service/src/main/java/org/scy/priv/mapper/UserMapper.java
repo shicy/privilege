@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.scy.common.ds.mybatis.BaseMapper;
 import org.scy.priv.model.UserModel;
+import org.scy.priv.model.UserProfile;
 
 import java.util.List;
 

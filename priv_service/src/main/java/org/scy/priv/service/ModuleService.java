@@ -88,11 +88,11 @@ public interface ModuleService {
     /**
      * 查询
      * @param params 参数：
-     *      -param name 按名称查询
-     *      -param nameLike 按名称模糊查询
-     *      -param code 按编码查询
-     *      -param codeLike 按编码模糊查询
-     *      -param parentId 上级模块编号
+     *     -param name 按名称查询
+     *     -param nameLike 按名称模糊查询
+     *     -param code 按编码查询
+     *     -param codeLike 按编码模糊查询
+     *     -param parentId 上级模块编号
      * @param pageInfo 分页信息
      * @return 返回模块列表
      */
