@@ -4,6 +4,7 @@
 -- Created on <2017-08-28>
 -- ========================================================
 
+-- CREATE SCHEMA `db_priv` DEFAULT CHARACTER SET utf8mb4 ;
 -- USE `db_priv`;
 
 -- -----------------------------------------------------
@@ -192,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `login_record` (
   `ip` VARCHAR(20) NULL COMMENT 'IP地址',
   `domain` VARCHAR(30) NULL COMMENT '网站域名',
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
-  `client` VARCHAR(100) NULL COMMENT '客户端编号'
+  `client` VARCHAR(100) NULL COMMENT '客户端编号',
   `createTime` BIGINT NULL,
   `paasId` INT NULL,
   PRIMARY KEY (`id`))
@@ -209,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `token` (
   `token` VARCHAR(64) NULL COMMENT '登录用户token信息',
   `expires` BIGINT NULL COMMENT '到期时间',
   `domain` VARCHAR(30) NULL COMMENT '登录时的域名',
-  `client` VARCHAR(100) NULL COMMENT '客户端编号'
+  `client` VARCHAR(100) NULL COMMENT '客户端编号',
   `userAgent` VARCHAR(200) NULL COMMENT '用户代理',
   `createTime` BIGINT NULL,
   `lastActiveTime` BIGINT NULL,
