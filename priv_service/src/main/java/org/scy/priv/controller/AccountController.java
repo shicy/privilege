@@ -14,7 +14,10 @@ import org.scy.priv.model.AccountModel;
 import org.scy.priv.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -101,7 +104,7 @@ public class AccountController extends BaseController {
      * @return 新增的帐户信息
      */
     @RequestMapping(value = "/account/add", method = RequestMethod.POST)
-    public Object addAccount(@RequestBody Account account) {
+    public Object addAccount(Account account) {
         if (!SessionManager.isPlatform())
             return HttpResult.error(Const.MSG_CODE_NOPERMISSION);
 
@@ -124,7 +127,7 @@ public class AccountController extends BaseController {
      * @return 帐户信息
      */
     @RequestMapping(value = "/account/update", method = RequestMethod.POST)
-    public Object updateAccount(@RequestBody Account account) {
+    public Object updateAccount(Account account) {
         if (account == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 

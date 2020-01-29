@@ -13,7 +13,10 @@ import org.scy.priv.model.PrivilegeModel;
 import org.scy.priv.service.PrivilegeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -78,7 +81,7 @@ public class PrivilegeController extends BaseController {
      * -param grantType 授权方式
      */
     @RequestMapping(value = "/privs/add", method = RequestMethod.POST)
-    public Object addPrivilege(@RequestBody Privilege privilege) {
+    public Object addPrivilege(Privilege privilege) {
         if (privilege == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -114,7 +117,7 @@ public class PrivilegeController extends BaseController {
      * -param roleId 角色编号
      */
     @RequestMapping(value = "/privs/delete", method = RequestMethod.POST)
-    public Object deletePrivilege(@RequestBody Privilege privilege) {
+    public Object deletePrivilege(Privilege privilege) {
         if (privilege == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
         privilegeService.deletePrivileges(privilege);

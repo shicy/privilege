@@ -11,7 +11,10 @@ import org.scy.priv.model.ModuleModel;
 import org.scy.priv.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -79,7 +82,7 @@ public class ModuleController extends BaseController {
      * @return 返回新增的模块信息
      */
     @RequestMapping(value = "/module/add", method = RequestMethod.POST)
-    public Object addModule(@RequestBody Module module) {
+    public Object addModule(Module module) {
         if (module == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -99,7 +102,7 @@ public class ModuleController extends BaseController {
      * @return 返回模块信息
      */
     @RequestMapping(value = "/module/update", method = RequestMethod.POST)
-    public Object updateModule(@RequestBody Module module) {
+    public Object updateModule(Module module) {
         if (module == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 

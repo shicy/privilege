@@ -12,11 +12,12 @@ import org.scy.priv.model.Group;
 import org.scy.priv.model.GroupModel;
 import org.scy.priv.model.GroupUserModel;
 import org.scy.priv.service.GroupService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -32,8 +33,6 @@ import java.util.Map;
 @ResponseBody
 @SuppressWarnings("unused")
 public class GroupController extends BaseController {
-
-    private Logger logger = LoggerFactory.getLogger(GroupController.class);
 
     @Autowired
     private GroupService groupService;
@@ -77,7 +76,7 @@ public class GroupController extends BaseController {
      * @return 返回新建用户组信息
      */
     @RequestMapping(value = "/group/add", method = RequestMethod.POST)
-    public Object addGroup(@RequestBody Group group) {
+    public Object addGroup(Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -92,7 +91,7 @@ public class GroupController extends BaseController {
      * @return 返回用户信息
      */
     @RequestMapping(value = "/group/update", method = RequestMethod.POST)
-    public Object updateGroup(@RequestBody Group group) {
+    public Object updateGroup(Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 

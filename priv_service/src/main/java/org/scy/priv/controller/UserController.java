@@ -120,7 +120,7 @@ public class UserController extends BaseController {
      * @return 返回新建用户信息
      */
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-    public Object addUser(@RequestBody User user, @RequestParam(value = "groupIds", required = false) String groupIds,
+    public Object addUser(User user, @RequestParam(value = "groupIds", required = false) String groupIds,
             @RequestParam(value = "roleIds", required = false) String roleIds) {
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
@@ -157,7 +157,7 @@ public class UserController extends BaseController {
      * @return 用户信息
      */
     @RequestMapping(value = "/user/update", method = RequestMethod.POST)
-    public Object updateUser(@RequestBody User user, @RequestParam(value = "groupIds", required = false) String groupIds,
+    public Object updateUser(User user, @RequestParam(value = "groupIds", required = false) String groupIds,
             @RequestParam(value = "roleIds", required = false) String roleIds) {
         if (user == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "缺少用户信息");
@@ -372,7 +372,7 @@ public class UserController extends BaseController {
      * -param userId 用户编号
      */
     @RequestMapping(value = "/user/profile/set_batch/{userId}", method = RequestMethod.POST)
-    public Object setProfile(@PathVariable("userId") int userId, @RequestBody UserProfile[] profiles) {
+    public Object setProfile(@PathVariable("userId") int userId, UserProfile[] profiles) {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING, "用户编号无效");
         return HttpResult.ok(userService.saveProfiles(userId, profiles));

@@ -14,7 +14,10 @@ import org.scy.priv.model.UserModel;
 import org.scy.priv.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -142,7 +145,7 @@ public class SessionController extends BaseController {
      */
     @AccessToken
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Object login(HttpServletRequest request, HttpServletResponse response, @RequestBody LoginForm loginForm) {
+    public Object login(HttpServletRequest request, HttpServletResponse response, LoginForm loginForm) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", loginForm.getUsername());
         params.put("password", loginForm.getPassword());
@@ -170,7 +173,7 @@ public class SessionController extends BaseController {
     @AccessToken
     @RequestMapping(value = "/loginWithoutPassword", method = RequestMethod.POST)
     public Object loginWithoutPassword(HttpServletRequest request, HttpServletResponse response,
-            @RequestBody LoginForm loginForm) {
+            LoginForm loginForm) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", loginForm.getUsername());
         params.put("loginType", loginForm.getLoginType());
