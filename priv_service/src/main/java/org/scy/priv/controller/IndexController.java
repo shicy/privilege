@@ -30,7 +30,8 @@ public class IndexController extends BaseController {
 
     @RequestMapping(value = "/test/bean", method = RequestMethod.POST)
     @ResponseBody
-    public Object testBean(@RequestBody User user, @RequestParam(value = "groupIds", required = false) String groupIds,
+    public Object testBean(@RequestBody User user,
+            @RequestParam(value = "groupIds", required = false) String groupIds,
             @RequestParam(value = "roleIds", required = false) String roleIds) {
         System.out.println("TestBean: xxxxx，" + groupIds + roleIds);
         return HttpResult.ok("ok");

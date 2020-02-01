@@ -14,10 +14,7 @@ import org.scy.priv.model.RoleUserModel;
 import org.scy.priv.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -77,7 +74,7 @@ public class RoleController extends BaseController {
      * @return 返回新增的角色信息
      */
     @RequestMapping(value = "/role/add", method = RequestMethod.POST)
-    public Object addRole(Role role) {
+    public Object addRole(@RequestBody Role role) {
         if (role == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -96,7 +93,7 @@ public class RoleController extends BaseController {
      * @return 返回角色信息
      */
     @RequestMapping(value = "/role/update", method = RequestMethod.POST)
-    public Object updateRole(Role role) {
+    public Object updateRole(@RequestBody Role role) {
         if (role == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 

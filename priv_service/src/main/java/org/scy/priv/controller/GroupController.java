@@ -14,10 +14,7 @@ import org.scy.priv.model.GroupUserModel;
 import org.scy.priv.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -76,7 +73,7 @@ public class GroupController extends BaseController {
      * @return 返回新建用户组信息
      */
     @RequestMapping(value = "/group/add", method = RequestMethod.POST)
-    public Object addGroup(Group group) {
+    public Object addGroup(@RequestBody Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
@@ -91,7 +88,7 @@ public class GroupController extends BaseController {
      * @return 返回用户信息
      */
     @RequestMapping(value = "/group/update", method = RequestMethod.POST)
-    public Object updateGroup(Group group) {
+    public Object updateGroup(@RequestBody Group group) {
         if (group == null)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
 
