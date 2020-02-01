@@ -285,7 +285,7 @@ public interface PrivilegeClient {
      * @param value 属性值
      */
     @RequestMapping(value = "/user/profile/set/{userId}/{name}/{value}", method = RequestMethod.POST)
-    HttpResult setUserProfile(@PathVariable("user") int userId, @PathVariable("name") String name,
+    HttpResult setUserProfile(@PathVariable("userId") int userId, @PathVariable("name") String name,
         @PathVariable("value") String value);
 
     /**
