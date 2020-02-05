@@ -72,7 +72,7 @@ public final class TokenManager {
                 else {
                     if (active) {
                         // 防止频繁操作，最多30秒激活一次
-                        if (now - tokenModel.getLastActiveTime() < 30 * 1000)
+                        if (now - tokenModel.getLastActiveTime() > 30 * 1000)
                             tokenMapper.setActive(token, now);
                     }
                     return true;
