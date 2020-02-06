@@ -22,7 +22,7 @@
     <!-- getProfilesLike -->
     <select id="getProfilesLike" resultType="UserProfileModel">
         select * from `user_profile`
-        where userId = #{userId} and name like "%"#{nameLike}"%" and paasId = ${paasId}
+        where userId = #{userId} and name like concat('%', #{nameLike}, '%') and paasId = ${paasId}
     </select>
 
     <!-- getProfilesIn -->
