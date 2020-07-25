@@ -1,0 +1,3 @@
+# 只需构建打包后的*.jar文件
+*
+!priv_service/target/privilege-*.jar

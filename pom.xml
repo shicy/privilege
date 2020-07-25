@@ -43,7 +43,7 @@
             <id>test</id>
             <properties>
                 <env>test</env>
-                <package.type>war</package.type>
+                <package.type>jar</package.type>
             </properties>
         </profile>
 
@@ -51,7 +51,15 @@
             <id>prod</id>
             <properties>
                 <env>prod</env>
-                <package.type>war</package.type>
+                <package.type>jar</package.type>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>local</id>
+            <properties>
+                <env>local</env>
+                <package.type>jar</package.type>
             </properties>
         </profile>
     </profiles>
