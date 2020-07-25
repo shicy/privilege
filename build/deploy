@@ -12,6 +12,7 @@ if [ ! $2 ]; then
 fi
 
 # 转到根目录
+cd -P $(dirname "$0")
 cd ..
 echo -e "目录: "`pwd`
 

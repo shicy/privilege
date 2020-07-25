@@ -13,7 +13,6 @@ fi
 
 # 远程执行
 ssh root@www.scyok.com << remotessh
-cd /mnt/src/privilege/build
-./deploy $profile $version
+/mnt/src/privilege/build/deploy $profile $version
 exit
 remotessh
