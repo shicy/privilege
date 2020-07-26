@@ -94,4 +94,3 @@ IDEL 配置选项 Profiles 为 prod
 本地执行`./build/deploy_remote`
 
 或登录服务器，进入`build`目录，执行`./deploy`命令
-

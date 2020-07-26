@@ -3,14 +3,6 @@
 profile=$1
 version=$2
 
-if [ ! $1 ]; then
-	profile="prod"
-fi
-
-if [ ! $2 ]; then
-	version="1.0.3"
-fi
-
 # 远程执行
 ssh root@www.scyok.com << remotessh
 /mnt/src/privilege/build/deploy $profile $version
