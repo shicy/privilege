@@ -3,3 +3,5 @@
 logs
 priv_api/target
 priv_service/target
+web/node_modules
+package-lock.json
