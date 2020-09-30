@@ -23,12 +23,9 @@ import MainHeader from "./MainHeader.vue";
 import MainMenu from "./MainMenu.vue";
 
 export default {
-  props: ["fix"],
+  components: { MainHeader, MainMenu },
 
-  components: {
-    MainHeader,
-    MainMenu
-  }
+  props: ["fix"]
 };
 </script>
 

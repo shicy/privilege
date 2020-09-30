@@ -2,17 +2,18 @@
 
 <template>
   <div class="m-tenant">
-    <MainFrame fix>jfeowfjeo</MainFrame>
+    <MainFrame fix>
+      <ListView />
+    </MainFrame>
   </div>
 </template>
 
 <script>
 import MainFrame from "@/framework/main/MainFrame.vue";
+import ListView from "@/temp/vue-base/components/list/ListView.vue";
 
 export default {
-  components: {
-    MainFrame
-  }
+  components: { MainFrame, ListView }
 };
 </script>
 
