@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import { checkUserSession } from "@/framework/Context";
 
 Vue.use(VueRouter);
 
@@ -29,9 +30,13 @@ router.beforeEach((to, from, next) => {
   if (to.name == "Login") {
     next();
   } else {
-    setTimeout(() => {
-      next("/login");
-    }, 1000);
+    checkUserSession()
+      .then(() => {
+        next();
+      })
+      .catch(() => {
+        next("/login");
+      });
   }
 });
 

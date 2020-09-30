@@ -1,6 +1,7 @@
 // 系统环境信息
 
 const isDevelopment = process.env.NODE_ENV === "development";
+let userInfo = null;
 
 // 判断是否开发环境
 export function isDev() {
@@ -17,14 +18,25 @@ export function api(url) {
   return url;
 }
 
+// ==============================================
+export function doLogin() {
+  // .
+}
+
+export function setUser(user) {
+  userInfo = user;
+  console.log("===>", userInfo);
+}
+
 // 验证用户是否登录，或者登录是否已过期
 export function checkUserSession() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (Date.now() % 2 == 1)
+      if (userInfo) {
         resolve({});
-      else
+      } else {
         reject();
-    }, 1000);
+      }
+    }, 500);
   });
 }
