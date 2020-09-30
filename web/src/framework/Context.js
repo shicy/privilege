@@ -1,7 +1,7 @@
 // 系统环境信息
 
 const isDevelopment = process.env.NODE_ENV === "development";
-let userInfo = null;
+let userInfo = { id: 1, name: "金覅额" };
 
 // 判断是否开发环境
 export function isDev() {
@@ -21,6 +21,15 @@ export function api(url) {
 // ==============================================
 export function doLogin() {
   // .
+}
+
+export function doLogout() {
+  userInfo = null;
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, 500);
+  });
 }
 
 export function setUser(user) {
