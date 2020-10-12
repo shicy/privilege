@@ -14,8 +14,6 @@ import org.scy.priv.mapper.AccountMapper;
 import org.scy.priv.model.Account;
 import org.scy.priv.model.AccountModel;
 import org.scy.priv.service.AccountService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +26,11 @@ import java.util.Map;
  * Created by hykj on 2017/9/5.
  */
 @Service
-@SuppressWarnings("unused")
 public class AccountServiceImpl extends MybatisBaseService implements AccountService {
 
-    private Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
+//    private final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
-    private char[] codeChars = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    private final char[] codeChars = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
     @Autowired
     private AccountMapper accountMapper;
@@ -121,10 +118,12 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             throw new ResultException(10001, "名称已存在");
 
         accountModel.setMobile(StringUtils.trimToEmpty(account.getMobile()));
-        if (!CommonUtilsEx.checkMobile(accountModel.getMobile()))
-            throw new ResultException(1004, "手机号码格式不正确");
-        if (accountMapper.getByMobile(accountModel.getMobile()) != null)
-            throw new ResultException(10002, "手机号码已存在");
+        if (StringUtils.isNoneEmpty(accountModel.getMobile())) {
+            if (!CommonUtilsEx.checkMobile(accountModel.getMobile()))
+                throw new ResultException(1004, "手机号码格式不正确");
+            if (accountMapper.getByMobile(accountModel.getMobile()) != null)
+                throw new ResultException(10002, "手机号码已存在");
+        }
 
         accountModel.setEmail(StringUtils.trimToEmpty(account.getEmail()));
         if (StringUtils.isNotEmpty(accountModel.getEmail())) {
