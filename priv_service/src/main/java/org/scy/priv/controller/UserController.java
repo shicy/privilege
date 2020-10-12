@@ -32,7 +32,6 @@ import java.util.Map;
 @Controller
 @AccessToken
 @ResponseBody
-@SuppressWarnings("unused")
 public class UserController extends BaseController {
 
     @Autowired

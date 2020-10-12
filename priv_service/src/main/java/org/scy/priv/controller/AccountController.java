@@ -28,7 +28,6 @@ import java.util.Map;
 @Controller
 @AccessToken
 @ResponseBody
-@SuppressWarnings("unused")
 public class AccountController extends BaseController {
 
     @Autowired

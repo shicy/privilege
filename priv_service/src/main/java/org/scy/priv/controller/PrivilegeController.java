@@ -26,7 +26,6 @@ import java.util.List;
 @Controller
 @AccessToken
 @ResponseBody
-@SuppressWarnings("unused")
 public class PrivilegeController extends BaseController {
 
     @Autowired

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
  * Created by shicy on 2017/8/31
  */
 @Controller
-@SuppressWarnings("unused")
 public class IndexController extends BaseController {
 
     @RequestMapping(value = "/version", method = RequestMethod.GET)
