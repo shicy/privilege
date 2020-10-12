@@ -16,7 +16,7 @@ public class IndexController extends BaseController {
 
     @RequestMapping(value = "/version", method = RequestMethod.GET)
     @ResponseBody
-    public Object version() {
+    public HttpResult version() {
         return HttpResult.ok(getAppVersion());
     }
 

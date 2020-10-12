@@ -32,7 +32,6 @@ import java.util.Map;
  * Created by shicy on 2017/9/3.
  */
 @Service
-@SuppressWarnings("unused")
 public class UserServiceImpl extends MybatisBaseService implements UserService {
 
     @Autowired
