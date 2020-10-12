@@ -10,7 +10,8 @@
 
 <script>
 import MainFrame from "@/framework/main/MainFrame.vue";
-import ListView from "@/temp/vue-base/components/list/ListView.vue";
+// import ListView from "@/temp/vue-base/components/list/ListView.vue";
+import { ListView } from "@scyui/vue-base";
 
 export default {
   components: { MainFrame, ListView }

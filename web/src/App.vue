@@ -2,16 +2,11 @@
   <div id="app">
     <router-view />
     <div v-if="!beInit" class="loading">正在努力加载中...</div>
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view /> -->
   </div>
 </template>
 
 <script>
-import PageLoading from "@/temp/vue-base/tool/PageLoading.vue";
+import { PageLoading } from "@scyui/vue-base";
 
 export default {
   data() {
@@ -21,15 +16,15 @@ export default {
   },
 
   mounted() {
-    PageLoading.start();
+    PageLoading.start(this);
 
     this.$router.beforeEach((to, from, next) => {
-      PageLoading.start();
+      PageLoading.start(this);
       next();
     });
 
     this.$router.afterEach(() => {
-      PageLoading.finish();
+      PageLoading.finish(this);
       this.beInit = true;
     });
   }
