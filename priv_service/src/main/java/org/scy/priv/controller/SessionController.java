@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -135,7 +134,7 @@ public class SessionController extends BaseController {
      * -param password 登录密码
      * -param expires 有效期（秒），大于零时有效，否则无限期
      * -param loginType 登录方式，默认所有登录方式
-     * -param validCode 验证码，使用“/login/code”获取登录验证码
+     * -param validCode 验证码，使用“/valid/code”获取登录验证码
      * -param validCodeId 验证码编号，获取验证码时一起返回
      * @return 登录成功将返回用户token信息
      */
@@ -221,17 +220,11 @@ public class SessionController extends BaseController {
      * @param expires 过期时间（秒），小于零时无限期
      */
     private void setTokenCookie(HttpServletResponse response, String token, int expires) {
-        Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, token);
-        cookie.setPath("/");
-        cookie.setMaxAge(expires > 0 ? expires : Integer.MAX_VALUE);
-        response.addCookie(cookie);
+        HttpUtilsEx.setCookie(response, SessionManager.TOKEN_KEY, token, expires);
     }
 
     private void removeTokenCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie(SessionManager.TOKEN_KEY, null);
-        cookie.setPath("/");
-        cookie.setMaxAge(-1);
-        response.addCookie(cookie);
+        HttpUtilsEx.setCookie(response, SessionManager.TOKEN_KEY, null);
     }
 
 }

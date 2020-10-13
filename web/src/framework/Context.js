@@ -1,5 +1,7 @@
 // 系统环境信息
 
+import { Request } from "@scyui/vue-base";
+
 const isDevelopment = process.env.NODE_ENV === "development";
 let userInfo = null;
 
@@ -40,12 +42,21 @@ export function setUser(user) {
 // 验证用户是否登录，或者登录是否已过期
 export function checkUserSession() {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (userInfo) {
-        resolve({});
+    Request.get(api("/account/valid"), null, (err, ret) => {
+      console.log("==>", err, ret);
+      if (!err && ret == 1) {
+        resolve();
       } else {
         reject();
       }
-    }, 500);
+      return false;
+    });
+    // setTimeout(() => {
+    //   if (userInfo) {
+    //     resolve({});
+    //   } else {
+    //     reject();
+    //   }
+    // }, 500);
   });
 }
