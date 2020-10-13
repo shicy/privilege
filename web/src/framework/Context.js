@@ -1,7 +1,7 @@
 // 系统环境信息
 
 const isDevelopment = process.env.NODE_ENV === "development";
-let userInfo = { id: 1, name: "金覅额" };
+let userInfo = null;
 
 // 判断是否开发环境
 export function isDev() {

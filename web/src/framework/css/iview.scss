@@ -1,0 +1,54 @@
+/* ivu-btn */
+.ivu-btn {
+  min-width: 80px;
+  border-radius: 3px;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(243, 144, 72, 0.2);
+  }
+}
+.ivu-btn-default {
+  border-color: #ddd;
+
+  &:hover {
+    color: #f39048;
+    border-color: #f39048;
+  }
+}
+.ivu-btn-primary {
+  border-color: #f39048;
+  background-color: #f39048;
+
+  &:hover {
+    border-color: #f3a76f;
+    background-color: #f3a76f;
+  }
+}
+
+/* ivu-input */
+.ivu-input {
+  padding: 0px 10px;
+  border-color: #ddd;
+  border-radius: 3px;
+
+  &:hover {
+    border-color: rgba(243, 144, 72, 0.75);
+  }
+
+  &:focus {
+    border-color: #f39048;
+    box-shadow: 0 0 0 2px rgba(243, 144, 72, 0.2);
+  }
+}
+
+/* ivu-table */
+.ivu-table {
+  th {
+    border-bottom-color: #ddd;
+    background-color: #fff3eb;
+  }
+
+  .ivu-table-header {
+    color: #333;
+  }
+}
