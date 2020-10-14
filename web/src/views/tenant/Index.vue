@@ -30,7 +30,7 @@ const topButtons = [
     name: "create",
     label: "新建",
     type: "primary",
-    icon: require("../../assets/a001.png")
+    icon: require("../../assets/001b.png")
   }
 ];
 
