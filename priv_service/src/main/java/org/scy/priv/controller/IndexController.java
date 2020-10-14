@@ -5,6 +5,9 @@ import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
 import org.scy.common.web.session.LoginForm;
 import org.scy.common.web.session.SessionManager;
+import org.scy.priv.manager.TokenManager;
+import org.scy.priv.model.AccountModel;
+import org.scy.priv.service.AccountService;
 import org.scy.priv.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 首页
@@ -24,11 +29,14 @@ import javax.servlet.http.HttpServletResponse;
 public class IndexController extends BaseController {
 
     @Autowired
+    private AccountService accountService;
+
+    @Autowired
     private TokenService tokenService;
 
     @RequestMapping(value = "/version", method = RequestMethod.GET)
     @ResponseBody
-    public HttpResult version() {
+    public Object version() {
         return HttpResult.ok(getAppVersion());
     }
 
@@ -58,8 +66,28 @@ public class IndexController extends BaseController {
      * @return 返回账户信息
      */
     @RequestMapping(value = "/account/login", method = RequestMethod.POST)
+    @ResponseBody
     public Object login(HttpServletRequest request, HttpServletResponse response, @RequestBody LoginForm loginForm) {
-        return null;
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("username", loginForm.getUsername());
+        params.put("password", loginForm.getPassword());
+        params.put("validCode", loginForm.getValidCode());
+        params.put("validCodeId", loginForm.getValidCodeId());
+        params.put("expires", 30 * 60); // 半小时
+        params.put("ip", HttpUtilsEx.getIP(request));
+        params.put("domain", request.getServerName());
+        params.put("userAgent", request.getHeader("User-Agent"));
+        params.put("client", SessionManager.uuid.get());
+
+        // 登录并获取 Token，登录出错将会异常返回
+        String token = tokenService.doLoginByAccount(params);
+        setToken(response, token);
+
+        int accountId = TokenManager.getLoginTokenUserId(token);
+        AccountModel accountModel = accountService.getByIdAsPlat(accountId);
+        accountModel.setPassword(null);
+        accountModel.setSecret(null);
+        return HttpResult.ok(accountModel);
     }
 
     /**
@@ -75,12 +103,15 @@ public class IndexController extends BaseController {
      * @return “1” - 未过期 “0” - “过期”
      */
     @RequestMapping(value = "/account/valid", method = RequestMethod.GET)
+    @ResponseBody
     public Object validate(HttpServletRequest request, HttpServletResponse response) {
         String token = SessionManager.token.get();
-        boolean isValidate = tokenService.isUserTokenValidate(token, true);
-        if (isValidate) {
-            setToken(response, token);
-            return HttpResult.ok("1");
+        if (token != null) {
+            boolean isValidate = tokenService.isUserTokenValidate(token, true);
+            if (isValidate) {
+                setToken(response, token);
+                return HttpResult.ok("1");
+            }
         }
         return HttpResult.ok("0");
     }

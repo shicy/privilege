@@ -11,7 +11,6 @@ import java.util.Map;
  * 帐户相关服务
  * Created by shicy on 2017/9/5.
  */
-@SuppressWarnings("unused")
 public interface AccountService {
 
     /**
@@ -19,6 +18,18 @@ public interface AccountService {
      * @param id 帐户编号
      */
     AccountModel getById(int id);
+
+    /**
+     * 以平台权限，根据编号获取账户信息
+     * @param id 账户编号
+     */
+    AccountModel getByIdAsPlat(int id);
+
+    /**
+     * 根据名称获取账户信息
+     * @param name 账户名称
+     */
+    AccountModel getByName(String name);
 
     /**
      * 根据编码获取帐户信息
@@ -85,5 +96,13 @@ public interface AccountService {
      * @return 返回新状态
      */
     short setAccountState(int accountId, short state);
+
+    /**
+     * 验证账户登录是否正确
+     * @param username 账户名称、手机号码或邮箱
+     * @param password 账户密码
+     * @return 如果验证通过返回账户信息
+     */
+    AccountModel validAccount(String username, String password);
 
 }

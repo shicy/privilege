@@ -1,7 +1,6 @@
 package org.scy.priv.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.scy.common.Const;
 import org.scy.common.ds.PageInfo;
 import org.scy.common.ds.query.Oper;
@@ -20,8 +19,6 @@ import org.scy.priv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -232,16 +229,7 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
      * @param password 原密码
      */
     private String getSecretPassword(String password) {
-        if (StringUtils.isBlank(password))
-            return "";
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            return MD5Encoder.encode(md.digest(password.getBytes()));
-        }
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return password;
+        return StringUtilsEx.toMD5(password);
     }
 
     @Override

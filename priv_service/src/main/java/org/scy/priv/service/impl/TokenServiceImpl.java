@@ -31,7 +31,6 @@ import java.util.Map;
  * Created by shicy on 2017/10/30.
  */
 @Service
-@SuppressWarnings("unused")
 public class TokenServiceImpl extends MybatisBaseService implements TokenService {
 
     @Autowired
@@ -161,6 +160,39 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
     }
 
     /**
+     * 账户登录
+     * @param params 参数
+     *      -username 登录名称：用户名、手机号或邮箱
+     *      -expires Token 有效期限（秒）
+     *      -password 登录密码
+     *      -validCode 验证码
+     *      -validCodeId 验证码编号
+     *      -ip 用户 IP 地址
+     *      -domain 域名
+     *      -userAgent 浏览器信息
+     *      -client 客户端编号 uuid
+     * @return 返回该用户的 Token 信息
+     */
+    @Override
+    public String doLoginByAccount(Map<String, Object> params) {
+        // 登录名称
+        String username = (String)params.get("username");
+        if (StringUtils.isBlank(username))
+            throw new ResultException(10001, "登录名称不能为空");
+
+        // 验证码
+        if (!checkValidCode((String)params.get("validCodeId"), (String)params.get("validCode")))
+            throw new ResultException(10002, "验证码错误");
+
+        String password = (String)params.get("password");
+        AccountModel accountModel = accountService.validAccount(username, password);
+        if (accountModel == null)
+            throw new ResultException(10003, "账户或密码错误");
+
+        return doLoginInner(accountModel, params);
+    }
+
+    /**
      * 生成当前用户 Token 信息，记录用户登录信息
      * @param user 登录用户对象
      * @param params 参数
@@ -173,7 +205,7 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         tokenModel.setDomain((String)params.get("domain"));
         tokenModel.setClient((String)params.get("client"));
         tokenModel.setUserAgent((String)params.get("userAgent"));
-        String token = TokenManager.addUserLoginToken(user, tokenModel);
+        String token = TokenManager.addUserLoginToken(user.getId(), tokenModel);
 
         LoginRecordModel loginRecordModel = new LoginRecordModel();
         loginRecordModel.setUserId(user.getId());
@@ -189,6 +221,22 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         loginRecodeMapper.add(loginRecordModel);
 
         return token;
+    }
+
+    /**
+     * 生成账户登录 Token 信息
+     * @param account 登录账户信息
+     * @param params 参数
+     * @return
+     */
+    private String doLoginInner(AccountModel account, Map<String, Object> params) {
+        long expires = params.get("expires") == null ? 0 : ((Integer)params.get("expires") * 1000);
+        TokenModel tokenModel = new TokenModel();
+        tokenModel.setExpires(expires); // 这里需要单位毫秒
+        tokenModel.setDomain((String)params.get("domain"));
+        tokenModel.setClient((String)params.get("client"));
+        tokenModel.setUserAgent((String)params.get("userAgent"));
+        return TokenManager.addUserLoginToken(account.getId(), tokenModel);
     }
 
     private boolean checkValidCode(String codeId, String codeValue) {

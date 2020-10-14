@@ -46,6 +46,23 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
     }
 
     @Override
+    public AccountModel getByIdAsPlat(int id) {
+        return accountMapper.getById(id);
+    }
+
+    @Override
+    public AccountModel getByName(String name) {
+        if (StringUtils.isBlank(name))
+            return null;
+        AccountModel accountModel = accountMapper.getByName(name);
+        if (accountModel != null && !SessionManager.isPlatform()) {
+            if (!SessionManager.isAccountOwner(accountModel.getId()))
+                return null;
+        }
+        return null;
+    }
+
+    @Override
     public AccountModel getByCode(String code) {
         if (StringUtils.isBlank(code))
             return null;
@@ -134,6 +151,7 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
         }
 
         accountModel.setRemark(StringUtils.trimToEmpty(account.getRemark()));
+        accountModel.setPassword(getSecretPassword(account.getPassword()));
         accountModel.setCode(getValidateCode());
         accountModel.setSecret(makeSecret());
         accountModel.setType(account.getType());
@@ -294,6 +312,39 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
         accountMapper.updateState(accountModel);
 
         return accountModel.getState();
+    }
+
+    @Override
+    public AccountModel validAccount(String username, String password) {
+        password = getSecretPassword(password);
+
+        AccountModel accountModel = accountMapper.getByMobile(username);
+        if (accountModel != null) {
+            if (password.equals(accountModel.getPassword()))
+                return accountModel;
+        }
+
+        accountModel = accountMapper.getByEmail(username);
+        if (accountModel != null) {
+            if (password.equals(accountModel.getPassword()))
+                return accountModel;
+        }
+
+        accountModel = accountMapper.getByName(username);
+        if (accountModel != null) {
+            if (password.equals(accountModel.getPassword()))
+                return accountModel;
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取加密后密码
+     * @param password 原密码
+     */
+    private String getSecretPassword(String password) {
+        return StringUtilsEx.toMD5(password);
     }
 
 }

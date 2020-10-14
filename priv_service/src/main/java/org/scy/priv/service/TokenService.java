@@ -72,6 +72,22 @@ public interface TokenService {
     String doLoginWithoutPassword(Map<String, Object> params);
 
     /**
+     * 账户登录
+     * @param params 参数
+     *      -username 登录名称：用户名、手机号或邮箱
+     *      -expires Token 有效期限（秒）
+     *      -password 登录密码
+     *      -validCode 验证码
+     *      -validCodeId 验证码编号
+     *      -ip 用户 IP 地址
+     *      -domain 域名
+     *      -userAgent 浏览器信息
+     *      -client 客户端编号 uuid
+     * @return 返回该用户的 Token 信息
+     */
+    String doLoginByAccount(Map<String, Object> params);
+
+    /**
      * 用户退出登录
      * @param token 用户 Token 信息
      */

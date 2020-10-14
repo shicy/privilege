@@ -10,7 +10,6 @@ import org.scy.common.utils.StringUtilsEx;
 import org.scy.common.web.session.SessionManager;
 import org.scy.priv.mapper.TokenMapper;
 import org.scy.priv.model.TokenModel;
-import org.scy.priv.model.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import java.util.Date;
  * Created by shicy on 2017/9/30.
  */
 @Component
-@SuppressWarnings("unused")
 public final class TokenManager {
 
     private static TokenMapper tokenMapper;
@@ -40,13 +38,13 @@ public final class TokenManager {
 
     /**
      * 添加用户登录信息
-     * @param userModel 用户信息
+     * @param userId 用户编号
      * @param tokenModel token 相关信息，其中 token 值非必要，会在方法内初始化
      * @return 返回 token
      */
-    public static String addUserLoginToken(UserModel userModel, TokenModel tokenModel) {
+    public static String addUserLoginToken(int userId, TokenModel tokenModel) {
         tokenModel.setId(0);
-        tokenModel.setUserId(userModel.getId());
+        tokenModel.setUserId(userId);
         tokenModel.setToken(getLoginTokenUnique());
         tokenModel.setLastActiveDate(new Date());
         tokenModel.setCreateDate(new Date());
@@ -212,7 +210,7 @@ public final class TokenManager {
     }
 
     public static class TokenCleanTask extends SchedulerManager.ThreadJob {
-        private Logger logger = LoggerFactory.getLogger(TokenCleanTask.class);
+        private final Logger logger = LoggerFactory.getLogger(TokenCleanTask.class);
 
         @Override
         protected void executeJob(JobDataMap data) {
