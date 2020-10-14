@@ -5,30 +5,104 @@
     <div class="title">登录</div>
     <div class="login-form">
       <div class="form-item name">
-        <input placeholder="用户名" />
+        <input v-model="username" placeholder="用户名" />
       </div>
       <div class="form-item pwd">
-        <input placeholder="密码" />
+        <input v-model="password" placeholder="密码" />
       </div>
       <div class="form-item code">
-        <input placeholder="验证码" />
+        <input v-model="validcode" placeholder="验证码" />
         <div class="code-img">
-          <img alt="验证码" src="" />
+          <img alt="验证码" :src="codeImage" @click="onCodeImageHandler" />
         </div>
       </div>
     </div>
-    <div class="login-btn" @click="onLoginBtnHandler">登录</div>
+    <Button
+      class="login-btn"
+      type="primary"
+      :loading="loginFlag"
+      @click="onLoginBtnHandler"
+    >
+      {{ loginBtnLabel }}
+    </Button>
   </div>
 </template>
 
 <script>
-import * as Context from "@/framework/Context";
+import { $get, $post, trimToEmpty, Message } from "@scyui/vue-base";
+import { api, setUser } from "@/framework/Context";
 
 export default {
+  data() {
+    return {
+      username: "",
+      password: "",
+      validcode: "",
+      codeId: "",
+      codeImage: "",
+      loginFlag: false
+    };
+  },
+
+  mounted() {
+    this.loadCodeImage();
+  },
+
+  computed: {
+    loginBtnLabel() {
+      return this.loginFlag ? "正在登录..." : "登录";
+    }
+  },
+
   methods: {
     onLoginBtnHandler() {
-      Context.setUser({ id: 1, name: "张飞" });
-      this.$emit("logined");
+      if (!this.loginFlag) {
+        let data = this.getValidData();
+        if (data) {
+          // console.log("--->", data);
+          this.loginFlag = true;
+          $post(api("/account/login"), data, (err, user) => {
+            console.log("--->", err, user);
+            if (!err) {
+              setUser(user);
+              this.$emit("logined");
+            } else {
+              this.loginFlag = false;
+            }
+          });
+        }
+      }
+    },
+
+    onCodeImageHandler() {
+      this.loadCodeImage();
+    },
+
+    getValidData() {
+      let params = {};
+      params.username = trimToEmpty(this.username);
+      if (!params.username) {
+        return Message.error("请输入用户名称");
+      }
+      params.password = trimToEmpty(this.password);
+      if (!params.password) {
+        return Message.error("请输入登录密码");
+      }
+      params.validCode = trimToEmpty(this.validcode);
+      if (!params.validCode) {
+        return Message.error("请输入验证码");
+      }
+      params.validCodeId = this.codeId;
+      return params;
+    },
+
+    loadCodeImage() {
+      $get(api("/valid/code")).then(({ data }) => {
+        if (data) {
+          this.codeId = data.codeId;
+          this.codeImage = data.imageUrl;
+        }
+      });
     }
   }
 };
@@ -124,12 +198,8 @@ export default {
   }
 
   .login-btn {
+    width: 100%;
     height: 44px;
-    color: #fff;
-    text-align: center;
-    line-height: 44px;
-    border-radius: 3px;
-    background-color: #f39048;
     cursor: pointer;
   }
 }

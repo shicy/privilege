@@ -16,15 +16,15 @@ export default {
   },
 
   mounted() {
-    PageLoading.start(this);
+    PageLoading.start();
 
     this.$router.beforeEach((to, from, next) => {
-      PageLoading.start(this);
+      PageLoading.start();
       next();
     });
 
     this.$router.afterEach(() => {
-      PageLoading.finish(this);
+      PageLoading.finish();
       this.beInit = true;
     });
   }
