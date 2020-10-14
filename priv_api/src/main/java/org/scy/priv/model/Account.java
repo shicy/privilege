@@ -41,6 +41,9 @@ public class Account extends BaseModel {
     // 所有者
     private Integer ownerId;
 
+    // 登录密码
+    private String password;
+
     /**
      * 获取名称
      */
@@ -153,4 +156,17 @@ public class Account extends BaseModel {
         this.ownerId = ownerId;
     }
 
+    /**
+     * 获取登录密码
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * 设置登录密码
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

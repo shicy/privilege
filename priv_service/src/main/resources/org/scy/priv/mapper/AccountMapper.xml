@@ -29,16 +29,18 @@
 
     <!-- add -->
     <insert id="add" parameterType="AccountModel" useGeneratedKeys="true" keyProperty="id">
-        insert into `account` (name, code, secret, mobile, email, remark, type, ownerId, state, creatorId, createTime)
-        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{remark}, #{type}, #{ownerId},
-            #{state}, #{creatorId}, #{createTime})
+        insert into `account` (name, code, secret, mobile, email, remark, type, password,
+            ownerId, state, creatorId, createTime)
+        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{remark}, #{type}, ${password},
+            #{ownerId}, #{state}, #{creatorId}, #{createTime})
     </insert>
 
     <!-- update -->
     <update id="update" parameterType="AccountModel">
         update `account`
         set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email}, remark = #{remark},
-            secret = #{secret}, type = ${type}, updatorId = #{updatorId}, updateTime = #{updateTime}
+            secret = #{secret}, type = ${type}, password = ${password},
+            updatorId = #{updatorId}, updateTime = #{updateTime}
         where id = ${id}
     </update>
 
@@ -61,6 +63,13 @@
     <update id="updateSecret" parameterType="AccountModel">
         update `account`
         set secret = #{secret}, updatorId = #{updatorId}, updateTime = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- updatePassword -->
+    <update id="updatePassword" parameterType="AccountModel">
+        update `account`
+        set password = #{password}, updatorId = #{updatorId}, updateTime = #{updateTime}
         where id = #{id}
     </update>
 

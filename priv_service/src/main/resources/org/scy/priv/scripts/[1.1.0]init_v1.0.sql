@@ -8,3 +8,6 @@
 INSERT INTO `account`(`name`, `code`, `secret`, `mobile`, `type`, `creatorId`, `createTime`)
 VALUES('阳光夜雨梦', '1000000000000000', 'scy19851203', '10000000000', 0, -1, 1506575499988);
 
+
+-- 添加账户默认密码(123456) <2020-10-14 14:05:00>
+UPDATE `account` SET `password` = 'e10adc3949ba59abbe56e057f20f883e';

@@ -234,3 +234,8 @@ CREATE TABLE IF NOT EXISTS `user_profile` (
   `paasId` INT NULL,
   PRIMARY KEY (`id`))
 COMMENT = '当前用户属性表';
+
+
+-- =====================================================
+-- 账户表添加登录密码 <2020-10-14 14:00:00>
+ALTER TABLE `account` ADD COLUMN `password` VARCHAR(32) NULL COMMENT '登录密码' AFTER `remark`;
