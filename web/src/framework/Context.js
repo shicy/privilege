@@ -3,7 +3,10 @@
 import { $get } from "@scyui/vue-base";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+
 let userInfo = null;
+let accessToken = null;
+let accessTokenTime = 0;
 
 // 判断是否开发环境
 export function isDev() {
@@ -47,14 +50,32 @@ export function setUser(user) {
 // 验证用户是否登录，或者登录是否已过期
 export function checkUserSession() {
   return new Promise((resolve, reject) => {
-    $get(api("/account/valid"), null, (err, ret) => {
-      console.log("==>", err, ret);
-      if (!err && ret == 1) {
+    let params = { needUser: !userInfo };
+    $get(api("/account/valid"), params, (err, ret) => {
+      // console.log("==>", err, ret);
+      if (!err) {
+        if (ret) {
+          setUser(ret);
+        }
         resolve();
       } else {
         reject();
       }
       return false;
+    });
+  });
+}
+
+// 获取 AccessToken 信息
+export function getAccessToken() {
+  if (accessToken && Date.now() - accessTokenTime < 15 * 60 * 1000) {
+    return Promise.resolve(accessToken);
+  }
+  return new Promise(resolve => {
+    $get(api("/account/access/token"), null, (err, ret) => {
+      accessToken = !err ? ret : "";
+      accessTokenTime = Date.now();
+      resolve(accessToken);
     });
   });
 }

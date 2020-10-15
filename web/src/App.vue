@@ -6,7 +6,16 @@
 </template>
 
 <script>
-import { PageLoading } from "@scyui/vue-base";
+import { has, PageLoading, beforeRequest } from "@scyui/vue-base";
+import { getAccessToken } from "@/framework/Context";
+
+const accessTokenIgnores = [
+  "/account/login",
+  "/account/logout",
+  "/account/valid",
+  "/account/access/token",
+  "/valid/code"
+];
 
 export default {
   data() {
@@ -26,6 +35,20 @@ export default {
     this.$router.afterEach(() => {
       PageLoading.finish();
       this.beInit = true;
+    });
+
+    beforeRequest(options => {
+      // console.log("===>", options.url);
+      let beIgnore = has(accessTokenIgnores, tmp => {
+        return options.url.indexOf(tmp) >= 0;
+      });
+      if (!beIgnore) {
+        return getAccessToken().then(token => {
+          if (token) {
+            options.headers = { "X-Access-Token": token };
+          }
+        });
+      }
     });
   }
 };
