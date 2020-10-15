@@ -3,12 +3,18 @@
 <template>
   <div class="m-tenant">
     <MainFrame fix>
-      <ListView :columns="columns" :searchs="searchs" :buttons="buttons" />
+      <ListView
+        :action="apiName"
+        :columns="columns"
+        :searchs="searchs"
+        :buttons="buttons"
+      />
     </MainFrame>
   </div>
 </template>
 
 <script>
+import { api } from "@/framework/Context";
 import MainFrame from "@/framework/main/MainFrame.vue";
 import ListView from "@/components/MyListView.vue";
 
@@ -43,6 +49,12 @@ export default {
       searchs: searchItems,
       buttons: topButtons
     };
+  },
+
+  computed: {
+    apiName() {
+      return api("/account/list");
+    }
   }
 };
 </script>
