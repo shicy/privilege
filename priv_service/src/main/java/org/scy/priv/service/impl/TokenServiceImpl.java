@@ -257,10 +257,16 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
 
     @Override
     public void doLogout(String token) {
-        UserModel userModel = getUserByToken(token);
-        if (userModel != null) {
-            tokenMapper.deleteByToken(token);
+        if (StringUtils.startsWith(token, "A-")) {
             TokenManager.removeLoginToken(token);
+        }
+        else {
+            // 获取用户信息，只能获取当前租户下的用户
+            // 如果没有用户信息，即使 Token 有效也不删除
+            UserModel userModel = getUserByToken(token);
+            if (userModel != null) {
+                TokenManager.removeLoginToken(token);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package org.scy.priv.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.scy.common.annotation.Auth;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
@@ -92,7 +93,12 @@ public class IndexController extends BaseController {
      */
     @RequestMapping(value = "/account/logout", method = RequestMethod.POST)
     public Object logout(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+        String token = SessionManager.token.get();
+        if (StringUtils.isNotBlank(token)) {
+            tokenService.doLogout(token);
+        }
+        setToken(response, null);
+        return HttpResult.ok();
     }
 
     /**
@@ -103,7 +109,7 @@ public class IndexController extends BaseController {
     @ResponseBody
     public Object validate(HttpServletRequest request, HttpServletResponse response) {
         String token = SessionManager.token.get();
-        if (token != null) {
+        if (StringUtils.isNotBlank(token)) {
             boolean isValidate = tokenService.isUserTokenValidate(token, true);
             if (isValidate) {
                 setToken(response, token);
