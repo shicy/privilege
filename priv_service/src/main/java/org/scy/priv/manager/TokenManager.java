@@ -43,14 +43,21 @@ public final class TokenManager {
      * @return 返回 token
      */
     public static String addUserLoginToken(int userId, TokenModel tokenModel) {
-        tokenModel.setId(0);
         tokenModel.setUserId(userId);
-        tokenModel.setToken(getLoginTokenUnique());
-        tokenModel.setLastActiveDate(new Date());
-        tokenModel.setCreateDate(new Date());
-        tokenModel.setPaasId(SessionManager.getAccountId());
-        tokenMapper.add(tokenModel);
-        return tokenModel.getToken();
+        tokenModel.setToken("U-" + getLoginTokenUnique());
+        return addLoginToken(tokenModel).getToken();
+    }
+
+    /**
+     * 添加账户登录信息
+     * @param accountId 用户编号
+     * @param tokenModel token 相关信息，其中 token 值非必要，会在方法内初始化
+     * @return 返回 token
+     */
+    public static String addAccountLoginToken(int accountId, TokenModel tokenModel) {
+        tokenModel.setUserId(accountId);
+        tokenModel.setToken("A-" + getLoginTokenUnique());
+        return addLoginToken(tokenModel).getToken();
     }
 
     /**
@@ -130,7 +137,8 @@ public final class TokenManager {
                     return cachedVO.getValue();
                 }
                 // 将原 token 置为失效状态（为防止 token 互串还需要保留一个较长时间）
-                CachedClientAdapter.set("access_token_val-" + cachedVO.getValue(), "", 3 * 24 * 60 * 60, flags);
+                CachedClientAdapter.set("access_token_val-" + cachedVO.getValue(),
+                        "", 3 * 24 * 60 * 60, flags);
             }
 
             // 生成一个32位的 token 信息
@@ -160,6 +168,19 @@ public final class TokenManager {
     public static String getAccessTokenValue(String token) {
         CachedVO cachedVO = getValidateAccessToken(token);
         return cachedVO != null ? cachedVO.getValue() : null;
+    }
+
+    /**
+     * 添加用户登录 Token 记录
+     * @param tokenModel Token信息
+     */
+    private static TokenModel addLoginToken(TokenModel tokenModel) {
+        tokenModel.setId(0);
+        tokenModel.setLastActiveDate(new Date());
+        tokenModel.setCreateDate(new Date());
+        tokenModel.setPaasId(SessionManager.getAccountId());
+        tokenMapper.add(tokenModel);
+        return tokenModel;
     }
 
     /**

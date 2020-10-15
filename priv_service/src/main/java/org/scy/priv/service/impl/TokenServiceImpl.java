@@ -58,13 +58,21 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
 
     @Override
     public AccountModel getAccountByToken(String token) {
-        String code = TokenManager.getAccessTokenValue(token);
-        if (StringUtils.isNotBlank(code)) {
-            // 该服务本身和权限相关，“/session/account/{token}”会用到
-            // 使用 accountService.getByCode(code) 的话会导致死循环
+        if (StringUtils.startsWith(token, "A-")) {
+            int accountId = TokenManager.getLoginTokenUserId(token);
+            if (accountId > 0) {
+                return accountMapper.getById(accountId);
+            }
+        }
+        else {
+            String code = TokenManager.getAccessTokenValue(token);
+            if (StringUtils.isNotBlank(code)) {
+                // 该服务本身和权限相关，“/session/account/{token}”会用到
+                // 使用 accountService.getByCode(code) 的话会导致死循环
 
-            // 这里就暂时忽略权限了，接口上返回需要数据安全过滤
-            return accountMapper.getByCode(code);
+                // 这里就暂时忽略权限了，接口上返回需要数据安全过滤
+                return accountMapper.getByCode(code);
+            }
         }
         return null;
     }
@@ -227,7 +235,6 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
      * 生成账户登录 Token 信息
      * @param account 登录账户信息
      * @param params 参数
-     * @return
      */
     private String doLoginInner(AccountModel account, Map<String, Object> params) {
         long expires = params.get("expires") == null ? 0 : ((Integer)params.get("expires") * 1000);
@@ -236,7 +243,7 @@ public class TokenServiceImpl extends MybatisBaseService implements TokenService
         tokenModel.setDomain((String)params.get("domain"));
         tokenModel.setClient((String)params.get("client"));
         tokenModel.setUserAgent((String)params.get("userAgent"));
-        return TokenManager.addUserLoginToken(account.getId(), tokenModel);
+        return TokenManager.addAccountLoginToken(account.getId(), tokenModel);
     }
 
     private boolean checkValidCode(String codeId, String codeValue) {

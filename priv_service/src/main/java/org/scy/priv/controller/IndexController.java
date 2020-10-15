@@ -1,5 +1,6 @@
 package org.scy.priv.controller;
 
+import org.scy.common.annotation.Auth;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
@@ -83,11 +84,7 @@ public class IndexController extends BaseController {
         String token = tokenService.doLoginByAccount(params);
         setToken(response, token);
 
-        int accountId = TokenManager.getLoginTokenUserId(token);
-        AccountModel accountModel = accountService.getByIdAsPlat(accountId);
-        accountModel.setPassword(null);
-        accountModel.setSecret(null);
-        return HttpResult.ok(accountModel);
+        return HttpResult.ok(getAccountSafety(token));
     }
 
     /**
@@ -110,10 +107,29 @@ public class IndexController extends BaseController {
             boolean isValidate = tokenService.isUserTokenValidate(token, true);
             if (isValidate) {
                 setToken(response, token);
-                return HttpResult.ok("1");
+                if (HttpUtilsEx.getBooleanValue(request, "needUser")) {
+                    return HttpResult.ok(getAccountSafety(token));
+                }
+                return HttpResult.ok();
             }
         }
-        return HttpResult.ok("0");
+        return HttpResult.error(HttpResult.NOAUTH);
+    }
+
+    @Auth
+    @RequestMapping(value = "/account/access/token", method = RequestMethod.GET)
+    @ResponseBody
+    public Object getAccessToken() {
+        String token = SessionManager.token.get();
+        int accountId = TokenManager.getLoginTokenUserId(token);
+        if (accountId > 0) {
+            AccountModel accountModel = accountService.getByIdAsPlat(accountId);
+            if (accountModel != null) {
+                String accessToken = TokenManager.getAccessToken(accountModel.getCode());
+                return HttpResult.ok(accessToken);
+            }
+        }
+        return HttpResult.error("账户不存在");
     }
 
     /**
@@ -121,6 +137,23 @@ public class IndexController extends BaseController {
      */
     private void setToken(HttpServletResponse response, String token) {
         HttpUtilsEx.setCookie(response, SessionManager.TOKEN_KEY, token, 30 * 60);
+    }
+
+    /**
+     * 获取账户信息，去掉登录密码和密钥
+     * @param token 用户 Token 信息
+     */
+    private AccountModel getAccountSafety(String token) {
+        int accountId = TokenManager.getLoginTokenUserId(token);
+        if (accountId > 0) {
+            AccountModel accountModel = accountService.getByIdAsPlat(accountId);
+            if (accountModel != null) {
+                accountModel.setPassword(null);
+                accountModel.setSecret(null);
+                return accountModel;
+            }
+        }
+        return null;
     }
 
 }

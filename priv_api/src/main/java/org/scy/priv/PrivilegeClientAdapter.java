@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
  * Created by shicy on 2017/11/13
  */
 @Component
-@SuppressWarnings("unused")
 public class PrivilegeClientAdapter {
 
     private static PrivilegeClient privilegeClient;
