@@ -8,6 +8,9 @@
         :columns="columns"
         :searchs="searchs"
         :buttons="buttons"
+        @btn-create="onCreateBtnHandler"
+        @oper-detail="onDetailOperHandler"
+        @oper-delete="onDeleteOperHandler"
       />
     </MainFrame>
   </div>
@@ -23,7 +26,6 @@ const tableColumns = [
   { key: "mobile", title: "手机号码" },
   { key: "email", title: "邮箱" },
   { key: "code", title: "编码" },
-  { key: "secret", title: "密钥" },
   { key: "ops", title: "操作" }
 ];
 
@@ -44,6 +46,7 @@ export default {
   components: { MainFrame, ListView },
 
   data() {
+    tableColumns[tableColumns.length - 1].opers = this.getOpers;
     return {
       columns: tableColumns,
       searchs: searchItems,
@@ -54,6 +57,27 @@ export default {
   computed: {
     apiName() {
       return api("/account/list");
+    }
+  },
+
+  methods: {
+    getOpers() {
+      let buttons = [];
+      buttons.push({ name: "detail", label: "详情" });
+      buttons.push({ name: "delete", label: "删除" });
+      return buttons;
+    },
+
+    onCreateBtnHandler() {
+      console.log("create");
+    },
+
+    onDetailOperHandler(data) {
+      console.log("detail:", data);
+    },
+
+    onDeleteOperHandler(data) {
+      console.log("delete:", data);
     }
   }
 };
