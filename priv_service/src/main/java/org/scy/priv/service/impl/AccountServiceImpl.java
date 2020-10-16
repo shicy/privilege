@@ -3,6 +3,8 @@ package org.scy.priv.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.scy.common.Const;
 import org.scy.common.ds.PageInfo;
+import org.scy.common.ds.query.Filter;
+import org.scy.common.ds.query.Logic;
 import org.scy.common.ds.query.Oper;
 import org.scy.common.ds.query.Selector;
 import org.scy.common.exception.ResultException;
@@ -256,6 +258,15 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             selector.addFilterNotBlank("name", params.get("nameLike"), Oper.LIKE);
             selector.addFilterNotBlank("mobile", params.get("mobile"));
             selector.addFilterNotBlank("email", params.get("email"));
+
+            String keyword = (String)params.get("keyword");
+            if (StringUtils.isNotBlank(keyword)) {
+                Filter[] keywordFilters = new Filter[3];
+                keywordFilters[0] = new Filter("name", keyword, Oper.LIKE);
+                keywordFilters[1] = new Filter("mobile", keyword, Oper.LIKE);
+                keywordFilters[2] = new Filter("email", keyword, Oper.LIKE);
+                selector.addFilter(keywordFilters, Logic.OR);
+            }
 
             Integer type = (Integer)params.get("type");
             if (type != null)

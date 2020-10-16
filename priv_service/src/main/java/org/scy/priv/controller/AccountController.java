@@ -59,6 +59,7 @@ public class AccountController extends BaseController {
         params.put("nameLike", HttpUtilsEx.getStringValue(request, "nameLike"));
         params.put("mobile", HttpUtilsEx.getStringValue(request, "mobile"));
         params.put("email", HttpUtilsEx.getStringValue(request, "email"));
+        params.put("keyword", HttpUtilsEx.getStringValue(request, "keyword"));
 
         String types = HttpUtilsEx.getStringValue(request, "type");
         if (StringUtils.isNotBlank(types)) {
@@ -72,6 +73,10 @@ public class AccountController extends BaseController {
 
         PageInfo pageInfo = PageInfo.create(request);
         List<AccountModel> accountModels = accountService.find(params, pageInfo);
+        for (AccountModel accountModel: accountModels) {
+            accountModel.setSecret(null);
+            accountModel.setPassword(null);
+        }
 
         return HttpResult.ok(accountModels, pageInfo);
     }

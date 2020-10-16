@@ -73,6 +73,7 @@ public interface AccountService {
     /**
      * 查询帐户信息
      * @param params 参数：
+     *      -param keyword 按名称、手机号码或email查询
      *      -param code 按编码查询
      *      -param name 按名称查询
      *      -param nameLike 按名称模糊查询

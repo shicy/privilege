@@ -93,7 +93,6 @@ public class SessionController extends BaseController {
     /**
      * 获取帐户信息
      */
-    @AccessToken
     @RequestMapping(value = "/session/account/{token}", method = RequestMethod.GET)
     public Object accountInfo(@PathVariable("token") String token) {
         AccountModel accountModel = tokenService.getAccountByToken(token);
