@@ -2,13 +2,19 @@
 
 <template>
   <ListView
+    ref="listView"
     :action="action"
     :params="params"
     :columns="columns"
     :searchs="searchs"
     :buttons="buttons"
     :head-height="40"
-    :row-height="32"
+    :show-stripe="true"
+    page-style=""
+    @load-before="onLoadBeforeHandler"
+    @loaded="onLoadResultHandler"
+    @btnclick="onButtonHandler"
+    @oper="onOperHandler"
   />
 </template>
 
@@ -28,6 +34,34 @@ export default {
     searchs: Array,
     // 列表上面的按钮配置项
     buttons: Array
+  },
+
+  methods: {
+    refresh() {
+      this.$refs.listView.refresh();
+    },
+
+    reload() {
+      this.$refs.listView.reload();
+    },
+
+    onLoadBeforeHandler(params) {
+      this.$emit("load-before", params);
+    },
+
+    onLoadResultHandler(result) {
+      this.$emit("loaded", result);
+    },
+
+    onButtonHandler(name) {
+      this.$emit("btnclick", name);
+      this.$emit(`btn-${name}`);
+    },
+
+    onOperHandler(name, data) {
+      this.$emit("oper", name, data);
+      this.$emit(`oper-${name}`, data);
+    }
   }
 };
 </script>
@@ -45,8 +79,18 @@ export default {
   }
 
   .sui-vue-mytable {
-    .ivu-table th {
-      height: 40px;
+    .ivu-table {
+      th {
+        height: 40px;
+      }
+
+      td {
+        border-bottom: 0px;
+      }
+    }
+
+    .ivu-table-body {
+      color: #686868;
     }
   }
 }
