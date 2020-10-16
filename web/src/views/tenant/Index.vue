@@ -4,28 +4,41 @@
   <div class="m-tenant">
     <MainFrame fix>
       <ListView
+        ref="ListView"
         :action="apiName"
         :columns="columns"
         :searchs="searchs"
         :buttons="buttons"
+        @loaded="onLoadResultHandler"
         @btn-create="onCreateBtnHandler"
         @oper-detail="onDetailOperHandler"
         @oper-delete="onDeleteOperHandler"
       />
+      <Drawer
+        v-model="showEditor"
+        class="tenant-edit-drawer"
+        width="550"
+        :mask-closable="false"
+      >
+        <Editor :model="currentModel" @submit="onSubmitHandler" />
+      </Drawer>
     </MainFrame>
   </div>
 </template>
 
 <script>
+import { toDateString } from "@scyui/vue-base";
 import { api } from "@/framework/Context";
 import MainFrame from "@/framework/main/MainFrame.vue";
 import ListView from "@/components/MyListView.vue";
+import Editor from "./Editor.vue";
 
 const tableColumns = [
   { key: "name", title: "租户名称" },
   { key: "mobile", title: "手机号码" },
   { key: "email", title: "邮箱" },
   { key: "code", title: "编码" },
+  { key: "createDate", title: "创建日期" },
   { key: "ops", title: "操作" }
 ];
 
@@ -43,14 +56,17 @@ const topButtons = [
 ];
 
 export default {
-  components: { MainFrame, ListView },
+  components: { MainFrame, ListView, Editor },
 
   data() {
     tableColumns[tableColumns.length - 1].opers = this.getOpers;
     return {
       columns: tableColumns,
       searchs: searchItems,
-      buttons: topButtons
+      buttons: topButtons,
+
+      showEditor: false,
+      currentModel: null
     };
   },
 
@@ -68,16 +84,31 @@ export default {
       return buttons;
     },
 
+    onLoadResultHandler(result) {
+      if (result && result.datas) {
+        result.datas.forEach(data => {
+          data.createDate = toDateString(data.createTime, "yyyy-MM-dd");
+        });
+      }
+    },
+
     onCreateBtnHandler() {
-      console.log("create");
+      this.currentModel = {};
+      this.showEditor = true;
     },
 
     onDetailOperHandler(data) {
-      console.log("detail:", data);
+      this.currentModel = Object.assign({}, data);
+      this.showEditor = true;
     },
 
     onDeleteOperHandler(data) {
       console.log("delete:", data);
+    },
+
+    onSubmitHandler() {
+      this.showEditor = false;
+      this.$refs.listView.reload();
     }
   }
 };
