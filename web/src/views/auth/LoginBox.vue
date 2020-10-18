@@ -5,13 +5,25 @@
     <div class="title">登录</div>
     <div class="login-form">
       <div class="form-item name">
-        <input v-model="username" placeholder="用户名" />
+        <input
+          v-model="username"
+          placeholder="用户名"
+          @keydown.enter="onInputEnterHandler"
+        />
       </div>
       <div class="form-item pwd">
-        <input v-model="password" placeholder="密码" />
+        <input
+          v-model="password"
+          placeholder="密码"
+          @keydown.enter="onInputEnterHandler"
+        />
       </div>
       <div class="form-item code">
-        <input v-model="validcode" placeholder="验证码" />
+        <input
+          v-model="validcode"
+          placeholder="验证码"
+          @keydown.enter="onInputEnterHandler"
+        />
         <div class="code-img">
           <img alt="验证码" :src="codeImage" @click="onCodeImageHandler" />
         </div>
@@ -55,6 +67,10 @@ export default {
   },
 
   methods: {
+    onInputEnterHandler() {
+      this.onLoginBtnHandler();
+    },
+
     onLoginBtnHandler() {
       if (!this.loginFlag) {
         let data = this.getValidData();
@@ -62,7 +78,7 @@ export default {
           // console.log("--->", data);
           this.loginFlag = true;
           $post(api("/account/login"), data, (err, user) => {
-            console.log("--->", err, user);
+            // console.log("--->", err, user);
             if (!err) {
               setUser(user);
               this.$emit("logined");
