@@ -42,9 +42,13 @@ export function doLogout() {
   });
 }
 
+export function getUser() {
+  return userInfo;
+}
+
 export function setUser(user) {
   userInfo = user;
-  console.log("===>", userInfo);
+  // console.log("===>", userInfo);
 }
 
 // 验证用户是否登录，或者登录是否已过期

@@ -6,15 +6,23 @@
       <router-link to="/">&nbsp;</router-link>
     </div>
     <div class="user">
-      <div class="exit" @click="onExitBtnHandler">退出</div>
+      <span class="name">{{ userName }}</span>
+      <span class="exit" @click="onExitBtnHandler">退出</span>
     </div>
   </div>
 </template>
 
 <script>
-import { doLogout } from "@/framework/Context";
+import { getUser, doLogout } from "@/framework/Context";
 
 export default {
+  data() {
+    let user = getUser() || {};
+    return {
+      userName: user.name
+    };
+  },
+
   methods: {
     onExitBtnHandler() {
       doLogout().then(() => {
@@ -51,7 +59,14 @@ export default {
     top: 0px;
     right: 0px;
 
+    .name {
+      display: inline-block;
+      margin-right: 30px;
+      color: #fff;
+    }
+
     .exit {
+      display: inline-block;
       padding: 0px 12px 0px 30px;
       color: #fff;
       line-height: 40px;
