@@ -32,11 +32,38 @@
   }
 }
 
+/* ivu-form */
+.ivu-form {
+  .ivu-form-item-label {
+    min-height: 32px;
+    padding-top: 9px;
+    padding-bottom: 0px;
+    vertical-align: top;
+    line-height: 14px;
+  }
+
+  .ivu-form-item-error-tip {
+    padding-top: 3px;
+    font-size: 12px;
+  }
+
+  .ivu-input-wrapper {
+    vertical-align: top;
+  }
+}
+.ivu-form-label-left {
+  .ivu-form-item-required .ivu-form-item-label:before {
+    position: absolute;
+    left: -10px;
+  }
+}
+
 /* ivu-input */
 .ivu-input {
   padding: 0px 10px;
   border-color: #ddd;
   border-radius: 3px;
+  resize: none;
 
   &:hover {
     border-color: rgba(243, 144, 72, 0.75);
@@ -46,6 +73,10 @@
     border-color: #f39048;
     box-shadow: 0 0 0 2px rgba(243, 144, 72, 0.2);
   }
+}
+textarea.ivu-input {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 /* ivu-page */

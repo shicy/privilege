@@ -211,6 +211,9 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
         if (account.getRemark() != null)
             accountModel.setRemark(StringUtils.trimToEmpty(account.getRemark()));
 
+        if (StringUtils.isNotBlank(account.getPassword()))
+            accountModel.setPassword(getSecretPassword(account.getPassword()));
+
         accountModel.setUpdatorId(SessionManager.getUserId());
         accountModel.setUpdateDate(new Date());
 

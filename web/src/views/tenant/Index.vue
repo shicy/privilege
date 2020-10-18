@@ -20,7 +20,11 @@
         width="550"
         :mask-closable="false"
       >
-        <Editor :model="currentModel" @submit="onSubmitHandler" />
+        <Editor
+          :model="currentModel"
+          @submit="onSubmitHandler"
+          @cancel="onCancelHandler"
+        />
       </Drawer>
     </MainFrame>
   </div>
@@ -109,6 +113,10 @@ export default {
     onSubmitHandler() {
       this.showEditor = false;
       this.$refs.listView.reload();
+    },
+
+    onCancelHandler() {
+      this.showEditor = false;
     }
   }
 };
