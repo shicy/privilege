@@ -36,27 +36,18 @@ public class IndexController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
+    @RequestMapping(value = {"/", "/index", "/admin/**"}, method = RequestMethod.GET)
+    public String index(HttpServletRequest request) {
+        String url = request.getRequestURI();
+        System.out.println(url);
+        return "/web/index.html";
+    }
+
     @RequestMapping(value = "/version", method = RequestMethod.GET)
     @ResponseBody
     public Object version() {
         return HttpResult.ok(getAppVersion());
     }
-
-//    @Auth
-//    @RequestMapping("/test/auth")
-//    @ResponseBody
-//    public Object testAuth() {
-//        return HttpResult.ok("ok");
-//    }
-//
-//    @RequestMapping(value = "/test/bean", method = RequestMethod.POST)
-//    @ResponseBody
-//    public Object testBean(@RequestBody User user,
-//            @RequestParam(value = "groupIds", required = false) String groupIds,
-//            @RequestParam(value = "roleIds", required = false) String roleIds) {
-//        System.out.println("TestBean: xxxxx，" + groupIds + roleIds);
-//        return HttpResult.ok("ok");
-//    }
 
     /**
      * 账户登录

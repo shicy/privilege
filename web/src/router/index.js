@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { checkUserSession } from "@/framework/Context";
+import { isDev, checkUserSession } from "@/framework/Context";
 
 Vue.use(VueRouter);
 
@@ -33,7 +33,7 @@ const routes = [
 
 const router = new VueRouter({
   mode: "history",
-  base: process.env.BASE_URL,
+  base: isDev() ? process.env.BASE_URL : "/admin",
   routes
 });
 
