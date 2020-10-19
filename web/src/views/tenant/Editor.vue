@@ -97,7 +97,13 @@
           </Row>
         </FormItem>
         <FormItem>
-          <Button type="primary" @click="onSubmitHandler">确定</Button>
+          <Button
+            type="primary"
+            :loading="loadingFlag"
+            @click="onSubmitHandler"
+          >
+            确定
+          </Button>
           <Button style="margin-left: 10px;" @click="onCancelBtnHandler">
             取消
           </Button>
@@ -108,7 +114,7 @@
 </template>
 
 <script>
-import { $get, trimToEmpty, Message } from "@scyui/vue-base";
+import { $get, $post, trimToEmpty, Message } from "@scyui/vue-base";
 import { api } from "@/framework/Context";
 
 export default {
@@ -137,7 +143,8 @@ export default {
       isNameValid: false,
       isMobileValid: false,
       isEmailValid: false,
-      showSecret: false
+      showSecret: false,
+      loadingFlag: false
     };
   },
 
@@ -163,7 +170,7 @@ export default {
   methods: {
     initData() {
       let data = this.model || {};
-      console.log("==>", data);
+      // console.log("==>", data);
       this.formData.name = data.name || "";
       this.formData.mobile = data.mobile || "";
       this.formData.email = data.email || "";
@@ -177,6 +184,7 @@ export default {
       this.isMobileValid = !this.isCreate;
       this.isEmailValid = !this.isCreate;
       this.showSecret = false;
+      this.loadingFlag = false;
     },
 
     reset() {
@@ -269,11 +277,59 @@ export default {
     },
 
     onSubmitHandler() {
-      // .
+      if (this.loadingFlag) {
+        return;
+      }
+      let data = this.getSaveData();
+      if (data) {
+        // console.log("save:", data);
+        this.loadingFlag = true;
+        let _api = api(data.id ? "/account/update" : "/account/add");
+        $post(_api, data, err => {
+          this.loadingFlag = false;
+          if (!err) {
+            Message.success("保存成功");
+            this.$emit("submit");
+          }
+        });
+      }
     },
 
     onCancelBtnHandler() {
       this.$emit("cancel");
+    },
+
+    getSaveData() {
+      let data = {};
+
+      data.id = (this.model && this.model.id) || undefined;
+      data.name = trimToEmpty(this.formData.name);
+      if (!data.name) {
+        return Message.error("请输入租户名称");
+      } else if (!this.isNameValid) {
+        return Message.error("租户名称已存在");
+      }
+
+      data.mobile = trimToEmpty(this.formData.mobile);
+      if (data.mobile && !this.isMobileValid) {
+        return Message.error("手机号码不符");
+      }
+
+      data.email = trimToEmpty(this.formData.email);
+      if (data.email && !this.isEmailValid) {
+        return Message.error("邮箱不符");
+      }
+
+      data.remark = trimToEmpty(this.formData.remark);
+
+      if (this.editPassword) {
+        data.password = trimToEmpty(this.formData.password);
+        if (!data.password) {
+          return Message.error("请输入登录密码");
+        }
+      }
+
+      return data;
     }
   }
 };

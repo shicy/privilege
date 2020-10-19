@@ -4,7 +4,7 @@
   <div class="m-tenant">
     <MainFrame fix>
       <ListView
-        ref="ListView"
+        ref="listView"
         :action="apiName"
         :columns="columns"
         :searchs="searchs"
@@ -31,16 +31,19 @@
 </template>
 
 <script>
-import { toDateString } from "@scyui/vue-base";
+import { toDateString, Message } from "@scyui/vue-base";
 import { api } from "@/framework/Context";
 import MainFrame from "@/framework/main/MainFrame.vue";
 import ListView from "@/components/MyListView.vue";
 import Editor from "./Editor.vue";
 
+const typeNames = ["平台", "个人", "企业"];
+
 const tableColumns = [
   { key: "name", title: "租户名称" },
   { key: "mobile", title: "手机号码" },
   { key: "email", title: "邮箱" },
+  { key: "typeName", title: "类型" },
   { key: "code", title: "编码" },
   { key: "createDate", title: "创建日期" },
   { key: "ops", title: "操作" }
@@ -91,7 +94,8 @@ export default {
     onLoadResultHandler(result) {
       if (result && result.datas) {
         result.datas.forEach(data => {
-          data.createDate = toDateString(data.createTime, "yyyy-MM-dd");
+          data.createDate = toDateString(data.createTime, "yyyy-MM-dd HH:mm");
+          data.typeName = typeNames[parseInt(data.type) || 0] || data.type;
         });
       }
     },
@@ -107,7 +111,16 @@ export default {
     },
 
     onDeleteOperHandler(data) {
-      console.log("delete:", data);
+      Message.confirm(
+        "提示",
+        "是否确认删除租户？",
+        api(`/account/delete/${data.id}`)
+      )
+        .then(() => {
+          Message.success("删除成功");
+          this.$refs.listView.reload();
+        })
+        .catch(() => {});
     },
 
     onSubmitHandler() {

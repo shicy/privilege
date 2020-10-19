@@ -31,7 +31,7 @@
     <insert id="add" parameterType="AccountModel" useGeneratedKeys="true" keyProperty="id">
         insert into `account` (name, code, secret, mobile, email, remark, type, password,
             ownerId, state, creatorId, createTime)
-        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{remark}, #{type}, ${password},
+        values (#{name}, #{code}, #{secret}, #{mobile}, #{email}, #{remark}, #{type}, #{password},
             #{ownerId}, #{state}, #{creatorId}, #{createTime})
     </insert>
 
@@ -39,7 +39,7 @@
     <update id="update" parameterType="AccountModel">
         update `account`
         set name = #{name}, code = #{code}, mobile = #{mobile}, email = #{email}, remark = #{remark},
-            secret = #{secret}, type = ${type}, password = ${password},
+            secret = #{secret}, type = #{type}, password = #{password},
             updatorId = #{updatorId}, updateTime = #{updateTime}
         where id = ${id}
     </update>

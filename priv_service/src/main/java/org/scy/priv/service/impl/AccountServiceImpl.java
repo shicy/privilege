@@ -127,8 +127,8 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
             throw new ResultException(Const.MSG_CODE_PARAMMISSING);
 
         // 帐户名称和手机号码不能为空
-        if (StringUtils.isBlank(account.getName()) || StringUtils.isBlank(account.getMobile()))
-            throw new ResultException(Const.MSG_CODE_PARAMMISSING);
+        if (StringUtils.isBlank(account.getName())/* || StringUtils.isBlank(account.getMobile())*/)
+            throw new ResultException(Const.MSG_CODE_PARAMMISSING, "名称不能为空");
 
         AccountModel accountModel = new AccountModel();
 
@@ -186,26 +186,30 @@ public class AccountServiceImpl extends MybatisBaseService implements AccountSer
         if (StringUtils.isNotBlank(account.getName())) {
             accountModel.setName(StringUtils.trimToEmpty(account.getName()));
             tempAccount = accountMapper.getByName(accountModel.getName());
-            if (tempAccount != null && tempAccount.getId() == account.getId())
+            if (tempAccount != null && tempAccount.getId() != account.getId())
                 throw new ResultException(10001, "名称已存在");
         }
 
-        if (StringUtils.isNotBlank(account.getMobile())) {
+        if (account.getMobile() != null) {
             accountModel.setMobile(StringUtils.trimToEmpty(account.getMobile()));
-            if (!CommonUtilsEx.checkMobile(accountModel.getMobile()))
-                throw new ResultException(1004, "手机号码格式不正确");
-            tempAccount = accountMapper.getByMobile(accountModel.getMobile());
-            if (tempAccount != null && tempAccount.getId() == account.getId())
-                throw new ResultException(10002, "手机号码已存在");
+            if (StringUtils.isNoneEmpty(accountModel.getMobile())) {
+                if (!CommonUtilsEx.checkMobile(accountModel.getMobile()))
+                    throw new ResultException(1004, "手机号码格式不正确");
+                tempAccount = accountMapper.getByMobile(accountModel.getMobile());
+                if (tempAccount != null && tempAccount.getId() != account.getId())
+                    throw new ResultException(10002, "手机号码已存在");
+            }
         }
 
-        if (StringUtils.isNotBlank(account.getEmail())) {
+        if (account.getEmail() != null) {
             accountModel.setEmail(StringUtils.trimToEmpty(account.getEmail()));
-            if (!CommonUtilsEx.checkEmail(accountModel.getEmail()))
-                throw new ResultException(1005, "邮箱格式不正确");
-            tempAccount = accountMapper.getByEmail(accountModel.getEmail());
-            if (tempAccount != null && tempAccount.getId() == account.getId())
-                throw new ResultException(1003, "邮箱已存在");
+            if (StringUtils.isNoneEmpty(accountModel.getEmail())) {
+                if (!CommonUtilsEx.checkEmail(accountModel.getEmail()))
+                    throw new ResultException(1005, "邮箱格式不正确");
+                tempAccount = accountMapper.getByEmail(accountModel.getEmail());
+                if (tempAccount != null && tempAccount.getId() != account.getId())
+                    throw new ResultException(1003, "邮箱已存在");
+            }
         }
 
         if (account.getRemark() != null)
