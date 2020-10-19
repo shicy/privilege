@@ -5,3 +5,4 @@ priv_api/target
 priv_service/target
 web/node_modules
 package-lock.json
+priv_service/src/main/resources/static/web
