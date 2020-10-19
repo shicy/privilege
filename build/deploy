@@ -8,7 +8,7 @@ if [ ! $1 ]; then
 fi
 
 if [ ! $2 ]; then
-	version="1.0.4"
+	version="1.1.0"
 fi
 
 # 转到根目录
@@ -35,6 +35,11 @@ echo -e done.
 
 # 构建
 echo -e "\n> 构建"
+cd ./web
+npm install
+npm run build
+
+cd ..
 mvn clean
 mvn install
 mvn package -P ${profile}
