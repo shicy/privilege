@@ -239,3 +239,7 @@ COMMENT = '当前用户属性表';
 -- =====================================================
 -- 账户表添加登录密码 <2020-10-14 14:00:00>
 ALTER TABLE `account` ADD COLUMN `password` VARCHAR(32) NULL COMMENT '登录密码' AFTER `remark`;
+
+-- 修改`account`表索引 <2020-10-19 13:50:00>
+DROP INDEX `u_account_name_idx` on `account`;
+ALTER TABLE `account` ADD INDEX `account_name_idx` (`name` ASC);
