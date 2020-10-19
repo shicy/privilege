@@ -14,6 +14,7 @@
       <div class="form-item pwd">
         <input
           v-model="password"
+          type="password"
           placeholder="密码"
           @keydown.enter="onInputEnterHandler"
         />

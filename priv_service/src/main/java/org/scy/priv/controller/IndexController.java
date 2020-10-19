@@ -92,6 +92,7 @@ public class IndexController extends BaseController {
      * 账户退出登录
      */
     @RequestMapping(value = "/account/logout", method = RequestMethod.POST)
+    @ResponseBody
     public Object logout(HttpServletRequest request, HttpServletResponse response) {
         String token = SessionManager.token.get();
         if (StringUtils.isNotBlank(token)) {

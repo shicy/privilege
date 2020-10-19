@@ -24,24 +24,6 @@ export function api(url) {
 }
 
 // ==============================================
-// export function showWaiting(context, text) {
-//   // body...
-// }
-
-// ==============================================
-export function doLogin() {
-  // .
-}
-
-export function doLogout() {
-  userInfo = null;
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve();
-    }, 500);
-  });
-}
-
 export function getUser() {
   return userInfo;
 }

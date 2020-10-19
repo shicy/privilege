@@ -13,7 +13,8 @@
 </template>
 
 <script>
-import { getUser, doLogout } from "@/framework/Context";
+import { $post } from "@scyui/vue-base";
+import { api, getUser, setUser } from "@/framework/Context";
 
 export default {
   data() {
@@ -25,7 +26,8 @@ export default {
 
   methods: {
     onExitBtnHandler() {
-      doLogout().then(() => {
+      $post(api("/account/logout")).then(() => {
+        setUser(null);
         this.$router.push("/login");
       });
     }
