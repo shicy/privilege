@@ -15,7 +15,7 @@ public class App extends BaseApplication {
     /**
      * 主函数
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         BaseApplication.startup(App.class, args);
     }
 
