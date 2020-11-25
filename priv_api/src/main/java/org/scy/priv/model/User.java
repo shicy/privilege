@@ -46,10 +46,10 @@ public class User extends BaseModel {
     private Long lastLoginTime;
 
     // 所在用户组
-    private List<Group> groups;
+    private List<? extends Group> groups;
 
     // 用户角色信息
-    private List<Role> roles;
+    private List<? extends Role> roles;
 
     /**
      * 转化为平台用户
@@ -235,29 +235,28 @@ public class User extends BaseModel {
     /**
      * 获取用户组信息
      */
-    public List<Group> getGroups() {
+    public List<? extends Group> getGroups() {
         return groups;
     }
 
     /**
      * 设置用户组信息
      */
-    public void setGroups(List<Group> groups) {
+    public void setGroups(List<? extends Group> groups) {
         this.groups = groups;
     }
 
     /**
      * 获取用户角色信息
      */
-    public List<Role> getRoles() {
+    public List<? extends Role> getRoles() {
         return roles;
     }
 
     /**
      * 设置用户角色信息
      */
-    public void setRoles(List<Role> roles) {
+    public void setRoles(List<? extends Role> roles) {
         this.roles = roles;
     }
-
 }

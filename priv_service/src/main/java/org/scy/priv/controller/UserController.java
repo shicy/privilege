@@ -8,10 +8,7 @@ import org.scy.common.utils.ArrayUtilsEx;
 import org.scy.common.utils.HttpUtilsEx;
 import org.scy.common.web.controller.BaseController;
 import org.scy.common.web.controller.HttpResult;
-import org.scy.priv.model.User;
-import org.scy.priv.model.UserModel;
-import org.scy.priv.model.UserProfile;
-import org.scy.priv.model.UserProfileModel;
+import org.scy.priv.model.*;
 import org.scy.priv.service.GroupService;
 import org.scy.priv.service.RoleService;
 import org.scy.priv.service.UserService;
@@ -98,8 +95,11 @@ public class UserController extends BaseController {
         if (userId <= 0)
             return HttpResult.error(Const.MSG_CODE_PARAMMISSING);
         UserModel userModel = userService.getById(userId);
-        if (userModel != null)
+        if (userModel != null) {
             userModel.setPassword(null);
+            userModel.setRoles(roleService.getByUserId(userModel.getId()));
+            userModel.setGroups(groupService.getByUserId(userModel.getId()));
+        }
         return HttpResult.ok(userModel);
     }
 
