@@ -65,7 +65,14 @@ public class User extends BaseModel {
             user.setName(email);
         user.setRemark(this.getRemark());
         user.setType(this.getType());
-        user.setState(getState());
+        user.setState(this.getState());
+        if (roles != null && roles.size() > 0) {
+            int[] roleIds = new int[roles.size()];
+            for (int i = 0; i < roles.size(); i++) {
+                roleIds[i] = roles.get(i).getId();
+            }
+            user.setRoleIds(roleIds);
+        }
         return user;
     }
 
