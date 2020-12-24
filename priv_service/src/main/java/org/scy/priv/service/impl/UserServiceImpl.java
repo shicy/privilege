@@ -16,6 +16,8 @@ import org.scy.priv.model.*;
 import org.scy.priv.service.GroupService;
 import org.scy.priv.service.RoleService;
 import org.scy.priv.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ import java.util.Map;
  */
 @Service
 public class UserServiceImpl extends MybatisBaseService implements UserService {
+
+    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserMapper userMapper;
@@ -493,21 +497,28 @@ public class UserServiceImpl extends MybatisBaseService implements UserService {
     public UserModel validUser(String username, String password, short type) {
         UserModel userModel;
         password = getSecretPassword(password);
+        logger.debug("validUser:" + username + "-" + password);
 
         if (type <= 0 || ((type & Const.LOGIN_TYPE_NAME) != 0)) {
             userModel = getByName(username);
+            if (userModel != null)
+                logger.debug("validUser(1):" + userModel.getPassword());
             if (userModel != null && password.equals(userModel.getPassword()))
                 return userModel;
         }
 
         if (type <= 0 || ((type & Const.LOGIN_TYPE_MOBILE) != 0)) {
             userModel = getByMobile(username);
+            if (userModel != null)
+                logger.debug("validUser(2):" + userModel.getPassword());
             if (userModel != null && password.equals(userModel.getPassword()))
                 return userModel;
         }
 
         if (type <= 0 || ((type & Const.LOGIN_TYPE_EMAIL) != 0)) {
             userModel = getByEmail(username);
+            if (userModel != null)
+                logger.debug("validUser(4):" + userModel.getPassword());
             if (userModel != null && password.equals(userModel.getPassword()))
                 return userModel;
         }
